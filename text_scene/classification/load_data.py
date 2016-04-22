@@ -99,7 +99,8 @@ def load_dataset(df, ngram_order=1):
         else:
             for ngram in zip(*[sentence[i:] for i in range(ngram_order)]):
                 vocab.append(ngram)
-    word2id = {w:i for i,w in enumerate(set(vocab))}
+    # start at 1 to allow masking in Keras
+    word2id = {w:i for i,w in enumerate(set(vocab), start=1)}
     X_ind = []
     for i,sentence in enumerate(sentences):
         sentence = sentence.split()
@@ -109,7 +110,7 @@ def load_dataset(df, ngram_order=1):
         else:
             indices = [word2id[n] for n in
                        zip(*[sentence[j:] for j in range(ngram_order)])]
-    X = np.zeros((len(sentences), len(word2id)))
+    X = np.zeros((len(sentences), len(word2id)+1))
     for i,sample in enumerate(X_ind):
         for idx in sample:
             X[i,idx] = 1
