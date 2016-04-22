@@ -48,17 +48,18 @@ def write_sentence_csv(datadict, captions_file, out_csv):
     q4 = []
     with open(captions_file) as cfile, open(out_csv, 'w') as outfile:
         writer = csv.writer(outfile)
-        writer.writerow(['sentence', 'q1', 'q2', 'q3', 'q4'])
+        writer.writerow(['sentence', 'q1', 'q2', 'q3', 'q4', 'img_file'])
         for line in cfile:
             split_line = line.split()
             img_file = split_line[0].split('#')[0]
             if img_file in datadict:
                 sentence = ' '.join(split_line[1:]).lower()
                 annotations = datadict[img_file]
-                writer.writerow([sentence] + annotations)
+                writer.writerow([sentence] + annotations + [img_file])
 
 def load_data(sentence_csv, labels='full'):
     df = pd.read_csv(sentence_csv)
+    df = df.drop(['img_file'], 1)
     if labels == 'full':
         def full_map(q1, q2, q3, q4):
             label = [q1, q2, q3, q4]

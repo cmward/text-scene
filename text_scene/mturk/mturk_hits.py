@@ -252,6 +252,13 @@ def get_all_reviewable_hits(mtc):
     return hits
 
 def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
+    # row:
+    #   0: requester annotation
+    #   1: worker id
+    #   2: q1
+    #   3: q2
+    #   4: q3
+    #   5: q4
     with open(outfile, 'a') as f:
         writer = csv.writer(f)
         for hit in hits:
@@ -269,9 +276,9 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                 if check_valid:
                     if row[4] != 'NA' and row[5] != 'NA':
                         rejected = True
-                    elif row[3] == '0' and row[6] != 'NA':
+                    elif row[2] == '0' and row[4] != 'NA':
                         rejected = True
-                    elif row[3] == '1' and row[4] != 'NA':
+                    elif row[3] == '1' and row[5] != 'NA':
                         rejected = True
                     if rejected:
                         mtc.reject_assignment(assignment.AssignmentId)
@@ -282,11 +289,14 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     mtc.approve_assignment(assignment.AssignmentId)
             mtc.disable_hit(hit.HITId)
 
-if __name__ == '__main__':
-    if sys.argv[1] in ['-a', '--approve']:
+def main(argv):
+    if argv[1] in ['-a', '--approve']:
         hits = get_all_reviewable_hits(mtc)
         approve_and_pay_all(hits,
                             GOLD_MTURK_RESULTS_CSV,
                             REJECTED_IMGS_FILE)
     else:
-        make_hit_batch(*sys.argv[1:])
+        make_hit_batch(*argv[1:])
+
+if __name__ == '__main__':
+    main(sys.argv)
