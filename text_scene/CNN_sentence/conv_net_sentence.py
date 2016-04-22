@@ -252,7 +252,7 @@ def safe_update(dict_to, dict_from):
         dict_to[key] = val
     return dict_to
 
-def get_idx_from_sent(sent, word_idx_map, max_l=79, k=300, filter_h=5):
+def get_idx_from_sent(sent, word_idx_map, max_l=82, k=300, filter_h=5):
     """
     Transforms sentence into a list of indices. Pad with zeroes.
     """
@@ -268,7 +268,7 @@ def get_idx_from_sent(sent, word_idx_map, max_l=79, k=300, filter_h=5):
         x.append(0)
     return x
 
-def make_idx_data_cv(revs, word_idx_map, cv, max_l=79, k=300, filter_h=5):
+def make_idx_data_cv(revs, word_idx_map, cv, max_l=82, k=300, filter_h=5):
     """
     Transforms sentences into a 2-d matrix.
     """
@@ -314,7 +314,7 @@ if __name__=="__main__":
     r = range(0,10)
     n_classes = len(set([rev['y'] for rev in revs]))
     for i in r:
-        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=83,k=300, filter_h=5)
+        datasets = make_idx_data_cv(revs, word_idx_map, i, max_l=86,k=300, filter_h=5)
         perf = train_conv_net(datasets,
                               U,
                               lr_decay=0.95,
