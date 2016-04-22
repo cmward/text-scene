@@ -274,12 +274,22 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     for answer in question_form_answer.fields:
                         row.append(answer)
                 if check_valid:
+                    # selections provided for landscape and function
                     if row[4] != 'NA' and row[5] != 'NA':
                         rejected = True
-                    elif row[2] == '0' and row[4] != 'NA':
+                        print 'rejected1'
+                    # indoors and landscape selected 
+                    elif row[2] == '0' and row[5] != 'NA':
                         rejected = True
-                    elif row[3] == '1' and row[5] != 'NA':
+                        print 'rejected2'
+                    # man-made and landscape selected
+                    elif row[3] == '0' and row[5] != 'NA':
                         rejected = True
+                        print 'rejected3'
+                    # natural and function selected
+                    elif row[3] == '1' and row[4] != 'NA':
+                        rejected = True
+                        print 'rejected4'
                     if rejected:
                         mtc.reject_assignment(assignment.AssignmentId)
                         with open(log_file, 'w') as log:

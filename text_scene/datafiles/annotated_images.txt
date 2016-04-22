@@ -521,3 +521,10 @@ http://s3.amazonaws.com/caption-scene/upload_batches/28000_29000/6376797975.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/26000_27000/506082695.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/5000_6000/2414352262.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/31000_31783/901027462.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/18000_19000/4125992235.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/28000_29000/637342973.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/26000_27000/539676201.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/9000_10000/2949773540.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/20000_21000/4515615789.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/5000_6000/2424398046.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/26000_27000/5290804615.jpg
