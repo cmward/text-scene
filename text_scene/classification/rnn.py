@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import sys
+import os
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
@@ -8,6 +9,7 @@ from keras.layers import LSTM, GRU
 from keras.utils.np_utils import to_categorical
 from sklearn.cross_validation import StratifiedKFold
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import load_data
 from CNN_sentence.process_data import load_bin_vec
 from paths import SENTENCES_CSV
@@ -39,13 +41,12 @@ def train_and_test_model(model, X_train, y_train, X_test, y_test):
     score = model.evaluate(X_test, y_test, batch_size=16)
     return score
 
-def main(rnn_layer='lstm'):
+def main(word_vecs, rnn_layer='lstm'):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV)
     X, y, word2idx, l_enc = load_data.load_dataset(df)
     y_binary = to_categorical(y)
-    word_vectors = load_bin_vec(
-        '../../data/GoogleNews-vectors-negative300.bin', word2idx)
+    word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
     print "Data loaded."
 
@@ -69,4 +70,4 @@ def main(rnn_layer='lstm'):
         print "fold %i/10 - time: %.2f - acc: %.2f" % (i,train_time,score)
 
 if __name__ == '__main__':
-    main(rnn_layer=sys.argv[1])
+    main(sys.argv[1], rnn_layer=sys.argv[2])
