@@ -2,9 +2,10 @@ import numpy as np
 import cPickle
 from collections import defaultdict
 from sklearn.preprocessing import LabelEncoder
-import sys, re
+import sys, re, os
 import pandas as pd
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from paths import SENTENCES_CSV
 from classification import load_data
 
