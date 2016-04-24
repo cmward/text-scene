@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from keras.preprocessing.sequence import pad_sequences
 from paths import CAPTIONS_FILE, SENTENCES_CSV
 
 q1map = {'0': 'indoors', '1': 'outdoors'}
@@ -88,7 +89,7 @@ def load_data(sentence_csv, labels='full'):
         df = df.drop(['q1', 'q2', 'q3', 'q4'], 1)
         return df
 
-def load_dataset(df, ngram_order=1):
+def load_dataset(df, ngram_order=1, pad=False):
     sentences = df['sentence'].values
     vocab = []
     for sentence in sentences:
@@ -116,4 +117,6 @@ def load_dataset(df, ngram_order=1):
             X[i,idx] = 1
     l_enc = LabelEncoder()
     y = l_enc.fit_transform(df['label'].values)
+    if pad:
+        X = pad_sequences(X_ind)
     return X, y, word2id, l_enc
