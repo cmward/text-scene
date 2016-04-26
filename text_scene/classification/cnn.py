@@ -8,6 +8,7 @@ from keras.layers import Convolution1D, MaxPooling1D
 from keras.utils.np_utils import to_categorical
 from sklearn.cross_validation import StratifiedKFold
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import load_data
 from CNN_sentence.process_data import load_bin_vec
 from paths import SENTENCES_CSV
@@ -24,8 +25,10 @@ def DeepCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
                         output_dim=300,
                         input_length=maxlen,
                         weights=[embedding_weights]))
+    model.add(Dropout(0.5))
     model.add(Convolution1D(64, 2, activation='relu'))
     model.add(Convolution1D(32, 3, activation='relu'))
+    model.add(Convolution1D(16, 4, activation='relu'))
     model.add(MaxPooling1D(pool_length=2))
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
@@ -44,7 +47,7 @@ def create_model(n_vocab, n_labels, vocab_dim, maxlen,
     return model
 
 def train_and_test_model(model, X_train, y_train, X_test, y_test):
-    model.fit(X_train, y_train, batch_size=16, nb_epoch=10)
+    model.fit(X_train, y_train, batch_size=16, nb_epoch=20)
     score = model.evaluate(X_test, y_test, batch_size=16)
     return score
 
@@ -70,13 +73,13 @@ def main(model='parallel'):
     skf = StratifiedKFold(y, n_folds=10, shuffle=True)
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
-        model = None
-        model = create_model(n_vocab, n_labels, vocab_dim, maxlen,
+        net = None
+        net = create_model(n_vocab, n_labels, vocab_dim, maxlen,
                              embedding_weights, model=model)
-        scores = train_and_test_model(model, X[train], y_binary[train],
+        scores = train_and_test_model(net, X[train], y_binary[train],
                                      X[test], y_binary[test])
         train_time = time.time() - start_time
-        print "fold %i/10 - time: %.2f - acc: %.2f" % (i,train_time,scores[1])
+        print "fold %i/10 - time: %.2f - acc: %.2f" % (i+1,train_time,scores[1])
 
 if __name__ == '__main__':
     main(model=sys.argv[1])
