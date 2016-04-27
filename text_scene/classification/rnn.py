@@ -11,7 +11,7 @@ from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-import load_data
+from data_utils import load_data, load_dataset
 from CNN_sentence.process_data import load_bin_vec
 from paths import SENTENCES_CSV
 
@@ -50,8 +50,8 @@ def train_and_test_model(model, X_train, y_train, X_test, y_test):
 
 def main(rnn_layer='lstm', word_vecs=None):
     print "Loading data...",
-    df = load_data.load_data(SENTENCES_CSV)
-    X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
+    df = load_data(SENTENCES_CSV)
+    X, y, word2idx, l_enc = load_dataset(df, pad=True)
     y_binary = to_categorical(y)
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)

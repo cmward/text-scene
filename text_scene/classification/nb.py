@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.cross_validation import cross_val_score
-from load_data import load_data, load_dataset
+from data_utils import load_data, load_dataset
 from paths import SENTENCES_CSV
 
 df = load_data(SENTENCES_CSV)

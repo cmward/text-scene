@@ -1,7 +1,7 @@
-import numpy as np
-import time
-import sys
 import os
+import sys
+import time
+import numpy as np
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
@@ -13,7 +13,7 @@ from keras import backend as K
 from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-import load_data
+from data_utils import load_data, load_dataset
 from CNN_sentence.process_data import load_bin_vec
 from paths import SENTENCES_CSV
 
@@ -107,8 +107,8 @@ def train_and_test_model(model, model_type, X_train, y_train, X_test, y_test):
 def main(model_type='parallel', label_set='full',
          word_vecs=None, setup_only=False):
     print "Loading data...",
-    df = load_data.load_data(SENTENCES_CSV, labels=label_set)
-    X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
+    df = load_data(SENTENCES_CSV, labels=label_set)
+    X, y, word2idx, l_enc = load_dataset(df, pad=True)
     y_orig = y
     y_binary = to_categorical(y)
     word_vectors = load_bin_vec(word_vecs, word2idx)

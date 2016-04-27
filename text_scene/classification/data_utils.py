@@ -57,6 +57,11 @@ def write_sentence_csv(datadict, captions_file, out_csv):
     print "Wrote sentence csv with %i sentences." % n_sents
 
 def load_data(sentence_csv, labels='full'):
+    """
+    Create a dataframe out of the data in `sentence_csv`.
+    Each row contains a sentence and its label. The label set
+    is determined by the value of the `labels` parameter.
+    """
     df = pd.read_csv(sentence_csv)
     df = df.drop(['img_file'], 1)
     if labels == 'full':
@@ -88,6 +93,15 @@ def load_data(sentence_csv, labels='full'):
         return df
 
 def load_dataset(df, ngram_order=1, pad=False):
+    """
+    Creates numpy arrays out of a dataframe. If `pad` is set to
+    `True`, X array will be of size (n_samples, maxlen), where each
+    element of a sample is an index corresponding to `word2idx`.
+    Otherwise, X array will be of size (n_samples, vocab_size+1),
+    where each element of a sample is either 1, indicating that
+    the word corresponding to that index is in the sentence (bag
+    of words/ngrams representation).
+    """
     sentences = df['sentence'].values
     vocab = []
     for sentence in sentences:

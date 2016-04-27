@@ -7,7 +7,7 @@ import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from paths import SENTENCES_CSV
-from classification import load_data
+from classification.data_utils import load_data 
 
 def build_data_cv(data_folder, cv=10, clean_string=True):
     """
@@ -171,7 +171,7 @@ if __name__=="__main__":
         labels = sys.argv[3]
     else:
         labels = 'full'
-    df = load_data.load_data(SENTENCES_CSV, labels=labels)
+    df = load_data(SENTENCES_CSV, labels=labels)
     #revs, vocab = build_data_cv(data_folder, cv=10, clean_string=True)
     revs, vocab = build_data_cv2(df, cv=10, clean_string=True)
     max_l = np.max(pd.DataFrame(revs)["num_words"])
