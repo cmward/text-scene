@@ -7,6 +7,7 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import LSTM, GRU
 from keras.utils.np_utils import to_categorical
+from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -16,37 +17,44 @@ from paths import SENTENCES_CSV
 
 
 def add_unknown_words(word_vecs, vocab, k=300):
+    added = 0
     for word in vocab:
         if word not in word_vecs:
             word_vecs[word] = np.random.uniform(-0.25,0.25,k)
+            added += 1
+    print "Added %i unknown words to word vectors." % added
 
 def create_model(n_vocab, n_labels, vocab_dim,
                  embedding_weights, rnn_layer='lstm'):
     model = Sequential()
-    model.add(Embedding(input_dim=n_vocab+1, output_dim=300, mask_zero=True,
+    model.add(Embedding(input_dim=n_vocab+1, output_dim=300,
+                        mask_zero=True, dropout=0.2,
                         weights=[embedding_weights]))
     if rnn_layer == 'lstm':
-        model.add(LSTM(128, return_sequences=False))
+        model.add(LSTM(128, dropout_W=0.2, dropout_U=0.2,
+                       return_sequences=False))
     elif rnn_layer == 'gru':
-        model.add(GRU(128, return_sequences=False))
-    model.add(Dropout(0.5))
+        model.add(GRU(128, dropout_W=0.2, dropout_U=0.2,
+                      return_sequences=False))
     model.add(Dense(n_labels, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
-                  optimizer='rmsprop',
+                  optimizer='adam',
                   metrics=['accuracy'])
     return model
 
 def train_and_test_model(model, X_train, y_train, X_test, y_test):
-    model.fit(X_train, y_train, batch_size=16, nb_epoch=25)
-    score = model.evaluate(X_test, y_test, batch_size=16)
+    model.fit(X_train, y_train, batch_size=32, nb_epoch=5,
+              validation_split=0.2)
+    score = model.evaluate(X_test, y_test, batch_size=32)
     return score
 
-def main(word_vecs, rnn_layer='lstm'):
+def main(rnn_layer='lstm'):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV)
     X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
     y_binary = to_categorical(y)
-    word_vectors = load_bin_vec(word_vecs, word2idx)
+    word_vectors = load_bin_vec(
+        '../../data/GoogleNews-vectors-negative300.bin', word2idx)
     add_unknown_words(word_vectors, word2idx)
     print "Data loaded."
 
@@ -59,15 +67,18 @@ def main(word_vecs, rnn_layer='lstm'):
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
 
-    skf = StratifiedKFold(y, n_folds=10, shuffle=True)
+    skf = StratifiedKFold(y, n_folds=10, shuffle=True, random_state=0)
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
         model = create_model(n_vocab, n_labels, vocab_dim,
                              embedding_weights, rnn_layer=rnn_layer)
+        if i == 0:
+            print_summary(model.layers)
         score = train_and_test_model(model, X[train], y_binary[train],
                                      X[test], y_binary[test])
         train_time = time.time() - start_time
-        print "fold %i/10 - time: %.2f - acc: %.2f" % (i,train_time,score)
+        print "fold %i/10 - time: %.2f - acc: %.2f on %i samples" % \
+            (i+1, train_time, score[1], len(test))
 
 if __name__ == '__main__':
-    main(sys.argv[1], rnn_layer=sys.argv[2])
+    main(rnn_layer=sys.argv[1])
