@@ -1,1 +1,0 @@
-http://s3.amazonaws.com/caption-scene/upload_batches/5000_6000/2424398046.jpg
