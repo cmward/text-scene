@@ -9,6 +9,7 @@ from keras.layers import Embedding
 from keras.layers import Convolution1D, MaxPooling1D
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import EarlyStopping
+from keras.utils.layer_utils import print_summary
 from keras import backend as K
 from sklearn.cross_validation import StratifiedKFold
 
@@ -74,13 +75,13 @@ def ParallelCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
     model.add(Merge(submodels, mode='concat'))
     if n_labels == 2:
         model.add(Dense(1, activation='sigmoid'))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.2))
         model.compile(loss='binary_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
     else:
         model.add(Dense(n_labels, activation='softmax'))
-        model.add(Dropout(0.5))
+        model.add(Dropout(0.2))
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
@@ -160,6 +161,8 @@ def main(model_type='parallel', label_set='full', setup_only=False):
                                         maxlen,
                                         embedding_weights,
                                         model_type=model_type)
+        if i == 0:
+            print_summary(model.layers)
         scores = train_and_test_model(model, model_type, filter_hs,
                                       X[train], y[train],
                                       X[test], y[test])
