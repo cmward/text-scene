@@ -48,13 +48,12 @@ def train_and_test_model(model, X_train, y_train, X_test, y_test):
     score = model.evaluate(X_test, y_test, batch_size=32)
     return score
 
-def main(rnn_layer='lstm'):
+def main(rnn_layer='lstm', word_vecs=None):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV)
     X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
     y_binary = to_categorical(y)
-    word_vectors = load_bin_vec(
-        '../../data/GoogleNews-vectors-negative300.bin', word2idx)
+    word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
     print "Data loaded."
 
@@ -81,4 +80,4 @@ def main(rnn_layer='lstm'):
             (i+1, train_time, score[1], len(test))
 
 if __name__ == '__main__':
-    main(rnn_layer=sys.argv[1])
+    main(rnn_layer=sys.argv[1], word_vecs=sys.argv[2])

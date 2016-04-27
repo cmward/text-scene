@@ -89,45 +89,6 @@ def ParallelCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
                       metrics=['accuracy'])
     return model
 
-    """
-    model = Sequential()
-    model.add(Embedding(input_dim=n_vocab+1,
-                        output_dim=emb_dim,
-                        input_length=maxlen,
-                        dropout=0.2,
-                        weights=[embedding_weights]))
-    submodels = []
-    for filter_h in filter_hs:
-        submodel = Sequential()
-        #submodel.add(Embedding(input_dim=n_vocab+1,
-        #                       output_dim=300,
-        #                       input_length=maxlen,
-        #                       dropout=0.2,
-        #                       weights=[embedding_weights]))
-        submodel.add(Convolution1D(n_filters, filter_h,
-                                   input_shape=(maxlen, emb_dim),
-                                   border_mode='same',
-                                   activation='relu'))
-        submodel.add(Lambda(max_1d, output_shape=(n_filters,)))
-        submodels.append(submodel)
-    #model.add(Merge(submodels, mode='concat'))
-    merged_max = merge(submodels, mode='concat')
-    model.add(merged_max)
-    if n_labels == 2:
-        model.add(Dense(1, activation='sigmoid'))
-        model.add(Dropout(0.2))
-        model.compile(loss='binary_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
-    else:
-        model.add(Dense(n_labels, activation='softmax'))
-        model.add(Dropout(0.2))
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
-    return model, filter_hs
-    """
-
 def create_model(n_vocab, n_labels, emb_dim, maxlen,
                  embedding_weights, model_type='parallel'):
     """ Create CNN with architecture specified by `model_type.`"""
@@ -144,14 +105,14 @@ def train_and_test_model(model, model_type, X_train, y_train, X_test, y_test):
     score, acc = model.evaluate(X_test, y_test, batch_size=64)
     return acc
 
-def main(model_type='parallel', label_set='full', setup_only=False):
+def main(model_type='parallel', label_set='full', word_vecs=None,
+         setup_only=False):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV, labels=label_set)
     X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
     y_orig = y
     y_binary = to_categorical(y)
-    word_vectors = load_bin_vec(
-        '../../data/GoogleNews-vectors-negative300.bin', word2idx)
+    word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
     print "Data loaded."
 
@@ -208,4 +169,4 @@ def main(model_type='parallel', label_set='full', setup_only=False):
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 
 if __name__ == '__main__':
-    main(model_type=sys.argv[1], label_set=sys.argv[2])
+    main(model_type=sys.argv[1], label_set=sys.argv[2], word_vecs=sys.argv[3])
