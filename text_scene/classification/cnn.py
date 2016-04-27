@@ -8,7 +8,6 @@ from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input
 from keras.layers import Convolution1D, MaxPooling1D
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import EarlyStopping
 from keras.utils.layer_utils import print_summary
 from keras import backend as K
 from sklearn.cross_validation import StratifiedKFold
@@ -73,7 +72,7 @@ def ParallelCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
         pool = Lambda(max_1d, output_shape=(n_filters,))
         pooled = pool(conved)
         conv_pools.append(pooled)
-    merged = merge(conv_pools)
+    merged = merge(conv_pools, mode='concat')
     dropout = Dropout(0.5)(merged)
     if n_labels == 2:
         out = Dense(1, activation='sigmoid')(dropout)
@@ -105,8 +104,8 @@ def train_and_test_model(model, model_type, X_train, y_train, X_test, y_test):
     score, acc = model.evaluate(X_test, y_test, batch_size=64)
     return acc
 
-def main(model_type='parallel', label_set='full', word_vecs=None,
-         setup_only=False):
+def main(model_type='parallel', label_set='full',
+         word_vecs=None, setup_only=False):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV, labels=label_set)
     X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
@@ -169,4 +168,6 @@ def main(model_type='parallel', label_set='full', word_vecs=None,
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 
 if __name__ == '__main__':
-    main(model_type=sys.argv[1], label_set=sys.argv[2], word_vecs=sys.argv[3])
+    main(model_type=sys.argv[1],
+         label_set=sys.argv[2],
+         word_vecs=sys.argv[3])
