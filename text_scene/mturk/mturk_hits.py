@@ -49,7 +49,7 @@ def make_hit(image_url):
                  ('athletics','5'),
                  ('shop','6'),
                  ('other/unclear','7')]
-    landscapes = [('body of water','0'),
+    landscapes = [('body of water/beach','0'),
                   ('field','1'),
                   ('mountain','2'),
                   ('forrest/jungle','3'),
@@ -100,7 +100,7 @@ def make_hit(image_url):
     </ul>
 
     <p><b>If an image location could be categorized as having two functions
-    (e.g., a street market could be <i>transportation</i> or <i>shop</i>, just
+    (e.g., a street market could be <i>transportation</i> or <i>shop</i>), just
     select the function you most commonly associate with that location. Most
     importantly, select the function that the location in the image has
     independent of the function that the people in the image are using the
