@@ -261,6 +261,7 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
     #   5: q4
     with open(outfile, 'a') as f:
         writer = csv.writer(f)
+        n_rejected = 0
         for hit in hits:
             ra = mtc.get_hit(hit.HITId)[0].RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)
@@ -292,12 +293,14 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                         print 'rejected4'
                     if rejected:
                         mtc.reject_assignment(assignment.AssignmentId)
+                        n_rejected += 1
                         with open(log_file, 'w') as log:
                             log.write(ra + '\n')
                 if not rejected:
                     writer.writerow(row)
                     mtc.approve_assignment(assignment.AssignmentId)
             mtc.disable_hit(hit.HITId)
+    print "Rejected %i hits" % n_rejected
 
 def main(argv):
     if argv[1] in ['-a', '--approve']:

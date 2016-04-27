@@ -56,6 +56,7 @@ def DeepCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
 
 def ParallelCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
     filter_hs = [3,4,5]
+    n_filters = 128
     model = Sequential()
     submodels = []
     for filter_h in filter_hs:
@@ -65,9 +66,10 @@ def ParallelCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
                                input_length=maxlen,
                                dropout=0.2,
                                weights=[embedding_weights]))
-        submodel.add(Convolution1D(64, filter_h, border_mode='same',
+        submodel.add(Convolution1D(n_filters, filter_h,
+                                   border_mode='same',
                                    activation='relu'))
-        submodel.add(Lambda(max_1d, output_shape=(64,)))
+        submodel.add(Lambda(max_1d, output_shape=(n_filters,)))
         submodels.append(submodel)
     model.add(Merge(submodels, mode='concat'))
     if n_labels == 2:
@@ -100,20 +102,21 @@ def train_and_test_model(model, model_type, filter_hs,
                          X_train, y_train, X_test, y_test):
     if model_type == 'parallel':
         model.fit([X_train]*len(filter_hs), y_train,
-                  batch_size=128, nb_epoch=20,
+                  batch_size=32, nb_epoch=20,
                   validation_split=0.2)
-        score = model.evaluate([X_test]*len(filter_hs), y_test, batch_size=128)
+        score = model.evaluate([X_test]*len(filter_hs), y_test, batch_size=32)
     else:
         model.fit(X_train, y_train,
-                  batch_size=128, nb_epoch=20,
+                  batch_size=32, nb_epoch=20,
                   validation_split=0.2)
-        score = model.evaluate(X_test, y_test, batch_size=128)
+        score = model.evaluate(X_test, y_test, batch_size=32)
     return score
 
 def main(model_type='parallel', label_set='full', setup_only=False):
     print "Loading data...",
     df = load_data.load_data(SENTENCES_CSV, labels=label_set)
     X, y, word2idx, l_enc = load_data.load_dataset(df, pad=True)
+    y_orig = y
     y_binary = to_categorical(y)
     word_vectors = load_bin_vec(
         '../../data/GoogleNews-vectors-negative300.bin', word2idx)
@@ -122,6 +125,7 @@ def main(model_type='parallel', label_set='full', setup_only=False):
 
     labels = np.unique(y)
     n_labels = labels.shape[0]
+    print "Number of labels:", n_labels
     if n_labels > 2:
         y = y_binary
     maxlen = X.shape[1]
@@ -145,7 +149,7 @@ def main(model_type='parallel', label_set='full', setup_only=False):
                 'n_vocab': n_vocab,
                 'embedding_weights': embedding_weights}
 
-    skf = StratifiedKFold(y, n_folds=10, shuffle=True, random_state=0)
+    skf = StratifiedKFold(y_orig, n_folds=10, shuffle=True, random_state=0)
     cv_scores = []
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
