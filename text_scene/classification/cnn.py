@@ -57,7 +57,7 @@ def DeepCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
 
 def ParallelCNN(n_vocab, n_labels, vocab_dim, maxlen, embedding_weights):
     filter_hs = [3,4,5]
-    n_filters = 128
+    n_filters = 10
     model = Sequential()
     submodels = []
     for filter_h in filter_hs:
@@ -103,12 +103,12 @@ def train_and_test_model(model, model_type, filter_hs,
                          X_train, y_train, X_test, y_test):
     if model_type == 'parallel':
         model.fit([X_train]*len(filter_hs), y_train,
-                  batch_size=32, nb_epoch=20,
+                  batch_size=32, nb_epoch=7,
                   validation_split=0.2)
         score = model.evaluate([X_test]*len(filter_hs), y_test, batch_size=32)
     else:
         model.fit(X_train, y_train,
-                  batch_size=32, nb_epoch=20,
+                  batch_size=32, nb_epoch=7,
                   validation_split=0.2)
         score = model.evaluate(X_test, y_test, batch_size=32)
     return score
@@ -168,6 +168,9 @@ def main(model_type='parallel', label_set='full', setup_only=False):
                                       X[test], y[test])
         cv_scores.append(scores[1])
         train_time = time.time() - start_time
+        if n_labels == 2:
+            y_1_perc = np.where(y[test]==1)[0].shape[0] / float(y[test].shape[0])
+            print "y test labels == 1: %.2f" % y_1_perc
         print "fold %i/10 - time: %.2f - acc: %.2f" % (i+1,train_time,scores[1])
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 
