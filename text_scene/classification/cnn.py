@@ -37,13 +37,15 @@ def DeepCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
                         input_length=maxlen,
                         dropout=0.2,
                         weights=[embedding_weights]))
-    model.add(Convolution1D(16, 2, border_mode='same', activation='relu'))
     model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
-    model.add(Convolution1D(16, 4, border_mode='same', activation='relu'))
-    model.add(Lambda(max_1d, output_shape=(32,)))
-    #model.add(MaxPooling1D(pool_length=2))
+    #model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
+    model.add(MaxPooling1D(pool_length=2))
+    #model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
+    model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
+    model.add(MaxPooling1D(pool_length=2))
     model.add(Flatten())
-    model.add(Dense(256, activation='relu'))
+    #model.add(Lambda(max_1d, output_shape=(16,)))
+    model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
     if n_labels == 2:
         model.add(Dense(1, activation='sigmoid', W_constraint=maxnorm(3)))
@@ -62,7 +64,7 @@ def ParallelCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
     n_filters = 16
     sentence_input = Input(shape=(maxlen,), dtype='int32')
     x = Embedding(input_dim=n_vocab+1, output_dim=emb_dim, input_length=maxlen,
-                  dropout=0.2, weights=[embedding_weights])
+                  weights=[embedding_weights])
     x = x(sentence_input)
     conv_pools = []
     for filter_h in filter_hs:
@@ -102,7 +104,7 @@ def create_model(n_vocab, n_labels, emb_dim, maxlen,
     return model
 
 def train_and_test_model(model, model_type, X_train, y_train, X_test, y_test):
-    model.fit(X_train, y_train, batch_size=64, nb_epoch=15, validation_split=0.2)
+    model.fit(X_train, y_train, batch_size=64, nb_epoch=10, validation_split=0.2)
     score, acc = model.evaluate(X_test, y_test, batch_size=64)
     return acc
 
@@ -130,6 +132,8 @@ def main(model_type='parallel', label_set='full',
         embedding_weights[index,:] = word_vectors[word]
 
     if setup_only:
+        model = create_model(n_vocab, n_labels, emb_dim, maxlen,
+                             embedding_weights, model_type=model_type)
         return {'X': X,
                 'y': y,
                 'word2idx': word2idx,
@@ -141,7 +145,8 @@ def main(model_type='parallel', label_set='full',
                 'maxlen': maxlen,
                 'emb_dim': emb_dim,
                 'n_vocab': n_vocab,
-                'embedding_weights': embedding_weights}
+                'embedding_weights': embedding_weights,
+                'model': model}
 
     skf = StratifiedKFold(y_orig, n_folds=5, shuffle=True, random_state=0)
     cv_scores = []
@@ -165,7 +170,7 @@ def main(model_type='parallel', label_set='full',
             y_1 = np.where(y[test]==1)[0].shape[0]
             y_1_perc =  (y_1 / float(y[test].shape[0])) * 100
             print "y_test[label == 1]: %2f%%" % y_1_perc
-        print "fold %i/10 - time: %2f s - acc: %.2f on %i samples" % \
+        print "fold %i/10 - time: %.2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 

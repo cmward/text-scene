@@ -57,7 +57,7 @@ def write_sentence_csv(datadict, captions_file, out_csv):
                 writer.writerow([sentence] + annotations + [img_file])
     print "Wrote sentence csv with %i sentences." % n_sents
 
-def load_data(sentence_csv, labels='full'):
+def load_data(sentence_csv, labels='full', drop_unk=False):
     """
     Create a dataframe out of the data in `sentence_csv`.
     Each row contains a sentence and its label. The label set
@@ -65,6 +65,9 @@ def load_data(sentence_csv, labels='full'):
     """
     df = pd.read_csv(sentence_csv)
     df = df.drop(['img_file'], 1)
+    if drop_unk:
+        df = df[df.q3 != 'other_unclear']
+        df = df[df.q4 != 'other_unclear']
     if labels == 'full':
         def full_map(q1, q2, q3, q4):
             label = [q1, q2, q3, q4]

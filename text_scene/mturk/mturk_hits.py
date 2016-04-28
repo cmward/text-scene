@@ -210,7 +210,7 @@ def make_hit(image_url):
                    qualifications=quals,
                    annotation=image_url,
                    duration=60*10,
-                   reward=0.01)
+                   reward=0.02)
 
 def make_hit_batch(log_file, n_images=100, img_url_file=IMG_URLS):
     n_images = int(n_images) # command line compatability
