@@ -37,21 +37,21 @@ def DeepCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
                         input_length=maxlen,
                         dropout=0.2,
                         weights=[embedding_weights]))
-    model.add(Convolution1D(128, 2, border_mode='same', activation='relu'))
-    model.add(Convolution1D(64, 3, border_mode='same', activation='relu'))
-    model.add(Convolution1D(32, 4, border_mode='same', activation='relu'))
+    model.add(Convolution1D(16, 2, border_mode='same', activation='relu'))
+    model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
+    model.add(Convolution1D(16, 4, border_mode='same', activation='relu'))
     model.add(Lambda(max_1d, output_shape=(32,)))
     #model.add(MaxPooling1D(pool_length=2))
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
     if n_labels == 2:
-        model.add(Dense(1, activation='sigmoid'))
+        model.add(Dense(1, activation='sigmoid', W_constraint=maxnorm(3)))
         model.compile(loss='binary_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
     else:
-        model.add(Dense(n_labels, activation='softmax'))
+        model.add(Dense(n_labels, activation='softmax', W_constraint=maxnorm(3)))
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
