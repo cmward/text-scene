@@ -1,30 +1,20 @@
+import sys
 import numpy as np
-import pandas as pd
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.cross_validation import cross_val_score
 from data_utils import load_data, load_dataset
 from paths import SENTENCES_CSV
 
-df = load_data(SENTENCES_CSV)
-X, y, word2id, l_enc = load_dataset(df, ngram_order=1)
-clf = BernoulliNB()
-scores = cross_val_score(clf, X, y, cv=10)
-print 'Full label mean cv accuracy:', np.mean(scores)
+if len(sys.argv) == 2:
+    ngram_order = int(sys.argv[1])
+else:
+    ngram_order = 1
+print "ngram order:", ngram_order
 
-df = load_data(SENTENCES_CSV, labels='function')
-X, y, word2id, l_enc = load_dataset(df, ngram_order=1)
-clf = BernoulliNB()
-scores = cross_val_score(clf, X, y, cv=10)
-print 'function/nat label mean cv accuracy:', np.mean(scores)
-
-df = load_data(SENTENCES_CSV, labels='in_out')
-X, y, word2id, l_enc = load_dataset(df, ngram_order=1)
-clf = BernoulliNB()
-scores = cross_val_score(clf, X, y, cv=10)
-print 'in/out label mean cv accuracy:', np.mean(scores)
-
-df = load_data(SENTENCES_CSV, labels='man_nat')
-X, y, word2id, l_enc = load_dataset(df, ngram_order=1)
-clf = BernoulliNB()
-scores = cross_val_score(clf, X, y, cv=10)
-print 'man/nat label mean cv accuracy:', np.mean(scores)
+label_sets = ['full', 'function', 'in_out', 'man_nat']
+for label_set in label_sets:
+    df = load_data(SENTENCES_CSV, labels=label_set)
+    X, y, word2idx, l_enc = load_dataset(df, ngram_order=ngram_order)
+    clf = BernoulliNB()
+    scores = cross_val_score(clf, X, y, cv=5, verbose=1)
+    print '%s label mean cv accuracy: %.2f' % (label_set, np.mean(scores))

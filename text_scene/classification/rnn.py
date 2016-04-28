@@ -66,7 +66,7 @@ def main(rnn_layer='lstm', word_vecs=None):
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
 
-    skf = StratifiedKFold(y, n_folds=10, shuffle=True, random_state=0)
+    skf = StratifiedKFold(y, n_folds=5, shuffle=True, random_state=0)
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
         model = create_model(n_vocab, n_labels, vocab_dim,
@@ -76,7 +76,7 @@ def main(rnn_layer='lstm', word_vecs=None):
         score = train_and_test_model(model, X[train], y_binary[train],
                                      X[test], y_binary[test])
         train_time = time.time() - start_time
-        print "fold %i/10 - time: %.2f - acc: %.2f on %i samples" % \
+        print "fold %i/10 - time: %.2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, score[1], len(test))
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 import pandas as pd
+from collections import defaultdict
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing.sequence import pad_sequences
@@ -132,3 +133,14 @@ def load_dataset(df, ngram_order=1, pad=False):
     if pad:
         X = pad_sequences(X_ind)
     return X, y, word2id, l_enc
+
+def label_frequencies(df):
+    """Given dataframe, return a dictionary mapping labels to
+    label frequencies."""
+    freqs = defaultdict(float)
+    for i, row in df.iterrows():
+        freqs[row['label']] += 1
+    total = sum(freqs.values())
+    probs = {k: (v/total) for k,v in freqs.items()}
+    sorted_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
+    return sorted_probs

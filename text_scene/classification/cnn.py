@@ -7,6 +7,7 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input
 from keras.layers import Convolution1D, MaxPooling1D
+from keras.constraints import maxnorm
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
 from keras import backend as K
@@ -37,11 +38,10 @@ def DeepCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
                         dropout=0.2,
                         weights=[embedding_weights]))
     model.add(Convolution1D(128, 2, border_mode='same', activation='relu'))
-    model.add(MaxPooling1D(pool_length=2))
     model.add(Convolution1D(64, 3, border_mode='same', activation='relu'))
-    model.add(MaxPooling1D(pool_length=2))
     model.add(Convolution1D(32, 4, border_mode='same', activation='relu'))
-    model.add(MaxPooling1D(pool_length=2))
+    model.add(Lambda(max_1d, output_shape=(32,)))
+    #model.add(MaxPooling1D(pool_length=2))
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
@@ -58,7 +58,7 @@ def DeepCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
     return model
 
 def ParallelCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
-    filter_hs = [3,4,5]
+    filter_hs = [2,3,4,5]
     n_filters = 16
     sentence_input = Input(shape=(maxlen,), dtype='int32')
     x = Embedding(input_dim=n_vocab+1, output_dim=emb_dim, input_length=maxlen,
@@ -75,13 +75,15 @@ def ParallelCNN(n_vocab, n_labels, emb_dim, maxlen, embedding_weights):
     merged = merge(conv_pools, mode='concat')
     dropout = Dropout(0.5)(merged)
     if n_labels == 2:
-        out = Dense(1, activation='sigmoid')(dropout)
+        out = Dense(1, activation='sigmoid', W_constraint=maxnorm(3))
+        out = out(dropout)
         model = Model(input=sentence_input, output=out)
         model.compile(loss='binary_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
     else:
-        out = Dense(n_labels, activation='softmax')(dropout)
+        out = Dense(n_labels, activation='softmax', W_constraint=maxnorm(3))
+        out = out(dropout)
         model = Model(input=sentence_input, output=out)
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
@@ -141,7 +143,7 @@ def main(model_type='parallel', label_set='full',
                 'n_vocab': n_vocab,
                 'embedding_weights': embedding_weights}
 
-    skf = StratifiedKFold(y_orig, n_folds=10, shuffle=True, random_state=0)
+    skf = StratifiedKFold(y_orig, n_folds=5, shuffle=True, random_state=0)
     cv_scores = []
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
@@ -161,9 +163,9 @@ def main(model_type='parallel', label_set='full',
         train_time = time.time() - start_time
         if n_labels == 2:
             y_1 = np.where(y[test]==1)[0].shape[0]
-            y_1_perc =  y_1 / float(y[test].shape[0])
+            y_1_perc =  (y_1 / float(y[test].shape[0])) * 100
             print "y_test[label == 1]: %2f%%" % y_1_perc
-        print "fold %i/10 - time: %.2f - acc: %.2f on %i samples" % \
+        print "fold %i/10 - time: %2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 
