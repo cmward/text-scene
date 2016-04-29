@@ -1,12 +1,3 @@
-"""
-Usage:
-    python mturk_hits.py <log_file>
-                         <n_images=100>
-                         <img_url_file='image_urls.csv'>
-
-Adapted from http://www.toforge.com/2011/04/boto-mturk-tutorial-create-hits/
-"""
-
 import csv
 import sys
 import os
@@ -20,6 +11,16 @@ from boto.mturk.qualification import PercentAssignmentsApprovedRequirement
 from boto.mturk.qualification import Qualifications
 from paths import SENTENCES_CSV, IMG_URLS, REJECTED_IMGS_FILE, \
     ANNOTATED_IMGS_FILE, KEY_FILE, GOLD_MTURK_RESULTS_CSV
+
+"""
+Usage:
+    python mturk_hits.py <log_file>
+                         <n_images=100>
+                         <img_url_file='image_urls.csv'>
+
+Adapted from http://www.toforge.com/2011/04/boto-mturk-tutorial-create-hits/
+"""
+
 
 with open(KEY_FILE) as f:
     lines = f.readlines()
