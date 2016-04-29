@@ -18,7 +18,7 @@ from paths import SENTENCES_CSV
 emb_dim = 300
 filter_hs = [3,4,5]
 nb_filters = 16
-dropout_p = [0.0, 0.5] # [input, softmax]
+dropout_p = [0.2, 0.5] # [input, softmax]
 maxnorm_val = 3
 trainable_embeddings = True
 pretrained_embeddings = True
@@ -65,7 +65,11 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
     y_binary = to_categorical(y)
     labels = np.unique(y_orig)
     nb_labels = labels.shape[0]
-    print "Number of labels: %i [%s]" % (nb_labels, label_set)
+    if drop_unk:
+        label_set_str = label_set + ' (- unk)'
+    else:
+        label_set_str = label_set
+    print "Number of labels: %i [%s]" % (nb_labels, label_set_str)
     if nb_labels > 2:
         y = y_binary
     maxlen = X.shape[1]
