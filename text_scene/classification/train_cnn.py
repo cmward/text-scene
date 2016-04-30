@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import numpy as np
-from keras.optimizers import Adam
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
@@ -10,7 +9,7 @@ from sklearn.cross_validation import StratifiedKFold
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from data_utils import load_data, load_dataset, print_label_frequencies
 from CNN_sentence.process_data import load_bin_vec
-from cnn import create_model
+from cnn import create_model, train_and_test_model
 from paths import SENTENCES_CSV
 
 
@@ -40,21 +39,6 @@ def add_unknown_words(word_vecs, vocab, k=300):
     word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
     print "Added %i unknown words to word vectors." % added
 
-def train_and_test_model(cnn, X_train, y_train, X_test, y_test):
-    adam = Adam(lr=lr, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon)
-    if cnn.nb_labels == 2:
-        cnn.model.compile(loss='binary_crossentropy',
-                      optimizer=adam,
-                      metrics=['accuracy'])
-    else:
-        cnn.model.compile(loss='categorical_crossentropy',
-                      optimizer=adam,
-                      metrics=['accuracy'])
-    cnn.model.fit(X_train, y_train,
-                  batch_size=batch_size, nb_epoch=nb_epoch,
-                  validation_split=0.2)
-    score, acc = cnn.model.evaluate(X_test, y_test, batch_size=64)
-    return acc
 
 def train(model_type='parallel', label_set='full', drop_unk=False,
           word_vecs=None, setup_only=False):
@@ -66,7 +50,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
     labels = np.unique(y_orig)
     nb_labels = labels.shape[0]
     if drop_unk:
-        label_set_str = label_set + ' (- unk)'
+        label_set_str = label_set + ' (-unk)'
     else:
         label_set_str = label_set
     print "Number of labels: %i [%s]" % (nb_labels, label_set_str)
@@ -102,7 +86,6 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                 'embedding_weights': embedding_weights,
                 'cnn': cnn}
 
-    print "Model type: %s" % model_type
     params = [('filter_hs',filter_hs), ('nb_filters',nb_filters),
               ('dropout_p',dropout_p), ('maxnorm_val',maxnorm_val),
               ('trainable_embeddings',trainable_embeddings),
@@ -110,7 +93,8 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
               ('batch_size',batch_size), ('nb_epoch',nb_epoch),
               ('lr',lr), ('beta_1',beta_1), ('beta_2',beta_2),
               ('epsilon',epsilon)]
-    print "\nParameters:"
+    print "\nModel type: %s" % model_type
+    print "Parameters:"
     for (name, value) in params:
         print name + ':', value
 
@@ -133,7 +117,9 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                            model_type=model_type)
         if i == 0:
             print_summary(cnn.model.layers)
-        acc = train_and_test_model(cnn, X[train], y[train], X[test], y[test])
+        acc = train_and_test_model(cnn, X[train], y[train], X[test], y[test],
+                                   batch_size, nb_epoch,
+                                   lr, beta_1, beta_2, epsilon)
         cv_scores.append(acc)
         train_time = time.time() - start_time
         print_label_frequencies((y_orig[test], l_enc))

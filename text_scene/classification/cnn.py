@@ -5,15 +5,23 @@ from theano import tensor as T
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
-from keras.layers import Embedding, Input
+from keras.layers import Embedding, Input, Permute
 from keras.layers import Convolution1D, MaxPooling1D
+from keras.layers import Convolution2D, MaxPooling2D
+from keras.layers import BatchNormalization
 from keras.regularizers import l2
 from keras.constraints import maxnorm
+from keras.optimizers import Adam
 from keras import backend as K
 
+def int32(X):
+    return T.cast(X, 'int32')
 
 def max_1d(X):
     return K.max(X, axis=1)
+
+def expand_channel_dim(X):
+    return K.permute_dimensions(X, (0, 'x', 1, 2))
 
 def kmax_1d_numpy(X, k):
     idxs = np.argsort(X, axis=1)[:,X.shape[1]-k:]
@@ -34,13 +42,11 @@ def kmax_1d(X, k):
     Returns:
         3d tensor of shape (samples, downsampled_steps, input_dim)
     """
-    idxs = T.argsort(X, axis=1)[:,X.shape[1]-k:]
-    dim_0 = T.repeat(T.arange(idxs.shape[0]), idxs.shape[1]*idxs.shape[2])
-    dim_0 = T.cast(dim_0, 'int32')
-    dim_1 = idxs.transpose(0,2,1).ravel()
-    dim_1 = T.cast(dim_1, 'int32')
-    dim_2 = T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]), idxs.shape[0])
-    dim_2 = T.cast(dim_2, 'int32')
+    idxs = int32(T.argsort(X, axis=1)[:,X.shape[1]-k:])
+    dim_0 = int32(T.repeat(T.arange(idxs.shape[0]), idxs.shape[1]*idxs.shape[2]))
+    dim_1 = int32(idxs.transpose(0,2,1).ravel())
+    dim_2 = int32(T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]),
+                         idxs.shape[0]))
     kmax = X[dim_0, dim_1, dim_2]
     return kmax.reshape((idxs.shape[0],idxs.shape[2],idxs.shape[1])).swapaxes(1,2)
 
@@ -53,7 +59,7 @@ class KmaxCNN(object):
                  embedding_weights, filter_hs, nb_filters, dropout_p,
                  maxnorm_val, trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
-        self.k = 3
+        self.k = 10
         if pretrained_embeddings is False:
             embedding_weights = None
         else:
@@ -75,15 +81,15 @@ class KmaxCNN(object):
             flattened = Flatten()(pooled)
             conv_pools.append(flattened)
         merged = merge(conv_pools, mode='concat')
-        dropout = Dropout(dropout_p[1])(merged)
+        dropped = Dropout(dropout_p[1])(merged)
         if nb_labels == 2:
             out = Dense(1, activation='sigmoid',
                         W_constraint=maxnorm(maxnorm_val))
-            out = out(dropout)
+            out = out(dropped)
         else:
             out = Dense(nb_labels, activation='softmax',
                         W_constraint=maxnorm(maxnorm_val))
-            out = out(dropout)
+            out = out(dropped)
         self.model = Model(input=sentence_input, output=out)
 
 class ParallelCNN(object):
@@ -127,31 +133,55 @@ class ParallelCNN(object):
 
 class DeepCNN(object):
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
-                 embedding_weights):
+                 embedding_weights, filter_hs, nb_filters,
+                 dropout_p, trainable_embeddings,
+                 pretrained_embeddings):
         self.nb_labels = nb_labels
-        model = Sequential()
-        model.add(Embedding(input_dim=vocab_size+1,
-                            output_dim=300,
-                            input_length=maxlen,
-                            dropout=0.2,
-                            weights=[embedding_weights]))
-        model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
-        #model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
-        model.add(MaxPooling1D(pool_length=2))
-        #model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
-        model.add(Convolution1D(16, 3, border_mode='same', activation='relu'))
-        model.add(MaxPooling1D(pool_length=2))
-        model.add(Flatten())
-        #model.add(Lambda(max_1d, output_shape=(16,)))
-        model.add(Dense(128, activation='relu'))
-        model.add(Dropout(0.5))
-        if nb_labels == 2:
-            model.add(Dense(1, activation='sigmoid',
-                            W_constraint=maxnorm(3)))
+        if pretrained_embeddings is False:
+            embedding_weights = None
         else:
-            model.add(Dense(nb_labels, activation='softmax',
-                            W_constraint=maxnorm(3)))
-        self.model = model
+            embedding_weights = [embedding_weights]
+        sentence_input = Input(shape=(maxlen,), dtype='int32')
+        x = Embedding(input_dim=vocab_size+1, output_dim=emb_dim,
+                      input_length=maxlen, dropout=dropout_p[0],
+                      weights=embedding_weights,
+                      trainable=trainable_embeddings)
+        x = x(sentence_input)
+        expand = Lambda(expand_channel_dim, output_shape=(1, maxlen, emb_dim))
+        x_expanded = expand(x)
+        # CONV -> BATCHNORM -> RELU
+        conv1 = Convolution2D(2, 79, 1, border_mode='same')(x_expanded)
+        bn1 = BatchNormalization()(conv1)
+        relu1 = Activation('relu')(bn1)
+        # CONV -> BATCHNORM -> RELU -> POOL
+        conv2 = Convolution2D(2, 79, 1, border_mode='same')(relu1)
+        bn2 = BatchNormalization()(conv2)
+        relu2 = Activation('relu')(bn2)
+        pool1 = MaxPooling2D(pool_size=(2,2))(relu2)
+        # CONV -> BATCHNORM -> RELU
+        conv3 = Convolution2D(2, 3, 3, border_mode='same')(pool1)
+        bn3 = BatchNormalization()(conv3)
+        relu3 = Activation('relu')(bn3)
+        # CONV -> BATCHNORM -> RELU -> POOL
+        conv4 = Convolution2D(2, 3, 3, border_mode='same')(relu3)
+        bn3 = BatchNormalization()(conv4)
+        relu4 = Activation('relu')(bn3)
+        pool2 = MaxPooling2D(pool_size=(2,2))(relu4)
+        # FC -> BATCHNORM -> SOFTMAX
+        flat = Flatten()(pool2)
+        flat = Flatten()(pool1)
+        drop1 = Dropout(0.5)(flat)
+        fc1 = Dense(64)(drop1)
+        bn4 = BatchNormalization()(fc1)
+        relu5 = Activation('relu')(bn4)
+        drop2 = Dropout(0.5)(relu5)
+        if nb_labels == 2:
+            fc2 = Dense(1, activation='sigmoid', W_regularizer=l2(0.01))
+            out = fc2(drop2)
+        else:
+            fc2 = Dense(nb_labels, activation='softmax', W_regularizer=l2(0.01))
+            out = fc2(drop2)
+        self.model = Model(input=sentence_input, output=out)
 
 def create_model(vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters,
@@ -164,7 +194,9 @@ def create_model(vocab_size, nb_labels, emb_dim, maxlen,
     """
     if model_type == 'deep':
         cnn = DeepCNN(vocab_size, nb_labels, emb_dim, maxlen,
-                      embedding_weights)
+                      embedding_weights, filter_hs, nb_filters,
+                      dropout_p, trainable_embeddings,
+                      pretrained_embeddings)
     elif model_type == 'parallel':
         cnn = ParallelCNN(vocab_size, nb_labels, emb_dim, maxlen,
                           embedding_weights, filter_hs, nb_filters,
@@ -176,3 +208,21 @@ def create_model(vocab_size, nb_labels, emb_dim, maxlen,
                       dropout_p, maxnorm_val, trainable_embeddings,
                       pretrained_embeddings)
     return cnn
+
+def train_and_test_model(cnn, X_train, y_train, X_test, y_test,
+                         batch_size, nb_epoch,
+                         lr, beta_1, beta_2, epsilon):
+    adam = Adam(lr=lr, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon)
+    if cnn.nb_labels == 2:
+        cnn.model.compile(loss='binary_crossentropy',
+                      optimizer=adam,
+                      metrics=['accuracy'])
+    else:
+        cnn.model.compile(loss='categorical_crossentropy',
+                      optimizer=adam,
+                      metrics=['accuracy'])
+    cnn.model.fit(X_train, y_train,
+                  batch_size=batch_size, nb_epoch=nb_epoch,
+                  validation_split=0.2)
+    score, acc = cnn.model.evaluate(X_test, y_test, batch_size=64)
+    return acc

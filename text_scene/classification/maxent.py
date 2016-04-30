@@ -1,11 +1,11 @@
 import sys
-import argparse
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import cross_val_score
 from data_utils import load_data, load_dataset
 from paths import SENTENCES_CSV
+
 
 """
 Usage:
