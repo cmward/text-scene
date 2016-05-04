@@ -15,8 +15,8 @@ from paths import SENTENCES_CSV
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [3,4,5]
-nb_filters = 16
+filter_hs = [5,6,7]
+nb_filters = 20
 dropout_p = [0.2, 0.5] # [input, softmax]
 maxnorm_val = 3
 trainable_embeddings = True
@@ -24,8 +24,8 @@ pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
 batch_size = 64
-nb_epoch = 12
-lr = 0.001
+nb_epoch = 30
+lr = 0.01
 beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
@@ -38,7 +38,6 @@ def add_unknown_words(word_vecs, vocab, k=300):
             added += 1
     word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
     print "Added %i unknown words to word vectors." % added
-
 
 def train(model_type='parallel', label_set='full', drop_unk=False,
           word_vecs=None, setup_only=False):
@@ -94,7 +93,6 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
               ('lr',lr), ('beta_1',beta_1), ('beta_2',beta_2),
               ('epsilon',epsilon)]
     print "\nModel type: %s" % model_type
-    print "Parameters:"
     for (name, value) in params:
         print name + ':', value
 
