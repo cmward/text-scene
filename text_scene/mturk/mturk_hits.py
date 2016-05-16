@@ -99,13 +99,6 @@ def make_hit(image_url):
         <li>Forrest/jungle: Location covered with trees, undergrowth, or vegetation</li>
         <li>Other/unclear: Any outside natural locations that don't fit into the previous categories or if the location cannot be determined from the image.</li>
     </ul>
-
-    <p><b>If an image location could be categorized as having two functions
-    (e.g., a street market could be <i>transportation</i> or <i>shop</i>), just
-    select the function you most commonly associate with that location. Most
-    importantly, select the function that the location in the image has
-    independent of the function that the people in the image are using the
-    location for.</b></p>
     """
     overview.append(FormattedContent(instructions))
 
