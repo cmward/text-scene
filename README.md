@@ -1,5 +1,7 @@
 # Scene Recognition for Text
 
 TODO:
-- Clean up horrible spaghetti code for handling command line arguments
+- Rewrite command line interfaces using argparse
 - Fix ParallelColumnCNN
+- refactor data loaders into data loaders and feature extractors
+- use SGDClassifier for maxent so we don't have to use lbfgs
