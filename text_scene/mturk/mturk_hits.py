@@ -15,6 +15,7 @@ from paths import (
     REJECTED_IMGS_FILE,
     ANNOTATED_IMGS_FILE,
     KEY_FILE,
+    MTURK_RESULTS_CSV,
     GOLD_MTURK_RESULTS_CSV
 )
 
