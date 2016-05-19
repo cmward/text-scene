@@ -9,8 +9,14 @@ from boto.mturk.question import FreeTextAnswer, Binary
 from boto.mturk.qualification import NumberHitsApprovedRequirement
 from boto.mturk.qualification import PercentAssignmentsApprovedRequirement
 from boto.mturk.qualification import Qualifications
-from paths import SENTENCES_CSV, IMG_URLS, REJECTED_IMGS_FILE, \
-    ANNOTATED_IMGS_FILE, KEY_FILE, GOLD_MTURK_RESULTS_CSV
+from paths import (
+    SENTENCES_CSV,
+    IMG_URLS,
+    REJECTED_IMGS_FILE,
+    ANNOTATED_IMGS_FILE,
+    KEY_FILE,
+    GOLD_MTURK_RESULTS_CSV
+)
 
 """
 Usage:
@@ -32,7 +38,7 @@ REAL_HOST = 'mechanicalturk.amazonaws.com'
 
 mtc = MTurkConnection(aws_access_key_id=ACCESS_ID,
                       aws_secret_access_key=SECRET_KEY,
-                      host=SB_HOST)
+                      host=REAL_HOST)
 
 def make_hit(image_url):
     title = 'Label image with its location'
@@ -272,21 +278,26 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     # selections provided for landscape and function
                     if row[4] != 'NA' and row[5] != 'NA':
                         rejected = True
-                        print 'rejected1'
+                        reject_msg = ("Answers specified for both "
+                                      "natural landscape type and function.")
                     # indoors and landscape selected 
                     elif row[2] == '0' and row[5] != 'NA':
                         rejected = True
-                        print 'rejected2'
+                        reject_msg = ("Selected both indoors and "
+                                      "a natural landscape type.")
                     # man-made and landscape selected
                     elif row[3] == '0' and row[5] != 'NA':
                         rejected = True
-                        print 'rejected3'
+                        reject_msg = ("Selected both man-made and "
+                                      "natural landscape type.")
                     # natural and function selected
                     elif row[3] == '1' and row[4] != 'NA':
                         rejected = True
-                        print 'rejected4'
+                        reject_msg = ("Selected both function and "
+                                      "natural landscape type")
                     if rejected:
-                        mtc.reject_assignment(assignment.AssignmentId)
+                        mtc.reject_assignment(assignment.AssignmentId,
+                                             feedback=reject_msg)
                         n_rejected += 1
                         with open(log_file, 'w') as log:
                             log.write(ra + '\n')
@@ -300,7 +311,7 @@ def main(argv):
     if argv[1] in ['-a', '--approve']:
         hits = get_all_reviewable_hits(mtc)
         approve_and_pay_all(hits,
-                            GOLD_MTURK_RESULTS_CSV,
+                            MTURK_RESULTS_CSV,
                             REJECTED_IMGS_FILE)
     else:
         make_hit_batch(*argv[1:])
