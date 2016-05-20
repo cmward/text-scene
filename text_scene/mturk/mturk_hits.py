@@ -70,13 +70,13 @@ def make_hit(image_url):
 
     instructions = """<p>In this task you will answer four questions about an
     image to determine the location of what's shown in the image. Please select
-    at most answer per question.</p>
+    at most one answer per question.</p>
 
     <p><b>Question 1</b>: Is the image showing a location that's indoors or
     outdoors?
     Any building or vehical interior is indoors, while anything that you could consider to be 'outside' is outdoors.</p>
 
-    <p><b>Question 2</b>: Is the location in the image natural or man-made? 
+    <p><b>Question 2</b>: Is the location in the image natural or man-made?
     Natural locations are places that can be found in nature, or in the wild, while man-made locations have been constructed by humans.</p>
 
     <p><b>Question 3</b>: If the location is man-made, what is its type or function?
@@ -204,29 +204,28 @@ def make_hit(image_url):
     #--------------- CREATE THE HIT -------------------
 
     mtc.create_hit(questions=question_form,
-                   max_assignments=1,
+                   max_assignments=3,
                    title=title,
                    description=description,
                    keywords=keywords,
                    qualifications=quals,
                    annotation=image_url,
                    duration=60*10,
-                   reward=0.02)
+                   reward=0.03)
 
 def make_hit_batch(log_file, n_images=100, img_url_file=IMG_URLS):
     n_images = int(n_images) # command line compatability
-    all_images = []
+    all_images = set()
     with open(img_url_file, 'rb') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
-            all_images.append(row[0])
-    not_annotated = []
-    annotated = []
+            all_images.add(row[0])
+    annotated = set()
     with open(log_file, 'r') as log:
         for line in log:
-            annotated.append(line.strip())
-    not_annotated = list(set(all_images) - set(annotated))
+            annotated.add(line.strip())
+    not_annotated = list(all_images - annotated)
     with open(log_file, 'a') as log:
         for i in range(n_images):
             make_hit(not_annotated[i])
@@ -281,7 +280,7 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                         rejected = True
                         reject_msg = ("Answers specified for both "
                                       "natural landscape type and function.")
-                    # indoors and landscape selected 
+                    # indoors and landscape selected
                     elif row[2] == '0' and row[5] != 'NA':
                         rejected = True
                         reject_msg = ("Selected both indoors and "
@@ -300,7 +299,7 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                         mtc.reject_assignment(assignment.AssignmentId,
                                              feedback=reject_msg)
                         n_rejected += 1
-                        with open(log_file, 'w') as log:
+                        with open(log_file, 'a') as log:
                             log.write(ra + '\n')
                 if not rejected:
                     writer.writerow(row)

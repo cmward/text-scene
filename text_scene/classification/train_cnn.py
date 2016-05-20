@@ -7,7 +7,11 @@ from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from data_utils import load_data, load_dataset, print_label_frequencies
+from preprocessing.data_utils import (
+    load_data,
+    load_dataset,
+    print_label_frequencies
+)
 from CNN_sentence.process_data import load_bin_vec
 from cnn import create_model, train_and_test_model
 from paths import SENTENCES_CSV
@@ -15,8 +19,8 @@ from paths import SENTENCES_CSV
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [5,6,7]
-nb_filters = 20
+filter_hs = [2,3,4]
+nb_filters = 16
 dropout_p = [0.2, 0.5] # [input, softmax]
 maxnorm_val = 3
 trainable_embeddings = True
@@ -24,7 +28,7 @@ pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
 batch_size = 64
-nb_epoch = 30
+nb_epoch = 20
 lr = 0.01
 beta_1 = 0.9
 beta_2 = 0.999

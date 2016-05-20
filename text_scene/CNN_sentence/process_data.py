@@ -7,7 +7,7 @@ import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from paths import SENTENCES_CSV
-from classification.data_utils import load_data 
+from preprocessing.data_utils import load_data 
 
 def build_data_cv(data_folder, cv=10, clean_string=True):
     """

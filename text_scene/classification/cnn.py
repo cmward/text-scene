@@ -81,7 +81,7 @@ class KmaxCNN(object):
                  embedding_weights, filter_hs, nb_filters, dropout_p,
                  maxnorm_val, trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
-        self.k = 10
+        self.k = 4
         if pretrained_embeddings is False:
             embedding_weights = None
         else:

@@ -1,6 +1,9 @@
 import sys
+import argparse
 
 def main(argv):
+    # argparse:
+    #   --classification/--mturk/--preprocessing
     if argv[1] == '--mturk':
         from mturk import mturk_hits
         mturk_hits.main(argv[1:])
