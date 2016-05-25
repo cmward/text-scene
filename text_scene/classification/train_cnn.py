@@ -125,7 +125,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
         cv_scores.append(acc)
         train_time = time.time() - start_time
         print_label_frequencies((y_orig[test], l_enc))
-        print "fold %i/10 - time: %.2f s - acc: %.2f on %i samples" % \
+        print "fold %i/5 - time: %.2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
 
