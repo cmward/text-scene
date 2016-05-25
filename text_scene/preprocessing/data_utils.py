@@ -238,6 +238,14 @@ def majority_vote_dict(datadict, keep_all=True):
         (nb_no_majority_questions, nb_no_majority_imgs)
     return voted_datadict
 
+def unique_workers(results_csv):
+    worker_ids = set()
+    with open(results_csv) as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            worker_ids.add(row[1])
+    return len(worker_ids)
+
 def make_kappa_matrix(datadict, labels='full'):
     """
     Create a N x M matrix where N is the number of images
