@@ -1,10 +1,11 @@
 # Scene Recognition for Text
 
 TODO:
-- Rewrite command line interfaces using argparse
+- Put images with no majority hits back into to-be-annotated pool
 - Fix ParallelColumnCNN
 - refactor data loaders into data loaders and feature extractors
 - use SGDClassifier for maxent so we don't have to use lbfgs
-- change food/drink label to be unambiguous (vs. domestic kitchen)
 - experiment logging
-- command for full suite of classifiers > log
+- port word vec loader from cnn\_sentence and get rid of the rest of it
+- break rnn into classes and training
+- YAML config for model params

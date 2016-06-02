@@ -128,9 +128,3 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
         print "fold %i/5 - time: %.2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
-
-if __name__ == '__main__':
-    train(model_type=sys.argv[1],
-          label_set=sys.argv[2],
-          drop_unk=sys.argv[3],
-          word_vecs=sys.argv[4])

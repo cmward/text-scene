@@ -39,7 +39,7 @@ REAL_HOST = 'mechanicalturk.amazonaws.com'
 
 mtc = MTurkConnection(aws_access_key_id=ACCESS_ID,
                       aws_secret_access_key=SECRET_KEY,
-                      host=REAL_HOST)
+                      host=SB_HOST)
 
 def make_hit(image_url):
     title = 'Label image with its location'
@@ -49,8 +49,7 @@ def make_hit(image_url):
     in_out = [('indoors','0'), ('outdoors','1')]
     nat_manmade = [('man-made','0'), ('natural','1')]
     functions = [('transportation/urban','0'),
-                 ('food/drink (places that serve food or drinks, not ' +
-                  'food shops or home kitchens)','1'),
+                 ('restaurant','1'),
                  ('recreation/entertainment','2'),
                  ('domestic','3'),
                  ('work/education','4'),
@@ -83,7 +82,7 @@ def make_hit(image_url):
     For each possible answer, here are some examples:</p>
     <ul>
         <li>Transportation/urban: streets, sidewalks, city squares and plazas, car interiors, airports</li>
-        <li>Food/drink: bars, restaurants. Does not include kitchents, which would be 'domestic'.</li>
+        <li>Restaurant: bars, restaurants. Does not include kitchents, which would be 'domestic'.</li>
         <li>Entertainment/recreation: dance clubs, concert venues, arcades, parks, gardens</li>
         <li>Domestic: Interiors and exteriors of houses and apartments</li>
         <li>Work/education: office buildings, schools, farms, doctor's offices</li>
@@ -204,7 +203,7 @@ def make_hit(image_url):
     #--------------- CREATE THE HIT -------------------
 
     mtc.create_hit(questions=question_form,
-                   max_assignments=3,
+                   max_assignments=1,
                    title=title,
                    description=description,
                    keywords=keywords,
@@ -252,6 +251,10 @@ def get_all_reviewable_hits(mtc):
     return hits
 
 def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
+    """
+    Approves/reject all available hits, write results to `outfile`,
+    write image files with rejected hits to `log_file`.
+    """
     # row:
     #   0: requester annotation
     #   1: worker id
@@ -307,14 +310,12 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
             mtc.disable_hit(hit.HITId)
     print "Rejected %i hits" % n_rejected
 
-def main(argv):
-    if argv[1] in ['-a', '--approve']:
+def main(make_hits=False, approve=False,
+         n_images=100, outfile=None, log_file=None):
+    if approve:
         hits = get_all_reviewable_hits(mtc)
-        approve_and_pay_all(hits,
-                            MTURK_RESULTS_CSV,
-                            REJECTED_IMGS_FILE)
+        approve_and_pay_all(hits, outfile, log_file, check_valid=True)
+    elif make_hits:
+        make_hit_batch(log_file, n_images=n_images)
     else:
-        make_hit_batch(*argv[1:])
-
-if __name__ == '__main__':
-    main(sys.argv)
+        raise Exception("Didn't get a recognized keyword")

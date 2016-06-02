@@ -18,7 +18,7 @@ from paths import (
 q1map = {'0': 'indoors', '1': 'outdoors'}
 q2map = {'0': 'man-made', '1': 'natural'}
 q3map = {'0': 'transportation_urban',
-         '1': 'food_drink',
+         '1': 'restaurant',
          '2': 'recreation_entertainment',
          '3': 'domestic',
          '4': 'work_education',
@@ -292,6 +292,10 @@ def fleiss_kappa(results_csv, labels='full'):
     datadict = make_datadict(results_csv)
     matrix = make_kappa_matrix(datadict, labels=labels)
     return fleiss.kappa(matrix)
+
+def write_rejected_no_majority_list():
+    #TODO this
+    pass
 
 def restore_rejected_imgs():
     """
