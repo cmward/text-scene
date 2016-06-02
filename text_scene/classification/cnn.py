@@ -64,7 +64,7 @@ def kmax_1d(X, k):
     idxs = T.argsort(X, axis=1)[:,X.shape[1]-k:]
     dim_0 = T.repeat(T.arange(idxs.shape[0]), idxs.shape[1]*idxs.shape[2])
     dim_1 = idxs.transpose(0,2,1).ravel()
-    dim_2 = T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]), idxs.shape[0]))
+    dim_2 = T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]), idxs.shape[0])
     kmax = X[dim_0, dim_1, dim_2]
     return kmax.reshape((idxs.shape[0],idxs.shape[2],idxs.shape[1])).swapaxes(1,2)
 
