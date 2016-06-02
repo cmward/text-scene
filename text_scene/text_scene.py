@@ -8,7 +8,6 @@ from preprocessing.data_utils import (
     write_rejected_no_majority_list,
     combine_csvs
 )
-from mturk import mturk_hits
 from paths import (
     CAPTIONS_FILE,
     SENTENCES_CSV,
@@ -38,11 +37,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mturk == 'hits':
+        from mturk import mturk_hits
         mturk_hits.main(make_hits=True, log_file=args.logfile,
                         n_images=args.nimages)
     if args.mturk == 'redo':
+        from mturk import mturk_hits
         mturk_hits.main(redo_hits=True, redo_log=args.redolog, log_file=args.logfile)
     elif args.mturk == 'approve':
+        from mturk import mturk_hits
         mturk_hits.main(approve=True, outfile=args.outfile,
                         log_file=args.logfile)
 
