@@ -14,9 +14,6 @@ from keras.constraints import maxnorm
 from keras.optimizers import Adam
 from keras import backend as K
 
-#TODO refactor parallel, kmax, and col into one class
-#TODO parameterize deep
-#TODO CNN superclass
 
 def int32(X):
     return T.cast(X, 'int32')
@@ -64,11 +61,10 @@ def kmax_1d(X, k):
     Returns:
         3d tensor of shape (samples, downsampled_steps, input_dim)
     """
-    idxs = int32(T.argsort(X, axis=1)[:,X.shape[1]-k:])
-    dim_0 = int32(T.repeat(T.arange(idxs.shape[0]), idxs.shape[1]*idxs.shape[2]))
-    dim_1 = int32(idxs.transpose(0,2,1).ravel())
-    dim_2 = int32(T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]),
-                         idxs.shape[0]))
+    idxs = T.argsort(X, axis=1)[:,X.shape[1]-k:]
+    dim_0 = T.repeat(T.arange(idxs.shape[0]), idxs.shape[1]*idxs.shape[2])
+    dim_1 = idxs.transpose(0,2,1).ravel()
+    dim_2 = T.tile(T.repeat(T.arange(idxs.shape[2]), idxs.shape[1]), idxs.shape[0]))
     kmax = X[dim_0, dim_1, dim_2]
     return kmax.reshape((idxs.shape[0],idxs.shape[2],idxs.shape[1])).swapaxes(1,2)
 

@@ -230,6 +230,7 @@ def make_hit_batch(log_file, n_images=100, redo=False, redo_log=None,
         with open(redo_log, 'r') as log:
             for line in log:
                 not_annotated.add(line.strip())
+        not_annotated = list(not_annotated)
         n_images = len(not_annotated)
     else:
         with open(img_url_file, 'rb') as csvfile:
