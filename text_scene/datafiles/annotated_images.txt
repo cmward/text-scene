@@ -678,7 +678,6 @@ http://s3.amazonaws.com/caption-scene/upload_batches/19000_20000/4399663161.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/3000_4000/2190227737.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/27000_28000/5957177594.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/28000_29000/6075614739.jpg
-http://s3.amazonaws.com/caption-scene/upload_batches/14000_15000/349738226.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/13000_14000/3371224046.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/15000_16000/3596959859.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/25000_26000/4965629392.jpg
@@ -849,7 +848,6 @@ http://s3.amazonaws.com/caption-scene/upload_batches/7000_8000/2640922346.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/23000_24000/4761666419.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/13000_14000/3328204532.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/11000_12000/3192005501.jpg
-http://s3.amazonaws.com/caption-scene/upload_batches/14000_15000/349738226.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/20000_21000/4553464209.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/2000_3000/1796521614.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/31000_31783/816205570.jpg

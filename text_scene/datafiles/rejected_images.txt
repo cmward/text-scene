@@ -5,3 +5,4 @@ http://s3.amazonaws.com/caption-scene/upload_batches/25000_26000/4932127810.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/23000_24000/4784357673.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/13000_14000/3328204532.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/23000_24000/4761666419.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/25000_26000/4932127810.jpg
