@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     elif args.sentcsv == 'combined':
         write_majority_vote_csv(GOLD_MTURK_RESULTS_CSV,
-                                           MAJORITY_MTURK_RESULTS_CSV)
+                                MAJORITY_MTURK_RESULTS_CSV)
         combine_csvs(GOLD_MTURK_RESULTS_CSV, MAJORITY_MTURK_RESULTS_CSV,
                      COMBINED_MTURK_RESULTS_CSV)
         datadict = make_datadict(COMBINED_MTURK_RESULTS_CSV)
