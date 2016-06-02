@@ -15,7 +15,8 @@ from paths import (
     COMBINED_MTURK_RESULTS_CSV,
     GOLD_MTURK_RESULTS_CSV,
     MTURK_RESULTS_CSV,
-    MAJORITY_MTURK_RESULTS_CSV
+    MAJORITY_MTURK_RESULTS_CSV,
+    REDO_IMGS_FILE
 )
 
 if __name__ == '__main__':
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('--outfile', '-o', type=str, required=False)
     parser.add_argument('--logfile', '-l', type=str, required=False)
     parser.add_argument('--nimages', '-n', type=int, required=False)
+    parser.add_argument('--redolog', type=str, required=False)
     parser.add_argument('--model', type=str, required=False)
     parser.add_argument('--labelset', type=str, required=False)
     parser.add_argument('--dropunk', action='store_true', required=False)
@@ -38,6 +40,8 @@ if __name__ == '__main__':
     if args.mturk == 'hits':
         mturk_hits.main(make_hits=True, log_file=args.logfile,
                         n_images=args.nimages)
+    if args.mturk == 'redo':
+        mturk_hits.main(redo_hits=True, redo_log=args.redolog, log_file=args.logfile)
     elif args.mturk == 'approve':
         mturk_hits.main(approve=True, outfile=args.outfile,
                         log_file=args.logfile)
@@ -72,11 +76,12 @@ if __name__ == '__main__':
             nb.train_and_test_nb()
 
     elif args.sentcsv == 'combined':
-        write_majority_vote_csv(GOLD_MTURK_RESULTS_CSV,
-                                MAJORITY_MTURK_RESULTS_CSV)
-        combine_csvs(GOLD_MTURK_RESULTS_CSV, MAJORITY_MTURK_RESULTS_CSV,
+        # majority vote on combined for gold annotation of nonmajority
+        combine_csvs(GOLD_MTURK_RESULTS_CSV, MTURK_RESULTS_CSV,
                      COMBINED_MTURK_RESULTS_CSV)
-        datadict = make_datadict(COMBINED_MTURK_RESULTS_CSV)
+        write_majority_vote_csv(COMBINED_MTURK_RESULTS_CSV,
+                                MAJORITY_MTURK_RESULTS_CSV)
+        datadict = make_datadict(MAJORITY_MTURK_RESULTS_CSV)
         write_sentence_csv(datadict, CAPTIONS_FILE, SENTENCES_CSV)
 
     elif args.sentcsv == 'gold':

@@ -212,19 +212,36 @@ def make_hit(image_url):
                    duration=60*10,
                    reward=0.03)
 
-def make_hit_batch(log_file, n_images=100, img_url_file=IMG_URLS):
-    n_images = int(n_images) # command line compatability
+def make_hit_batch(log_file, n_images=100, redo=False, redo_log=None,
+                   img_url_file=IMG_URLS):
+    """
+    Parameters
+    ----------
+    log_file: path to file listing which images have already been annotated
+    n_images: how many images to make HITs for
+    redo: if True, make HITs for images in `redo_log`
+    redo_log: path to file specifying which images to make HITs for
+        (rejected/no majority)
+    img_url_file: path to file containing all image urls
+    """
     all_images = set()
-    with open(img_url_file, 'rb') as csvfile:
-        reader = csv.reader(csvfile)
-        next(reader)
-        for row in reader:
-            all_images.add(row[0])
-    annotated = set()
-    with open(log_file, 'r') as log:
-        for line in log:
-            annotated.add(line.strip())
-    not_annotated = list(all_images - annotated)
+    if redo:
+        not_annotated = set()
+        with open(redo_log, 'r') as log:
+            for line in log:
+                not_annotated.add(line.strip())
+        n_images = len(not_annotated)
+    else:
+        with open(img_url_file, 'rb') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)
+            for row in reader:
+                all_images.add(row[0])
+        annotated = set()
+        with open(log_file, 'r') as log:
+            for line in log:
+                annotated.add(line.strip())
+        not_annotated = list(all_images - annotated)
     with open(log_file, 'a') as log:
         for i in range(n_images):
             make_hit(not_annotated[i])
@@ -310,12 +327,21 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
             mtc.disable_hit(hit.HITId)
     print "Rejected %i hits" % n_rejected
 
-def main(make_hits=False, approve=False,
+def disable_all_hits():
+    hits = mtc.get_all_hits()
+    for hit in hits:
+        mtc.expire_hit(hit.HITId)
+        mtc.disable_hit(hit.HITId)
+
+def main(make_hits=False, approve=False, redo_hits=False, redo_log=None,
          n_images=100, outfile=None, log_file=None):
     if approve:
         hits = get_all_reviewable_hits(mtc)
         approve_and_pay_all(hits, outfile, log_file, check_valid=True)
     elif make_hits:
         make_hit_batch(log_file, n_images=n_images)
+    elif redo_hits:
+        make_hit_batch(log_file, n_images=n_images, redo=True,
+                       redo_log=redo_log)
     else:
         raise Exception("Didn't get a recognized keyword")

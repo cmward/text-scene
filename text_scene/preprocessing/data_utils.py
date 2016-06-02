@@ -12,7 +12,9 @@ from paths import (
     SENTENCES_CSV,
     REJECTED_IMGS_FILE,
     ANNOTATED_IMGS_FILE,
-    IMG_URLS
+    REDO_IMGS_FILE,
+    IMG_URLS,
+    COMBINED_MTURK_RESULTS_CSV
 )
 
 q1map = {'0': 'indoors', '1': 'outdoors'}
@@ -36,13 +38,16 @@ q4map = {'0': 'body_of_water',
 def url2filename(url):
     return url.split('/')[-1]
 
-def make_datadict(results_csv):
+def make_datadict(results_csv, keep_url=False):
     datadict = defaultdict(list)
     with open(results_csv, 'r') as csvf:
         reader = csv.reader(csvf)
         next(reader)
         for row in reader:
-            img_file = url2filename(row[0])
+            if keep_url:
+                img_file = row[0]
+            else:
+                img_file = url2filename(row[0])
             q1 = q1map[row[2]] if row[2].isdigit() else row[2]
             q2 = q2map[row[3]] if row[3].isdigit() else row[3]
             q3 = q3map[row[4]] if (row[4].isdigit() or row[4] == 'NA') else row[4]
@@ -215,25 +220,28 @@ def majority_vote_dict(datadict, keep_all=True):
     nb_no_majority_imgs = 0
     nb_no_majority_questions = 0
     for img_file, answer_lists in datadict.items():
-        no_majority_img = False
-        answers = zip(*[answer_list for answer_list in answer_lists])
-        majority = [most_common(a) for a in answers]
-        majority_answers = []
-        for i, a in enumerate(majority):
-            if is_majority(a, len(answers[i])):
-                majority_answers.append(a[0])
-            else:
-                majority_answers.append(answers[i])
-                no_majority_img = True
-                nb_no_majority_questions += 1
-        if no_majority_img:
-            nb_no_majority_imgs += 1
-        voted_datadict[img_file] = majority_answers
-        if not keep_all:
-            voted_datadict = dict(voted_datadict)
-            for img_file, answers in voted_datadict.items():
-                if any(isinstance(a, tuple) for a in answers):
-                    del voted_datadict[img_file]
+        if len(answer_lists) == 1:
+            voted_datadict[img_file] = answer_lists[0]
+        else:
+            no_majority_img = False
+            answers = zip(*[answer_list for answer_list in answer_lists])
+            majority = [most_common(a) for a in answers]
+            majority_answers = []
+            for i, a in enumerate(majority):
+                if is_majority(a, len(answers[i])):
+                    majority_answers.append(a[0])
+                else:
+                    majority_answers.append(answers[i])
+                    no_majority_img = True
+                    nb_no_majority_questions += 1
+            if no_majority_img:
+                nb_no_majority_imgs += 1
+            voted_datadict[img_file] = majority_answers
+            if not keep_all:
+                voted_datadict = dict(voted_datadict)
+                for img_file, answers in voted_datadict.items():
+                    if any(isinstance(a, tuple) for a in answers):
+                        del voted_datadict[img_file]
     print "No majority for %i questions/%i images." % \
         (nb_no_majority_questions, nb_no_majority_imgs)
     return voted_datadict
@@ -294,8 +302,15 @@ def fleiss_kappa(results_csv, labels='full'):
     return fleiss.kappa(matrix)
 
 def write_rejected_no_majority_list():
-    #TODO this
-    pass
+    with open(REDO_IMGS_FILE, 'a') as r:
+        datadict = make_datadict(COMBINED_MTURK_RESULTS_CSV, keep_url=True)
+        voted_dict = majority_vote_dict(datadict, keep_all=True)
+        for img_file, answers in voted_dict.items():
+            if any(isinstance(a, tuple) for a in answers):
+                r.write(img_file + '\n')
+        with open(REJECTED_IMGS_FILE, 'r') as f:
+            for line in f:
+                r.write(line.strip() + '\n')
 
 def restore_rejected_imgs():
     """
