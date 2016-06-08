@@ -11,8 +11,11 @@ from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from preprocessing.data_utils import load_data, load_dataset
-from CNN_sentence.process_data import load_bin_vec
+from preprocessing.data_utils import (
+    sentences_df,
+    load_dataset,
+    load_bin_vec
+)
 from paths import SENTENCES_CSV
 
 

@@ -8,11 +8,11 @@ from sklearn.cross_validation import StratifiedKFold
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import (
-    load_data,
+    load_bin_vec,
+    sentences_df,
     load_dataset,
     print_label_frequencies
 )
-from CNN_sentence.process_data import load_bin_vec
 from cnn import create_model, train_and_test_model
 from paths import SENTENCES_CSV
 

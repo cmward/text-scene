@@ -123,7 +123,7 @@ def write_sentence_csv(datadict, captions_file, out_csv):
                 writer.writerow([sentence] + annotations + [img_file])
     print "Wrote sentence csv with %i sentences." % n_sents
 
-def load_data(sentence_csv, labels='full', drop_unk=True):
+def sentences_df(sentence_csv, labels='full', drop_unk=True):
     """
     Create a dataframe out of the data in `sentence_csv`.
     Each row contains a sentence and its label. The label set
