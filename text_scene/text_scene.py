@@ -93,4 +93,3 @@ if __name__ == '__main__':
     elif args.sentcsv == 'mturk':
         datadict = make_datadict(MTURK_RESULTS_CSV)
         write_sentence_csv(datadict, CAPTIONS_FILE, SENTENCES_CSV)
-

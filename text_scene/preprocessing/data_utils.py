@@ -38,7 +38,52 @@ q4map = {'0': 'body_of_water',
 def url2filename(url):
     return url.split('/')[-1]
 
+def load_bin_vec(fname, vocab):
+    """
+    Loads 300x1 word vecs from Google (Mikolov) word2vec. Taken from
+    CNN_sentence https://github.com/yoonkim/CNN_sentence
+    """
+    word_vecs = {}
+    with open(fname, "rb") as f:
+        header = f.readline()
+        vocab_size, layer1_size = map(int, header.split())
+        binary_len = np.dtype('float32').itemsize * layer1_size
+        for line in range(vocab_size):
+            word = []
+            while True:
+                ch = f.read(1)
+                if ch == ' ':
+                    word = ''.join(word)
+                    break
+                if ch != '\n':
+                    word.append(ch)
+            if word in vocab:
+               word_vecs[word] = np.fromstring(f.read(binary_len),
+                                               dtype='float32')
+            else:
+                f.read(binary_len)
+    return word_vecs
+
 def make_datadict(results_csv, keep_url=False):
+    """
+    Read in the results of MTurk annotation and create
+    a dictionary mapping images to question responses, where the
+    responses are converted from integers to the corresponding label
+    strings.
+
+    Params
+    ------
+    results_csv: path to csv file storing MTurk annotation results
+    keep_url: boolean, if True, keep the image names (keys in the dict)
+        otherwise, shorten the url to just the filename
+
+    Returns
+    -------
+    datadict: dictionary mapping image keys to list of annotations, where
+        an annotation is a list of 4 strings. The index of each string
+        corresponds to which question in the MTurk template it's a
+        response to.
+    """
     datadict = defaultdict(list)
     with open(results_csv, 'r') as csvf:
         reader = csv.reader(csvf)
@@ -56,6 +101,11 @@ def make_datadict(results_csv, keep_url=False):
     return datadict
 
 def write_sentence_csv(datadict, captions_file, out_csv):
+    """
+    Given a datadict constructed from a results csv, write a new
+    csv file by mapping each annotated image to its 5 corresponding
+    captions and labeling each caption with the label given in results csv.
+    """
     with open(captions_file) as cfile, open(out_csv, 'w') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(['sentence', 'q1', 'q2', 'q3', 'q4', 'img_file'])
@@ -311,31 +361,6 @@ def write_rejected_no_majority_list():
         with open(REJECTED_IMGS_FILE, 'r') as f:
             for line in f:
                 r.write(line.strip() + '\n')
-
-def restore_rejected_imgs():
-    """
-    Remove rejected images from annotated images file and
-    then remove them from rejected images file.
-    """
-    all_images = set()
-    annotated = set()
-    rejected = set()
-    with open(IMG_URLS, 'rb') as csvfile:
-        reader = csv.reader(csvfile)
-        next(reader)
-        for row in reader:
-            all_images.add(row[0])
-    with open(ANNOTATED_IMGS_FILE, 'r') as a:
-        for line in a:
-            annotated.add(line.strip())
-    with open(REJECTED_IMGS_FILE, 'r') as r:
-        for line in r:
-            rejected.add(line.strip())
-    no_rejects_annotated = annotated - rejected
-    with open(ANNOTATED_IMGS_FILE, 'w') as a:
-        for img in no_rejects_annotated:
-            a.write(img + '\n')
-    open(REJECTED_IMGS_FILE, 'w').close()
 
 def combine_csvs(csv1, csv2, outcsv):
     with open(csv1) as c1, open(csv2) as c2, open(outcsv, 'w') as outfile:

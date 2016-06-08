@@ -280,9 +280,9 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
     #   3: q2
     #   4: q3
     #   5: q4
+    rejected_imgs = []
     with open(outfile, 'a') as f:
         writer = csv.writer(f)
-        n_rejected = 0
         for hit in hits:
             ra = mtc.get_hit(hit.HITId)[0].RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)
@@ -319,14 +319,16 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     if rejected:
                         mtc.reject_assignment(assignment.AssignmentId,
                                              feedback=reject_msg)
-                        n_rejected += 1
+                        rejected_imgs.append(ra)
                         with open(log_file, 'a') as log:
                             log.write(ra + '\n')
                 if not rejected:
                     writer.writerow(row)
                     mtc.approve_assignment(assignment.AssignmentId)
             mtc.disable_hit(hit.HITId)
-    print "Rejected %i hits" % n_rejected
+    print "Rejected %i hits:" % len(rejected_imgs)
+    for rejected_img in rejected_imgs:
+        print rejected_img
 
 def disable_all_hits():
     hits = mtc.get_all_hits()
