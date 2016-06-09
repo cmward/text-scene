@@ -71,8 +71,8 @@ def make_datadict(results_csv, keep_url=False):
     responses are converted from integers to the corresponding label
     strings.
 
-    Params
-    ------
+    Parameters
+    ----------
     results_csv: path to csv file storing MTurk annotation results
     keep_url: boolean, if True, keep the image names (keys in the dict)
         otherwise, shorten the url to just the filename
@@ -375,30 +375,3 @@ def combine_csvs(csv1, csv2, outcsv):
     print "Combined %s and %s into %s." % (basename(csv1),
                                            basename(csv2),
                                            basename(outcsv))
-
-def label_frequencies(data):
-    """
-    Given a dataset, return a dictionary mapping labels to label frequencies.
-
-    `data` is either a single dataframe or a tuple (y, l_enc) where y is a
-    numpy array of labels and l_enc is a LabelEncoder.
-    """
-    if isinstance(data, pd.DataFrame):
-        counts = defaultdict(float)
-        for i, row in data.iterrows():
-            counts[row['label']] += 1
-    elif isinstance(data, tuple):
-        y = data[0]
-        l_enc = data[1]
-        bincounts = np.bincount(y)
-        counts = {l_enc.inverse_transform(i): float(count)
-                 for i, count in enumerate(bincounts)}
-    total = sum(counts.values())
-    freqs = {k: (v/total) for k,v in counts.items()}
-    sorted_freqs = sorted(freqs.items(), key=lambda x: x[1], reverse=True)
-    return sorted_freqs
-
-def print_label_frequencies(data):
-    freqs = label_frequencies(data)
-    for (label, freq) in freqs:
-        print "%s: %.2f" % (label, freq)

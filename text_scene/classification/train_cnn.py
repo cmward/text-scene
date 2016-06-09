@@ -11,8 +11,8 @@ from preprocessing.data_utils import (
     load_bin_vec,
     sentences_df,
     load_dataset,
-    print_label_frequencies
 )
+from corpus_stats.corpus_stats import print_label_frequencies
 from cnn import create_model, train_and_test_model
 from paths import SENTENCES_CSV
 
