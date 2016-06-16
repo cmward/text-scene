@@ -6,7 +6,7 @@ def word_freq_by_labels(df):
     """
     Given a dataframe of labeled sentences, return
     a dictionary of word frequencies given a label.
-    
+
     Parameters
     ----------
     df: dataframe containing sentences and labels
@@ -21,6 +21,10 @@ def word_freq_by_labels(df):
         label = row['label']
         tokens = row['sentence'].split()
         freqdict[label].update(tokens)
+    for label, count_dict in freqdict.items():
+        total = sum(count_dict.values())
+        freqs = Counter({k: v / float(total) for k,v in count_dict.items()})
+        freqdict[label] = freqs
     return freqdict
 
 def label_frequencies(data):
