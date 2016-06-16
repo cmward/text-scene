@@ -851,3 +851,7 @@ http://s3.amazonaws.com/caption-scene/upload_batches/11000_12000/3192005501.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/20000_21000/4553464209.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/2000_3000/1796521614.jpg
 http://s3.amazonaws.com/caption-scene/upload_batches/31000_31783/816205570.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/11000_12000/3146509215.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/19000_20000/4368363908.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/4000_5000/2229179070.jpg
+http://s3.amazonaws.com/caption-scene/upload_batches/11000_12000/3130093622.jpg
