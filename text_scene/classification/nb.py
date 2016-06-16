@@ -3,10 +3,10 @@ import numpy as np
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.cross_validation import cross_val_score
 from paths import SENTENCES_CSV
+from corpus_stats.frequency import print_label_frequencies
 from preprocessing.data_utils import (
     sentences_df,
     load_dataset, 
-    print_label_frequencies
 )
 
 def train_and_test_nb(ngram_order=1):
