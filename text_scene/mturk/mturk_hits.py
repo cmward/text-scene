@@ -50,12 +50,10 @@ def make_hit(image_url):
     nat_manmade = [('man-made','0'), ('natural','1')]
     functions = [('transportation/urban','0'),
                  ('restaurant','1'),
-                 ('recreation/entertainment','2'),
+                 ('recreation','2'),
                  ('domestic','3'),
                  ('work/education','4'),
-                 ('athletics','5'),
-                 ('shop','6'),
-                 ('other/unclear','7')]
+                 ('other/unclear','5')]
     landscapes = [('body of water/beach','0'),
                   ('field','1'),
                   ('mountain','2'),
@@ -82,11 +80,11 @@ def make_hit(image_url):
     For each possible answer, here are some examples:</p>
     <ul>
         <li>Transportation/urban: streets, sidewalks, city squares and plazas, car interiors, airports</li>
-        <li>Restaurant: bars, restaurants. Does not include kitchents, which would be 'domestic'.</li>
-        <li>Entertainment/recreation: dance clubs, concert venues, arcades, parks, gardens</li>
+        <li>Restaurant: bars, restaurants. Does not include kitchens in houses
+        or apartments, which would be 'domestic'.</li>
+        <li>Entertainment: athletic facilities, sports fields, dance clubs, concert venues, arcades, parks, gardens</li>
         <li>Domestic: Interiors and exteriors of houses and apartments</li>
-        <li>Work/education: office buildings, schools, farms, doctor's offices</li>
-        <li>Athletics: Gyms, basketball courts, rock climbing facilities</li>
+        <li>Work/education: shops, office buildings, schools, farms, doctor's offices</li>
         <li>Other/Unclear: any location that doesn't fit into the previous categories or if the location cannot be determined from the image</li>
     </ul>
 
@@ -281,8 +279,8 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
     #   4: q3
     #   5: q4
     rejected_imgs = []
-    with open(outfile, 'a') as f:
-        writer = csv.writer(f)
+    with open(outfile, "ab") as f:
+        writer = csv.writer(f, lineterminator='\n')
         for hit in hits:
             ra = mtc.get_hit(hit.HITId)[0].RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)

@@ -21,12 +21,10 @@ q1map = {'0': 'indoors', '1': 'outdoors'}
 q2map = {'0': 'man-made', '1': 'natural'}
 q3map = {'0': 'transportation_urban',
          '1': 'restaurant',
-         '2': 'recreation_entertainment',
+         '2': 'recreation',
          '3': 'domestic',
          '4': 'work_education',
-         '5': 'athletics',
-         '6': 'shop',
-         '7': 'other_unclear',
+         '5': 'other_unclear',
          'NA': 'NA'}
 q4map = {'0': 'body_of_water',
          '1': 'field',
@@ -106,7 +104,7 @@ def write_sentence_csv(datadict, captions_file, out_csv):
     csv file by mapping each annotated image to its 5 corresponding
     captions and labeling each caption with the label given in results csv.
     """
-    with open(captions_file) as cfile, open(out_csv, 'w') as outfile:
+    with open(captions_file) as cfile, open(out_csv, 'wb') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(['sentence', 'q1', 'q2', 'q3', 'q4', 'img_file'])
         n_sents = 0
@@ -285,6 +283,7 @@ def majority_vote_dict(datadict, keep_all=True):
                     no_majority_img = True
                     nb_no_majority_questions += 1
             if no_majority_img:
+                print "no majority: %s" % img_file
                 nb_no_majority_imgs += 1
             voted_datadict[img_file] = majority_answers
             if not keep_all:
@@ -363,7 +362,7 @@ def write_rejected_no_majority_list():
                 r.write(line.strip() + '\n')
 
 def combine_csvs(csv1, csv2, outcsv):
-    with open(csv1) as c1, open(csv2) as c2, open(outcsv, 'w') as outfile:
+    with open(csv1,'rb') as c1, open(csv2,'rb') as c2, open(outcsv, 'wb') as outfile:
         c1reader = csv.reader(c1)
         c2reader = csv.reader(c2)
         next(c2reader)
