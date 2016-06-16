@@ -1,6 +1,7 @@
 import csv
 import sys
 import os
+from collections import defaultdict
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import QuestionContent, Question, QuestionForm
 from boto.mturk.question import Overview, AnswerSpecification
@@ -20,11 +21,6 @@ from paths import (
 )
 
 """
-Usage:
-    python mturk_hits.py <log_file>
-                         <n_images=100>
-                         <img_url_file='image_urls.csv'>
-
 Adapted from http://www.toforge.com/2011/04/boto-mturk-tutorial-create-hits/
 """
 
@@ -75,6 +71,12 @@ def make_hit(image_url):
 
     <p><b>Question 2</b>: Is the location in the image natural or man-made?
     Natural locations are places that can be found in nature, or in the wild, while man-made locations have been constructed by humans.</p>
+
+    <p><b>You should only select an answer for either Question 3 or Question 4,
+    but not both.</b> If the location is man-made, select a function in
+    Question 3 and don't select anything for Question 4. If the location is
+    natural, select a natural location type in Question 4 and don't select
+    anything for question 3.</p>
 
     <p><b>Question 3</b>: If the location is man-made, what is its type or function?
     For each possible answer, here are some examples:</p>
@@ -193,7 +195,7 @@ def make_hit(image_url):
     #-------------- QUALIFICATIONS -------------------
 
     percent = PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 95)
-    number = NumberHitsApprovedRequirement('GreaterThanOrEqualTo', 100)
+    number = NumberHitsApprovedRequirement('GreaterThanOrEqualTo', 200)
     quals = Qualifications()
     quals.add(percent)
     quals.add(number)
@@ -201,7 +203,7 @@ def make_hit(image_url):
     #--------------- CREATE THE HIT -------------------
 
     mtc.create_hit(questions=question_form,
-                   max_assignments=1,
+                   max_assignments=3,
                    title=title,
                    description=description,
                    keywords=keywords,
@@ -278,7 +280,7 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
     #   3: q2
     #   4: q3
     #   5: q4
-    rejected_imgs = []
+    rejected_assignments = defaultdict(list)
     with open(outfile, "ab") as f:
         writer = csv.writer(f, lineterminator='\n')
         for hit in hits:
@@ -317,16 +319,16 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     if rejected:
                         mtc.reject_assignment(assignment.AssignmentId,
                                              feedback=reject_msg)
-                        rejected_imgs.append(ra)
+                        rejected_assignments[ra].append(reject_msg)
                         with open(log_file, 'a') as log:
                             log.write(ra + '\n')
                 if not rejected:
                     writer.writerow(row)
                     mtc.approve_assignment(assignment.AssignmentId)
             mtc.disable_hit(hit.HITId)
-    print "Rejected %i hits:" % len(rejected_imgs)
-    for rejected_img in rejected_imgs:
-        print rejected_img
+    print "Rejected %i assignments:" % len(rejected_assignments)
+    for rejected_assignment in rejected_assignments:
+        print rejected_assignment
 
 def disable_all_hits():
     hits = mtc.get_all_hits()
