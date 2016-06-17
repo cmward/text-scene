@@ -1,7 +1,7 @@
 import csv
 import sys
 import os
-from collections import defaultdict
+from collections import defaultdict, Counter
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import QuestionContent, Question, QuestionForm
 from boto.mturk.question import Overview, AnswerSpecification
@@ -17,7 +17,8 @@ from paths import (
     ANNOTATED_IMGS_FILE,
     KEY_FILE,
     MTURK_RESULTS_CSV,
-    GOLD_MTURK_RESULTS_CSV
+    GOLD_MTURK_RESULTS_CSV,
+    ALL_HITS_CSV
 )
 
 """
@@ -72,19 +73,20 @@ def make_hit(image_url):
     <p><b>Question 2</b>: Is the location in the image natural or man-made?
     Natural locations are places that can be found in nature, or in the wild, while man-made locations have been constructed by humans.</p>
 
-    <p><b>You should only select an answer for either Question 3 or Question 4,
+    <p><b>Select an answer for either Question 3 or Question 4,
     but not both.</b> If the location is man-made, select a function in
     Question 3 and don't select anything for Question 4. If the location is
     natural, select a natural location type in Question 4 and don't select
-    anything for question 3.</p>
+    anything for Question 3.</p>
 
     <p><b>Question 3</b>: If the location is man-made, what is its type or function?
-    For each possible answer, here are some examples:</p>
+    <i>Only select an answer for this question if you've selected 'man-made'
+    for Question 2.</i> For each possible answer, here are some examples:</p>
     <ul>
         <li>Transportation/urban: streets, sidewalks, city squares and plazas, car interiors, airports</li>
         <li>Restaurant: bars, restaurants. Does not include kitchens in houses
         or apartments, which would be 'domestic'.</li>
-        <li>Entertainment: athletic facilities, sports fields, dance clubs, concert venues, arcades, parks, gardens</li>
+        <li>Recreation: athletic facilities, sports fields, dance clubs, concert venues, arcades, parks, gardens</li>
         <li>Domestic: Interiors and exteriors of houses and apartments</li>
         <li>Work/education: shops, office buildings, schools, farms, doctor's offices</li>
         <li>Other/Unclear: any location that doesn't fit into the previous categories or if the location cannot be determined from the image</li>
@@ -96,7 +98,9 @@ def make_hit(image_url):
     sidewalk, the correct answer would be 'transportation', since streets and
     sidewalks are used for transportation.</p>
 
-    <p><b>Question 4</b>: If the location in the picture is natural, what kind of natural location is it?
+    <p><b>Question 4</b>: If the location in the picture is natural, what kind
+    of natural location is it? <i>Only select an answer for this question if
+    you've selected an 'natural' for Question 2.</i>
     For each possible answer, here are some examples:</p>
     <ul>
         <li>Body of water: lake, ocean, river, beach</li>
@@ -105,7 +109,22 @@ def make_hit(image_url):
         <li>Forrest/jungle: Location covered with trees, undergrowth, or vegetation</li>
         <li>Other/unclear: Any outside natural locations that don't fit into the previous categories or if the location cannot be determined from the image.</li>
     </ul>
+
+    <p><b>The following answer combinations will be rejected automatically:</b></p>
+        <ul>
+            <li>Answers provided for both Question 3 (function) and Question 4
+            (landscape type)</li>
+            <li>'indoors' selected for Question 1 and any answer provided for
+            Question 4 (landscape type)</li>
+            <li>'man-made' selected for Question 2 and any answer provided for
+            Question 4 (landscape type)</li>
+            <li>'natural' selected for Question 2 and any answer provided for
+            Question 3 (function)</li>
+            <li>No answers selected for Question 3 and Question 4 (one of them
+            needs to be answered)</li>
+        </ul>
     """
+
     overview.append(FormattedContent(instructions))
 
     image = Binary('image', None, image_url, 'image')
@@ -203,7 +222,7 @@ def make_hit(image_url):
     #--------------- CREATE THE HIT -------------------
 
     mtc.create_hit(questions=question_form,
-                   max_assignments=3,
+                   max_assignments=1,
                    title=title,
                    description=description,
                    keywords=keywords,
@@ -281,8 +300,10 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
     #   4: q3
     #   5: q4
     rejected_assignments = defaultdict(list)
-    with open(outfile, "ab") as f:
+    rejected_workers = Counter()
+    with open(outfile, "ab") as f, open(ALL_HITS_CSV, "ab") as allhits:
         writer = csv.writer(f, lineterminator='\n')
+        allhits_writer = csv.writer(allhits)
         for hit in hits:
             ra = mtc.get_hit(hit.HITId)[0].RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)
@@ -296,39 +317,50 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                     for answer in question_form_answer.fields:
                         row.append(answer)
                 if check_valid:
-                    # selections provided for landscape and function
-                    if row[4] != 'NA' and row[5] != 'NA':
+                    reject_msg = check_row(row) # returns msg if rejected
+                    if reject_msg:
                         rejected = True
-                        reject_msg = ("Answers specified for both "
-                                      "natural landscape type and function.")
-                    # indoors and landscape selected
-                    elif row[2] == '0' and row[5] != 'NA':
-                        rejected = True
-                        reject_msg = ("Selected both indoors and "
-                                      "a natural landscape type.")
-                    # man-made and landscape selected
-                    elif row[3] == '0' and row[5] != 'NA':
-                        rejected = True
-                        reject_msg = ("Selected both man-made and "
-                                      "natural landscape type.")
-                    # natural and function selected
-                    elif row[3] == '1' and row[4] != 'NA':
-                        rejected = True
-                        reject_msg = ("Selected both function and "
-                                      "natural landscape type")
-                    if rejected:
                         mtc.reject_assignment(assignment.AssignmentId,
-                                             feedback=reject_msg)
+                                              feedback=reject_msg)
                         rejected_assignments[ra].append(reject_msg)
+                        rejected_workers[assignment.WorkerId] += 1
                         with open(log_file, 'a') as log:
                             log.write(ra + '\n')
+                allhits_writer.writerow([hit.HITId, assignment.WorkerId] + row)
                 if not rejected:
                     writer.writerow(row)
                     mtc.approve_assignment(assignment.AssignmentId)
-            mtc.disable_hit(hit.HITId)
+            #mtc.disable_hit(hit.HITId)
     print "Rejected %i assignments:" % len(rejected_assignments)
     for rejected_assignment in rejected_assignments:
         print rejected_assignment
+    for worker, count in rejected_workers.items():
+        print worker, count
+
+def check_row(row):
+    """Returns reject_msg if row is invalid, None otherwise."""
+    reject_msg = ""
+    # selections provided for landscape and function
+    if row[4] != 'NA' and row[5] != 'NA':
+        reject_msg = ("Answers specified for both "
+                      "natural landscape type (Question 4) and function "
+                      "(Question 3). ")
+    # indoors and landscape selected
+    elif row[2] == '0' and row[5] != 'NA':
+        reject_msg = ("Selected indoors for Question 1 and "
+                      "a natural landscape type (Question 4).")
+    # man-made and landscape selected
+    elif row[3] == '0' and row[5] != 'NA':
+        reject_msg = ("Selected man-made for Question 2 and "
+                      "an answer for Question 4 (landscape type).")
+    # natural and function selected
+    elif row[3] == '1' and row[4] != 'NA':
+        reject_msg = ("Selected an answer for function (Question 3) and "
+                      "a natural landscape type (Question 4)")
+    elif row[4] == 'NA' and row[5] == 'NA':
+        reject_msg = ("Did not select answers for Question 3 and Question 4 "
+                      "(one of them needs to be answered)")
+    return reject_msg
 
 def disable_all_hits():
     hits = mtc.get_all_hits()
