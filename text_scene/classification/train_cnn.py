@@ -12,7 +12,7 @@ from preprocessing.data_utils import (
     sentences_df,
     load_dataset,
 )
-from corpus_stats.corpus_stats import print_label_frequencies
+from corpus_stats.frequency import print_label_frequencies
 from cnn import create_model, train_and_test_model
 from paths import SENTENCES_CSV
 
@@ -28,8 +28,8 @@ pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
 batch_size = 64
-nb_epoch = 20
-lr = 0.01
+nb_epoch = 8
+lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
@@ -46,8 +46,9 @@ def add_unknown_words(word_vecs, vocab, k=300):
 def train(model_type='parallel', label_set='full', drop_unk=False,
           word_vecs=None, setup_only=False):
     print "Loading data..."
-    df = load_data(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
+    df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
+    print "X shape:", X.shape
     y_orig = y
     y_binary = to_categorical(y)
     labels = np.unique(y_orig)

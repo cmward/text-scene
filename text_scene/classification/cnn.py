@@ -309,6 +309,6 @@ def train_and_test_model(cnn, X_train, y_train, X_test, y_test,
                       metrics=['accuracy'])
     cnn.model.fit(X_train, y_train,
                   batch_size=batch_size, nb_epoch=nb_epoch,
-                  validation_split=0.2)
+                  validation_split=0.1)
     score, acc = cnn.model.evaluate(X_test, y_test, batch_size=64)
     return acc
