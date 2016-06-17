@@ -6,7 +6,9 @@ from preprocessing.data_utils import (
     majority_vote_dict,
     write_majority_vote_csv,
     write_rejected_no_majority_list,
-    combine_csvs
+    combine_csvs,
+    fleiss_kappa,
+    unique_workers
 )
 from paths import (
     CAPTIONS_FILE,
@@ -24,6 +26,8 @@ if __name__ == '__main__':
     parser.add_argument('--sentcsv', '-s', type=str, required=False)
     parser.add_argument('--classify', '-c', type=str, required=False)
     parser.add_argument('--approve', '-a', action='store_true', required=False)
+    parser.add_argument('--fleiss', type=str, required=False)
+    parser.add_argument('--workers', type=str, required=False)
     parser.add_argument('--outfile', '-o', type=str, required=False)
     parser.add_argument('--logfile', '-l', type=str, required=False)
     parser.add_argument('--nimages', '-n', type=int, required=False)
@@ -47,6 +51,11 @@ if __name__ == '__main__':
         from mturk import mturk_hits
         mturk_hits.main(approve=True, outfile=args.outfile,
                         log_file=args.logfile)
+    elif args.mturk == 'fleiss':
+        print "Fleiss kappa:", fleiss_kappa(args.outfile, args.labelset)
+    elif args.mturk == 'workers':
+        print "Unique workers:", unique_workers(args.outfile)
+
 
     elif args.classify == 'cnn':
         from classification import train_cnn
