@@ -306,7 +306,7 @@ def unique_workers(results_csv):
 def make_kappa_matrix(datadict, labels='full'):
     """
     Create a N x M matrix where N is the number of images
-    and M is the number of labels (21 for full) to be used
+    and M is the number of labels (14 for full) to be used
     for computing fleiss's kappa
     """
     datadict = dict(datadict)
