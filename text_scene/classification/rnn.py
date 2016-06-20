@@ -53,7 +53,7 @@ def train_and_test_model(model, X_train, y_train, X_test, y_test):
 
 def main(rnn_layer='lstm', word_vecs=None):
     print "Loading data...",
-    df = load_data(SENTENCES_CSV)
+    df = sentences_df(SENTENCES_CSV)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
     y_binary = to_categorical(y)
     word_vectors = load_bin_vec(word_vecs, word2idx)

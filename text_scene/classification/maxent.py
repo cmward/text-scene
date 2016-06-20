@@ -14,7 +14,7 @@ def train_test_bow(ngram_order):
         print "X shape: %s" % (X.shape,)
         print "y shape: %s" % (y.shape,)
         clf = SGDClassifier(loss='log',
-                            alpha=0.1,
+                            alpha=0.01,
                             l1_ratio=0,
                             random_state=0)
         scores = cross_val_score(clf, X, y, cv=5, verbose=1)

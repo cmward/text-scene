@@ -2,7 +2,8 @@ import os
 import sys
 import time
 import numpy as np
-from keras.utils.np_utils import to_categorical
+from collections import Counter
+from keras.utils.np_utils import to_categorical, probas_to_classes
 from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
 
@@ -11,6 +12,7 @@ from preprocessing.data_utils import (
     load_bin_vec,
     sentences_df,
     load_dataset,
+    add_unknown_words
 )
 from corpus_stats.frequency import print_label_frequencies
 from cnn import create_model, train_and_test_model
@@ -28,7 +30,7 @@ pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
 batch_size = 64
-nb_epoch = 8
+nb_epoch = 20
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
@@ -125,7 +127,15 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                                    lr, beta_1, beta_2, epsilon)
         cv_scores.append(acc)
         train_time = time.time() - start_time
+        print('\nLabel frequencies in y[test]')
         print_label_frequencies((y_orig[test], l_enc))
+        y_pred = cnn.model.predict(X[test])
+        y_pred = probas_to_classes(y_pred)
+        c = Counter(y_pred)
+        total = float(len(y_pred))
+        print('\nLabel frequencies in predict(y[test])')
+        for label, count in c.most_common():
+            print l_enc.inverse_transform(label), count, count / total
         print "fold %i/5 - time: %.2f s - acc: %.2f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
