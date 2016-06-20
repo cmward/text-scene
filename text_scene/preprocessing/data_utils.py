@@ -62,6 +62,15 @@ def load_bin_vec(fname, vocab):
                 f.read(binary_len)
     return word_vecs
 
+def add_unknown_words(word_vecs, vocab, k=300):
+    added = 0
+    for word in vocab:
+        if word not in word_vecs:
+            word_vecs[word] = np.random.uniform(-0.25,0.25,k)
+            added += 1
+    word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
+    print "Added %i unknown words to word vectors." % added
+
 def make_datadict(results_csv, keep_url=False):
     """
     Read in the results of MTurk annotation and create
@@ -296,11 +305,14 @@ def majority_vote_dict(datadict, keep_all=True):
     return voted_datadict
 
 def unique_workers(results_csv):
-    worker_ids = set()
+    worker_ids = Counter()
     with open(results_csv) as csvfile:
         reader = csv.reader(csvfile)
+        next(reader)
         for row in reader:
-            worker_ids.add(row[1])
+            worker_ids[row[1]] += 1
+    for k,v in worker_ids.most_common():
+        print "%s: %s" % (k, v)
     return len(worker_ids)
 
 def make_kappa_matrix(datadict, labels='full'):
