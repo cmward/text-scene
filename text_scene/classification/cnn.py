@@ -131,11 +131,12 @@ class ParallelCNN(object):
         x = x(sentence_input)
         conv_pools = []
         for filter_h in filter_hs:
-            conv = Convolution1D(nb_filters, filter_h, border_mode='same',
-                                 activation='relu')
+            conv = Convolution1D(nb_filters, filter_h, border_mode='same')
             conved = conv(x)
+            batchnorm = BatchNormalization()(conved)
+            conved_relu = Activation('relu')(batchnorm)
             pool = Lambda(max_1d, output_shape=(nb_filters,))
-            pooled = pool(conved)
+            pooled = pool(batchnorm)
             conv_pools.append(pooled)
         merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
