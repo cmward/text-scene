@@ -24,8 +24,10 @@ class FeedforwardNN(object):
             pool = Lambda(lambda x: K.sum(x, axis=1), output_shape=(emb_dim,))
         elif pool_mode == 'max':
             pool = Lambda(lambda x: K.max(x, axis=1), output_shape=(emb_dim,))
-        else:
+        elif pool_mode == 'mean':
             pool = Lambda(lambda x: K.mean(x, axis=1), output_shape=(emb_dim,))
+        else: # concat
+            pool = Flatten()
         pool_out = Dropout(0.5)(pool(x))
         hidden_layers = []
         prev_layer = pool_out
@@ -34,19 +36,10 @@ class FeedforwardNN(object):
             hidden_out = Dropout(0.5)(hidden_in(prev_layer))
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out
-        """
-        hidden_1 = Dense(256, activation='relu')
-        hidden_1_out = Dropout(0.5)(hidden_1(pool_out))
-        hidden_2 = Dense(256, activation='relu')
-        hidden_2_out = Dropout(0.5)(hidden_2(hidden_1_out))
-        #hidden_3 = Dense(256, activation='relu')
-        #hidden_3_out = Dropout(0.5)(hidden_3(hidden_2_out))
-        """
         if self.nb_labels == 2:
             out = Dense(nb_labels, activation='sigmoid')
         else:
             out = Dense(nb_labels, activation='softmax')
-        #out = out(hidden_2_out)
         out = out(hidden_layers[-1])
         self.model = Model(input=sentence_input, output=out)
 

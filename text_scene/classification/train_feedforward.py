@@ -22,14 +22,14 @@ from paths import SENTENCES_CSV
 # hyperparameters
 emb_dim = 300
 batch_size = 64
-nb_epoch = 15
+nb_epoch = 12
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
 
 def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
-          drop_unk=False, word_vecs=None):
+          drop_unk=False, word_vecs=None, return_net=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
@@ -75,8 +75,21 @@ def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
         if i == 0:
             print_summary(nn.model.layers)
         nn, acc = train_and_test_model(nn, X[train], y[train], X[test], y[test],
-                                   batch_size, nb_epoch,
-                                   lr, beta_1, beta_2, epsilon)
+                                       batch_size, nb_epoch,
+                                       lr, beta_1, beta_2, epsilon)
+        if return_net:
+            d = {'X': X,
+                 'y': y,
+                 'word2idx': word2idx,
+                 'l_enc': l_enc,
+                 'y_binary': y_binary,
+                 'labels': labels,
+                 'nb_labels': nb_labels,
+                 'maxlen': maxlen,
+                 'emb_dim': emb_dim,
+                 'vocab_size': vocab_size,
+                 'embedding_weights': embedding_weights}
+            return d, nn
         cv_scores.append(acc)
         train_time = time.time() - start_time
         print('\nLabel frequencies in y[test]')
