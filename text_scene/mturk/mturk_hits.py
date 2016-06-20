@@ -36,7 +36,7 @@ REAL_HOST = 'mechanicalturk.amazonaws.com'
 
 mtc = MTurkConnection(aws_access_key_id=ACCESS_ID,
                       aws_secret_access_key=SECRET_KEY,
-                      host=SB_HOST)
+                      host=REAL_HOST)
 
 def make_hit(image_url):
     title = 'Label image with its location'
@@ -63,15 +63,22 @@ def make_hit(image_url):
     overview.append_field('Title', title)
 
     instructions = """<p>In this task you will answer four questions about an
-    image to determine the location of what's shown in the image. Please select
-    at most one answer per question.</p>
+    image to determine the location of what's shown in the image.</p>
 
     <p><b>Question 1</b>: Is the image showing a location that's indoors or
     outdoors?
-    Any building or vehical interior is indoors, while anything that you could consider to be 'outside' is outdoors.</p>
+    <br></br>
+    Any building or vehical interior is indoors, while anything that you could
+    consider to be 'outside' is outdoors.
+    <br></br>
+    <i>Select one answer for this question.</i></p>
 
     <p><b>Question 2</b>: Is the location in the image natural or man-made?
-    Natural locations are places that can be found in nature, or in the wild, while man-made locations have been constructed by humans.</p>
+    <br></br>
+    Natural locations are places that can be found in nature, or in the wild,
+    while man-made locations have been constructed by humans.
+    <br></br>
+    <i>Select one answer for this question.</i></p>
 
     <p><b>Select an answer for either Question 3 or Question 4,
     but not both.</b> If the location is man-made, select a function in
@@ -80,8 +87,11 @@ def make_hit(image_url):
     anything for Question 3.</p>
 
     <p><b>Question 3</b>: If the location is man-made, what is its type or function?
+    <br></br>
     <i>Only select an answer for this question if you've selected 'man-made'
-    for Question 2.</i> For each possible answer, here are some examples:</p>
+    for Question 2.</i>
+    <br></br>
+    For each possible answer, here are some examples:</p>
     <ul>
         <li>Transportation/urban: streets, sidewalks, city squares and plazas, car interiors, airports</li>
         <li>Restaurant: bars, restaurants. Does not include kitchens in houses
@@ -95,12 +105,15 @@ def make_hit(image_url):
     <p>Remember to answer this question with respect to the location, not what
     the people in the picture are doing. For example, if the image shows
     children playing a game in the street or workers doing construction on a
-    sidewalk, the correct answer would be 'transportation', since streets and
+    sidewalk, the correct answer would be 'transportation/urban', since streets and
     sidewalks are used for transportation.</p>
 
     <p><b>Question 4</b>: If the location in the picture is natural, what kind
-    of natural location is it? <i>Only select an answer for this question if
-    you've selected an 'natural' for Question 2.</i>
+    of natural location is it?
+    <br></br>
+    <i>Only select an answer for this question if you've selected 'natural' for
+    Question 2.</i>
+    <br></br>
     For each possible answer, here are some examples:</p>
     <ul>
         <li>Body of water: lake, ocean, river, beach</li>
@@ -120,7 +133,7 @@ def make_hit(image_url):
             Question 4 (landscape type)</li>
             <li>'natural' selected for Question 2 and any answer provided for
             Question 3 (function)</li>
-            <li>No answers selected for Question 3 and Question 4 (one of them
+            <li>Question 3 and Question 4 both left unanswered (one of them
             needs to be answered)</li>
         </ul>
     """
@@ -305,7 +318,9 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
         writer = csv.writer(f, lineterminator='\n')
         allhits_writer = csv.writer(allhits)
         for hit in hits:
-            ra = mtc.get_hit(hit.HITId)[0].RequesterAnnotation
+            h = mtc.get_hit(hit.HITId)[0]
+            if h.HITReviewStatus == 'Reviewing': continue
+            ra = h.RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)
             for assignment in assignments:
                 row = [ra]
@@ -328,8 +343,9 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
                             log.write(ra + '\n')
                 allhits_writer.writerow([hit.HITId, assignment.WorkerId] + row)
                 if not rejected:
-                    writer.writerow(row)
                     mtc.approve_assignment(assignment.AssignmentId)
+                    writer.writerow(row)
+            mtc.set_reviewing(hit.HITId)
             #mtc.disable_hit(hit.HITId)
     print "Rejected %i assignments:" % len(rejected_assignments)
     for rejected_assignment in rejected_assignments:
