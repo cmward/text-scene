@@ -54,7 +54,7 @@ if __name__ == '__main__':
     elif args.mturk == 'fleiss':
         print "Fleiss kappa:", fleiss_kappa(args.outfile, args.labelset)
     elif args.mturk == 'workers':
-        print "Unique workers:", unique_workers(args.outfile)
+        print unique_workers(args.outfile)
 
 
     elif args.classify == 'cnn':
