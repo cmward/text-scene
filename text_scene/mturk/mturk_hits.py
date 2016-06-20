@@ -54,7 +54,7 @@ def make_hit(image_url):
     landscapes = [('body of water/beach','0'),
                   ('field','1'),
                   ('mountain','2'),
-                  ('forrest/jungle','3'),
+                  ('forest/jungle','3'),
                   ('other/unclear','4')]
 
     #---------------  BUILD OVERVIEW -------------------
@@ -119,7 +119,7 @@ def make_hit(image_url):
         <li>Body of water: lake, ocean, river, beach</li>
         <li>Field: any (usually grassy) open field</li>
         <li>Mountain: any part of a mountain or a similar elevated, usually rocky, location</li>
-        <li>Forrest/jungle: Location covered with trees, undergrowth, or vegetation</li>
+        <li>Forest/jungle: Location covered with trees, undergrowth, or vegetation</li>
         <li>Other/unclear: Any outside natural locations that don't fit into the previous categories or if the location cannot be determined from the image.</li>
     </ul>
 

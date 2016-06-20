@@ -29,7 +29,7 @@ q3map = {'0': 'transportation_urban',
 q4map = {'0': 'body_of_water',
          '1': 'field',
          '2': 'mountain',
-         '3': 'forrest_jungle',
+         '3': 'forest_jungle',
          '4': 'other_unclear',
          'NA': 'NA'}
 
@@ -63,13 +63,14 @@ def load_bin_vec(fname, vocab):
     return word_vecs
 
 def add_unknown_words(word_vecs, vocab, k=300):
-    added = 0
+    unknown_words = []
     for word in vocab:
         if word not in word_vecs:
+            unknown_words.append(word)
             word_vecs[word] = np.random.uniform(-0.25,0.25,k)
-            added += 1
     word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
-    print "Added %i unknown words to word vectors." % added
+    print "Added %i unknown words to word vectors." % len(unknown_words)
+    print unknown_words
 
 def make_datadict(results_csv, keep_url=False):
     """
