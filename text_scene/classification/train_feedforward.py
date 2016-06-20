@@ -28,7 +28,8 @@ beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
 
-def train(label_set='full', pool_mode='max', drop_unk=False, word_vecs=None):
+def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
+          drop_unk=False, word_vecs=None):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
@@ -68,6 +69,7 @@ def train(label_set='full', pool_mode='max', drop_unk=False, word_vecs=None):
                            nb_labels,
                            emb_dim,
                            maxlen,
+                           layer_sizes,
                            embedding_weights,
                            pool_mode=pool_mode)
         if i == 0:

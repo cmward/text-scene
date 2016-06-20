@@ -36,6 +36,8 @@ if __name__ == '__main__':
     parser.add_argument('--labelset', type=str, required=False)
     parser.add_argument('--dropunk', action='store_true', required=False)
     parser.add_argument('--wordvecs', type=str, required=False)
+    parser.add_argument('--poolmode', type=str, required=False)
+    parser.add_argument('--layersizes', type=int, nargs='+', required=False)
     parser.add_argument('--ngram', type=int, required=False)
     parser.add_argument('--feats', '-f', type=str, required=False)
     args = parser.parse_args()
@@ -67,6 +69,19 @@ if __name__ == '__main__':
                         label_set=label_set,
                         drop_unk=drop_unk,
                         word_vecs=word_vecs)
+
+    elif args.classify == 'ff':
+        from classification import train_feedforward
+        label_set = args.labelset
+        drop_unk = args.dropunk
+        word_vecs = args.wordvecs
+        pool_mode = args.poolmode
+        layer_sizes = args.layersizes
+        train_feedforward.train(label_set,
+                                pool_mode=pool_mode,
+                                layer_sizes=layer_sizes,
+                                drop_unk=drop_unk,
+                                word_vecs=word_vecs)
 
     elif args.classify == 'maxent':
         from classification import maxent

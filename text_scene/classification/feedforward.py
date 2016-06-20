@@ -10,7 +10,7 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 class FeedforwardNN(object):
-    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
+    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, layer_sizes,
                  embedding_weights, pool_mode='max'):
         self.nb_labels = nb_labels
         sentence_input = Input(shape=(maxlen,), dtype='int32')
@@ -27,11 +27,12 @@ class FeedforwardNN(object):
         else:
             pool = Lambda(lambda x: K.mean(x, axis=1), output_shape=(emb_dim,))
         pool_out = Dropout(0.5)(pool(x))
-        """
+        hidden_layers = []
         prev_layer = pool_out
         for layer_size in layer_sizes:
             hidden_in = Dense(layer_size, activation='relu')
             hidden_out = Dropout(0.5)(hidden_in(prev_layer))
+            hidden_layers.append(hidden_out)
             prev_layer = hidden_out
         """
         hidden_1 = Dense(256, activation='relu')
@@ -40,11 +41,13 @@ class FeedforwardNN(object):
         hidden_2_out = Dropout(0.5)(hidden_2(hidden_1_out))
         #hidden_3 = Dense(256, activation='relu')
         #hidden_3_out = Dropout(0.5)(hidden_3(hidden_2_out))
+        """
         if self.nb_labels == 2:
             out = Dense(nb_labels, activation='sigmoid')
         else:
             out = Dense(nb_labels, activation='softmax')
-        out = out(hidden_2_out)
+        #out = out(hidden_2_out)
+        out = out(hidden_layers[-1])
         self.model = Model(input=sentence_input, output=out)
 
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
