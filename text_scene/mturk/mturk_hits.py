@@ -2,7 +2,7 @@ import csv
 import sys
 import os
 from collections import defaultdict, Counter
-from boto.mturk.connection import MTurkConnection
+from boto.mturk.connection import MTurkConnection, MTurkRequestError
 from boto.mturk.question import QuestionContent, Question, QuestionForm
 from boto.mturk.question import Overview, AnswerSpecification
 from boto.mturk.question import SelectionAnswer, FormattedContent
@@ -235,7 +235,7 @@ def make_hit(image_url):
     #--------------- CREATE THE HIT -------------------
 
     mtc.create_hit(questions=question_form,
-                   max_assignments=1,
+                   max_assignments=3,
                    title=title,
                    description=description,
                    keywords=keywords,
@@ -323,28 +323,31 @@ def approve_and_pay_all(hits, outfile, log_file, check_valid=True):
             ra = h.RequesterAnnotation
             assignments = mtc.get_assignments(hit.HITId)
             for assignment in assignments:
-                row = [ra]
-                row.append(assignment.WorkerId)
-                rejected = False
-                for question_form_answer in assignment.answers[0]:
-                    if not question_form_answer.fields:
-                        row.append('NA')
-                    for answer in question_form_answer.fields:
-                        row.append(answer)
-                if check_valid:
-                    reject_msg = check_row(row) # returns msg if rejected
-                    if reject_msg:
-                        rejected = True
-                        mtc.reject_assignment(assignment.AssignmentId,
-                                              feedback=reject_msg)
-                        rejected_assignments[ra].append(reject_msg)
-                        rejected_workers[assignment.WorkerId] += 1
-                        with open(log_file, 'a') as log:
-                            log.write(ra + '\n')
-                allhits_writer.writerow([hit.HITId, assignment.WorkerId] + row)
-                if not rejected:
-                    mtc.approve_assignment(assignment.AssignmentId)
-                    writer.writerow(row)
+                try:
+                    row = [ra]
+                    row.append(assignment.WorkerId)
+                    rejected = False
+                    for question_form_answer in assignment.answers[0]:
+                        if not question_form_answer.fields:
+                            row.append('NA')
+                        for answer in question_form_answer.fields:
+                            row.append(answer)
+                    if check_valid:
+                        reject_msg = check_row(row) # returns msg if rejected
+                        if reject_msg:
+                            rejected = True
+                            mtc.reject_assignment(assignment.AssignmentId,
+                                                  feedback=reject_msg)
+                            rejected_assignments[ra].append(reject_msg)
+                            rejected_workers[assignment.WorkerId] += 1
+                            with open(log_file, 'a') as log:
+                                log.write(ra + '\n')
+                    allhits_writer.writerow([hit.HITId, assignment.WorkerId] + row)
+                    if not rejected:
+                        mtc.approve_assignment(assignment.AssignmentId)
+                        writer.writerow(row)
+                except MTurkRequestError:
+                    continue
             mtc.set_reviewing(hit.HITId)
             #mtc.disable_hit(hit.HITId)
     print "Rejected %i assignments:" % len(rejected_assignments)
