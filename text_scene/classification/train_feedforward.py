@@ -2,17 +2,19 @@ import os
 import sys
 import time
 import numpy as np
+import pandas as pd
 from collections import Counter
 from keras.utils.np_utils import to_categorical, probas_to_classes
 from keras.utils.layer_utils import print_summary
-from sklearn.cross_validation import StratifiedKFold
+from sklearn.cross_validation import StratifiedKFold, train_test_split
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import (
     load_bin_vec,
     sentences_df,
     load_dataset,
-    add_unknown_words
+    add_unknown_words,
+    create_unk_labeled_instances
 )
 from corpus_stats.frequency import print_label_frequencies
 from feedforward import FeedforwardNN, train_and_test_model
@@ -29,7 +31,8 @@ beta_2 = 0.999
 epsilon = 1e-08
 
 def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
-          drop_unk=False, word_vecs=None, return_net=False):
+          drop_unk=False, word_vecs=None, return_net=False, cv=5,
+          label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
@@ -60,47 +63,91 @@ def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
     for (name, value) in params:
         print name + ':', value
 
-    skf = StratifiedKFold(y_orig, n_folds=5, shuffle=True, random_state=0)
-    cv_scores = []
-    for i, (train, test) in enumerate(skf):
-        start_time = time.time()
-        nn = None
-        nn = FeedforwardNN(vocab_size,
-                           nb_labels,
-                           emb_dim,
-                           maxlen,
-                           layer_sizes,
-                           embedding_weights,
-                           pool_mode=pool_mode)
-        if i == 0:
-            print_summary(nn.model.layers)
-        nn, acc = train_and_test_model(nn, X[train], y[train], X[test], y[test],
+    if label_unk:
+        unk_df = pd.read_csv(SENTENCES_CSV)
+        unk_df = unk_df[(unk_df.q3 == 'other_unclear')| (unk_df.q4 == 'other_unclear')]
+        df2 = create_unk_labeled_instances(unk_df)
+        df3 = sentences_df(label_unk=df2)
+        X_unk, y_unk, _, _ = load_dataset(df3, pad=True)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, stratify=y_orig, test_size=0.2, random_state=0)
+
+        print "Training and testing without labeled unknown on %i samples" % len(X_train)
+        nn1 = FeedforwardNN(vocab_size,
+                            nb_labels,
+                            emb_dim,
+                            maxlen,
+                            layer_sizes,
+                            embedding_weights,
+                            pool_mode=pool_mode)
+
+        _, acc = train_and_test_model(nn1, X_train, y_train, X_test, y_test,
                                        batch_size, nb_epoch,
                                        lr, beta_1, beta_2, epsilon)
-        if return_net:
-            d = {'X': X,
-                 'y': y,
-                 'word2idx': word2idx,
-                 'l_enc': l_enc,
-                 'y_binary': y_binary,
-                 'labels': labels,
-                 'nb_labels': nb_labels,
-                 'maxlen': maxlen,
-                 'emb_dim': emb_dim,
-                 'vocab_size': vocab_size,
-                 'embedding_weights': embedding_weights}
-            return d, nn
-        cv_scores.append(acc)
-        train_time = time.time() - start_time
-        print('\nLabel frequencies in y[test]')
-        print_label_frequencies((y_orig[test], l_enc))
-        y_pred = nn.model.predict(X[test])
-        y_pred = probas_to_classes(y_pred)
-        c = Counter(y_pred)
-        total = float(len(y_pred))
-        print('\nLabel frequencies in predict(y[test])')
-        for label, count in c.most_common():
-            print l_enc.inverse_transform(label), count, count / total
-        print "\nfold %i/5 - time: %.2f s - acc: %.2f on %i samples" % \
-            (i+1, train_time, acc, len(test))
-    print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
+
+        print "Acc: %.4f" % acc
+
+        print X_train.shape, X_unk.shape
+        X_train = np.vstack((X_train, X_unk))
+        y_train = np.vstack((y_train, to_categorical(y_unk)))
+        print "Training and testing with labeled unknown on %i samples" % len(X_train)
+        nn2 = FeedforwardNN(vocab_size,
+                            nb_labels,
+                            emb_dim,
+                            maxlen,
+                            layer_sizes,
+                            embedding_weights,
+                            pool_mode=pool_mode)
+
+        _, acc = train_and_test_model(nn2, X_train, y_train, X_test, y_test,
+                                       batch_size, nb_epoch,
+                                       lr, beta_1, beta_2, epsilon)
+
+        print "Acc: %.4f" % acc
+
+    elif cv:
+        skf = StratifiedKFold(y_orig, n_folds=cv, shuffle=True, random_state=0)
+        cv_scores = []
+        for i, (train, test) in enumerate(skf):
+            start_time = time.time()
+            nn = None
+            nn = FeedforwardNN(vocab_size,
+                               nb_labels,
+                               emb_dim,
+                               maxlen,
+                               layer_sizes,
+                               embedding_weights,
+                               pool_mode=pool_mode)
+            if i == 0:
+                print_summary(nn.model.layers)
+            nn, acc = train_and_test_model(nn, X[train], y[train], X[test], y[test],
+                                           batch_size, nb_epoch,
+                                           lr, beta_1, beta_2, epsilon)
+            if return_net:
+                d = {'X': X,
+                     'y': y,
+                     'word2idx': word2idx,
+                     'l_enc': l_enc,
+                     'y_binary': y_binary,
+                     'labels': labels,
+                     'nb_labels': nb_labels,
+                     'maxlen': maxlen,
+                     'emb_dim': emb_dim,
+                     'vocab_size': vocab_size,
+                     'embedding_weights': embedding_weights}
+                return d, nn
+            cv_scores.append(acc)
+            train_time = time.time() - start_time
+            print('\nLabel frequencies in y[test]')
+            print_label_frequencies((y_orig[test], l_enc))
+            y_pred = nn.model.predict(X[test])
+            y_pred = probas_to_classes(y_pred)
+            c = Counter(y_pred)
+            total = float(len(y_pred))
+            print('\nLabel frequencies in predict(y[test])')
+            for label, count in c.most_common():
+                print l_enc.inverse_transform(label), count, count / total
+            print "\nfold %i/5 - time: %.2f s - acc: %.4f on %i samples" % \
+                (i+1, train_time, acc, len(test))
+        print "Avg cv accuracy: %.4f" % np.mean(cv_scores)
