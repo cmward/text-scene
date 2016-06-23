@@ -440,16 +440,13 @@ def fleiss_kappa(results_csv, labels='full'):
     matrix = make_kappa_matrix(datadict, labels=labels)
     return fleiss.kappa(matrix)
 
-def write_rejected_no_majority_list():
+def write_no_majority_list():
     with open(REDO_IMGS_FILE, 'a') as r:
         datadict = make_datadict(COMBINED_MTURK_RESULTS_CSV, keep_url=True)
         voted_dict = majority_vote_dict(datadict, keep_all=True)
         for img_file, answers in voted_dict.items():
             if any(isinstance(a, tuple) for a in answers):
                 r.write(img_file + '\n')
-        with open(REJECTED_IMGS_FILE, 'r') as f:
-            for line in f:
-                r.write(line.strip() + '\n')
 
 def combine_csvs(csv1, csv2, outcsv):
     with open(csv1,'rb') as c1, open(csv2,'rb') as c2, open(outcsv, 'wb') as outfile:
