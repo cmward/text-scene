@@ -17,4 +17,6 @@ IMG_URLS = pjoin(DATAFILES, 'image_urls.csv')
 KEY_FILE = os.path.abspath('../../data/rootkey.csv')
 REDO_IMGS_FILE = pjoin(DATAFILES, 'redo_images.txt')
 INSTRUCTIONS_HTML = pjoin(ROOT, 'mturk/instructions.html')
-BATCH_URLS_CSV = pjoin(ROOT, 'batch_urls.csv')
+BATCH_URLS_CSV = pjoin(DATAFILES, 'batch_urls.csv')
+COMBINED_BATCH_RESULTS_CSV = pjoin(
+    DATAFILES, 'batch_results/batch_results.csv')
