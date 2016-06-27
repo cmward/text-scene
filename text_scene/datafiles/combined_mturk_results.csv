@@ -1,4 +1,3 @@
-image_url,worker_id,q1,q2,q3,q4
 http://s3.amazonaws.com/caption-scene/upload_batches/0_1000/1081595465.jpg,AZD3HQEB7KVNT,1,0,0,NA
 http://s3.amazonaws.com/caption-scene/upload_batches/6000_7000/2570026554.jpg,AZD3HQEB7KVNT,1,0,0,NA
 http://s3.amazonaws.com/caption-scene/upload_batches/20000_21000/4571650064.jpg,AZD3HQEB7KVNT,0,0,3,NA
