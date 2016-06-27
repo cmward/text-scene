@@ -34,66 +34,6 @@ q4map = {'0': 'body_of_water',
          '4': 'other_unclear',
          'NA': 'NA'}
 
-def url2filename(url):
-    return url.split('/')[-1]
-
-def load_bin_vec(fname, vocab):
-    """
-    Loads 300x1 word vecs from Google (Mikolov) word2vec. Taken from
-    CNN_sentence https://github.com/yoonkim/CNN_sentence
-    """
-    word_vecs = {}
-    with open(fname, "rb") as f:
-        header = f.readline()
-        vocab_size, layer1_size = map(int, header.split())
-        binary_len = np.dtype('float32').itemsize * layer1_size
-        for line in range(vocab_size):
-            word = []
-            while True:
-                ch = f.read(1)
-                if ch == ' ':
-                    word = ''.join(word)
-                    break
-                if ch != '\n':
-                    word.append(ch)
-            if word in vocab:
-               word_vecs[word] = np.fromstring(f.read(binary_len),
-                                               dtype='float32')
-            else:
-                f.read(binary_len)
-    return word_vecs
-
-def add_unknown_words(word_vecs, vocab, k=300):
-    unknown_words = []
-    for word in vocab:
-        if word not in word_vecs:
-            unknown_words.append(word)
-            word_vecs[word] = np.random.uniform(-0.25,0.25,k)
-    word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
-    print "Added %i unknown words to word vectors." % len(unknown_words)
-    print unknown_words
-
-def write_from_batch_csv(batch_csv, outcsv):
-    """write results csv from mturk generated batch results"""
-    df = pd.read_csv(batch_csv)
-    with open(outcsv, 'wb') as out:
-        writer = csv.writer(out)
-        writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
-        for _, row in df.iterrows():
-            img_url = row['Input.img_url']
-            worker_id = row['WorkerId']
-            q1 = row['Answer.Answer_1']
-            q2 = row['Answer.Answer_2']
-            try:
-                q3 = int(row['Answer.Answer_3'])
-            except ValueError:
-                q3 = row['Answer.Answer_3']
-            try:
-                q4 = int(row['Answer.Answer_4'])
-            except ValueError:
-                q4 = row['Answer.Answer_4']
-            writer.writerow([img_url, worker_id, q1, q2, q3, q4])
-
 def make_datadict(results_csv, keep_url=False):
     """
     Read in the results of MTurk annotation and create
@@ -153,36 +93,6 @@ def write_sentence_csv(datadict, captions_file, out_csv):
                 writer.writerow([sentence] + annotations + [img_file])
     print "Wrote sentence csv with %i sentences." % n_sents
 
-def find_unlabeled_sents(captions_file, df):
-    """
-    Add sentences that match keywords for each label to df
-    """
-    #TODO incomplete
-    body_of_water_words = ["beach", "lake", "ocean", "sea"]
-    in_work_ed_words = ["office", "classroom", "in a shop", "in a store"]
-    keywords = {'outdoors/man-made/body_of_water': body_of_water_words,
-                'indoors/man-made/work_education': in_work_ed_words}
-
-    captions = defaultdict(list)
-    with open(captions_file, "r") as cf:
-        for line in cf:
-            img, sentence = line.strip().split('\t')
-            img = img.split('#')[0]
-            captions[img].append(sentence)
-
-    match_sentences = []
-    annotated, not_annotated = get_annotated_imgs()
-    for img in not_annotated:
-        match = False
-        sentences = [s.strip().split() for s in captions[img]]
-        for sentence in sentences:
-            for (label, words) in keywords.items():
-                if any(word in sentence for word in words) and not match:
-                    match_sentences.append((label, sentences, img))
-                    match = True
-
-    return match_sentences
-
 def get_img_lists(img_url_file=IMG_URLS, log_file=ANNOTATED_IMGS_FILE,
                   keep_url=False):
     all_images = set()
@@ -204,44 +114,39 @@ def get_img_lists(img_url_file=IMG_URLS, log_file=ANNOTATED_IMGS_FILE,
     not_annotated = list(all_images - annotated)
     return annotated, not_annotated
 
-def write_batch_urls_csv(img_urls, n_imgs=100):
+######################################
+### Annotation using MTurk layout  ###
+######################################
+
+def write_from_batch_csv(batch_csv, outcsv):
+    """write results csv from mturk generated batch results"""
+    df = pd.read_csv(batch_csv)
+    with open(outcsv, 'wb') as out:
+        writer = csv.writer(out)
+        writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
+        for _, row in df.iterrows():
+            img_url = row['Input.img_url']
+            worker_id = row['WorkerId']
+            q1 = row['Answer.Answer_1']
+            q2 = row['Answer.Answer_2']
+            try:
+                q3 = int(row['Answer.Answer_3'])
+            except ValueError:
+                q3 = row['Answer.Answer_3']
+            try:
+                q4 = int(row['Answer.Answer_4'])
+            except ValueError:
+                q4 = row['Answer.Answer_4']
+            writer.writerow([img_url, worker_id, q1, q2, q3, q4])
+
+def write_batch_urls_csv(img_urls, outcsv=BATCH_URLS_CSV, n_imgs=100):
+    """get image urls for unannotated images and write them to
+    `outcsv`."""
     pass
 
-def write_annotated_urls(urls):
+def write_annotated_urls(img_urls):
+    """given a list of image urls, write them to `annotated_imgs.txt`."""
     pass
-
-def create_unk_labeled_instances_row(sentence, q1, q2, q3, q4, img_file):
-    if q2 == 'man-made':
-        new_q3 = [l for l in q3map.values()
-                  if l not in ['NA', 'other_unclear']]
-        new_sentence = [sentence for _ in range(len(new_q3))]
-        new_q1 = [q1 for _ in range(len(new_q3))]
-        new_q2 = [q2 for _ in range(len(new_q3))]
-        new_q4 = ['NA' for _ in range(len(new_q3))]
-        new_img_file = [img_file for _ in range(len(new_q3))]
-
-    elif q2 == 'natural':
-        new_q4 = [l for l in q4map.values()
-                  if l not in ['NA', 'other_unclear']]
-        new_sentence = [sentence for _ in range(len(new_q4))]
-        new_q1 = [q1 for _ in range(len(new_q4))]
-        new_q2 = [q2 for _ in range(len(new_q4))]
-        new_q3 = ['NA' for _ in range(len(new_q4))]
-        new_img_file = [img_file for _ in range(len(new_q4))]
-
-    return pd.DataFrame({'sentence': new_sentence, 'q1': new_q1,
-                        'q2': new_q2, 'q3': new_q3, 'q4': new_q4,
-                        'img_file': new_img_file})
-
-def create_unk_labeled_instances(df):
-    """Create a df by mapping any other/unclear image to every possible
-    leaf-level label."""
-    unk_df = df[(df.q3 == 'other_unclear') | (df.q4 == 'other_unclear')]
-    new_dfs = []
-    for _, row in unk_df.iterrows():
-        new_dfs.append(create_unk_labeled_instances_row(*row))
-    unk_labeled_df = pd.concat(new_dfs)
-    return unk_labeled_df
 
 def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
                  label_unk=None, distant=None):
@@ -334,6 +239,10 @@ def load_dataset(df, ngram_order=1, pad=False):
         X = pad_sequences(X_ind, maxlen=79)
     return X, y, word2id, l_enc
 
+#######################
+### Majority voting ###
+#######################
+
 def write_majority_vote_csv(results_csv, outfile):
     """
     Given the results of crowdsourced annotation with more than 1 assignment
@@ -418,6 +327,10 @@ def majority_vote_dict(datadict, keep_all=True):
         (nb_no_majority_questions, nb_no_majority_imgs)
     return voted_datadict
 
+##################################
+### Annotation result analysis ###
+##################################
+
 def unique_workers(results_csv):
     worker_ids = Counter()
     with open(results_csv) as csvfile:
@@ -484,6 +397,10 @@ def write_no_majority_list():
             if any(isinstance(a, tuple) for a in answers):
                 r.write(img_file + '\n')
 
+########################
+### Helper functions ###
+########################
+
 def combine_csvs(csv1, csv2, outcsv):
     with open(csv1,'rb') as c1, open(csv2,'rb') as c2, open(outcsv, 'wb') as outfile:
         c1reader = csv.reader(c1)
@@ -497,3 +414,42 @@ def combine_csvs(csv1, csv2, outcsv):
     print "Combined %s and %s into %s." % (basename(csv1),
                                            basename(csv2),
                                            basename(outcsv))
+
+def url2filename(url):
+    return url.split('/')[-1]
+
+def load_bin_vec(fname, vocab):
+    """
+    Loads 300x1 word vecs from Google (Mikolov) word2vec. Taken from
+    CNN_sentence https://github.com/yoonkim/CNN_sentence
+    """
+    word_vecs = {}
+    with open(fname, "rb") as f:
+        header = f.readline()
+        vocab_size, layer1_size = map(int, header.split())
+        binary_len = np.dtype('float32').itemsize * layer1_size
+        for line in range(vocab_size):
+            word = []
+            while True:
+                ch = f.read(1)
+                if ch == ' ':
+                    word = ''.join(word)
+                    break
+                if ch != '\n':
+                    word.append(ch)
+            if word in vocab:
+               word_vecs[word] = np.fromstring(f.read(binary_len),
+                                               dtype='float32')
+            else:
+                f.read(binary_len)
+    return word_vecs
+
+def add_unknown_words(word_vecs, vocab, k=300):
+    unknown_words = []
+    for word in vocab:
+        if word not in word_vecs:
+            unknown_words.append(word)
+            word_vecs[word] = np.random.uniform(-0.25,0.25,k)
+    word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
+    print "Added %i unknown words to word vectors." % len(unknown_words)
+    print unknown_words
