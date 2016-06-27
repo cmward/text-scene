@@ -114,21 +114,45 @@ def get_img_lists(img_url_file=IMG_URLS, log_file=ANNOTATED_IMGS_FILE,
     not_annotated = list(all_images - annotated)
     return annotated, not_annotated
 
-######################################
-### Annotation using MTurk layout  ###
-######################################
+#########################################
+### Annotation using MTurk layout/UI  ###
+#########################################
 
-def write_from_batch_csv(batch_csv, outcsv):
-    """write results csv from mturk generated batch results"""
-    df = pd.read_csv(batch_csv)
+def write_batch_urls_csv(img_urls, outcsv=BATCH_URLS_CSV, n_imgs=100):
+    """get image urls for unannotated images and write them to
+    `outcsv`."""
     with open(outcsv, 'wb') as out:
         writer = csv.writer(out)
-        writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
+        writer.writerow(['img_url'])
+        for img_url in img_urls:
+            writer.writerow([img_url])
+
+def write_annotated_urls(img_urls, outfile=ANNOTATED_IMGS_FILE):
+    """given a list of image urls, write them to `annotated_imgs.txt`."""
+    with open(outfile, 'a') as f:
+        for img_url in img_urls:
+            f.write(img_url + '\n')
+
+def make_batch(n_imgs=100):
+    """Create image url csv file for images to be annotated in the batch
+    and write those image urls to annotated_imgs.txt."""
+    _, unannotated = get_img_lists(keep_url=True)
+    to_annotate = np.random.choice(unannotated, size=(n_imgs,), replace=False)
+    write_batch_urls_csv(to_annotate)
+    write_annotated_urls(to_annotate)
+
+def write_results_from_batch_csv(batch_csv, outcsv):
+    """write results csv from mturk generated batch results.
+    Appends to `outcsv`."""
+    df = pd.read_csv(batch_csv)
+    with open(outcsv, 'ab') as out:
+        writer = csv.writer(out)
+        #writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
         for _, row in df.iterrows():
             img_url = row['Input.img_url']
             worker_id = row['WorkerId']
-            q1 = row['Answer.Answer_1']
-            q2 = row['Answer.Answer_2']
+            q1 = int(row['Answer.Answer_1'])
+            q2 = int(row['Answer.Answer_2'])
             try:
                 q3 = int(row['Answer.Answer_3'])
             except ValueError:
@@ -137,16 +161,15 @@ def write_from_batch_csv(batch_csv, outcsv):
                 q4 = int(row['Answer.Answer_4'])
             except ValueError:
                 q4 = row['Answer.Answer_4']
+            if pd.isnull(q4):
+                q4 = 'NA'
+            elif pd.isnull(q3):
+                q3 = 'NA'
             writer.writerow([img_url, worker_id, q1, q2, q3, q4])
 
-def write_batch_urls_csv(img_urls, outcsv=BATCH_URLS_CSV, n_imgs=100):
-    """get image urls for unannotated images and write them to
-    `outcsv`."""
-    pass
-
-def write_annotated_urls(img_urls):
-    """given a list of image urls, write them to `annotated_imgs.txt`."""
-    pass
+####################
+### Data loaders ###
+####################
 
 def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
                  label_unk=None, distant=None):
@@ -405,6 +428,7 @@ def combine_csvs(csv1, csv2, outcsv):
     with open(csv1,'rb') as c1, open(csv2,'rb') as c2, open(outcsv, 'wb') as outfile:
         c1reader = csv.reader(c1)
         c2reader = csv.reader(c2)
+        next(c1reader)
         next(c2reader)
         writer = csv.writer(outfile)
         for row in c1reader:
