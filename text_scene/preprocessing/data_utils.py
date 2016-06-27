@@ -14,7 +14,8 @@ from paths import (
     ANNOTATED_IMGS_FILE,
     REDO_IMGS_FILE,
     IMG_URLS,
-    COMBINED_MTURK_RESULTS_CSV
+    COMBINED_MTURK_RESULTS_CSV,
+    BATCH_URLS_CSV
 )
 
 q1map = {'0': 'indoors', '1': 'outdoors'}
@@ -72,6 +73,27 @@ def add_unknown_words(word_vecs, vocab, k=300):
     print "Added %i unknown words to word vectors." % len(unknown_words)
     print unknown_words
 
+def write_from_batch_csv(batch_csv, outcsv):
+    """write results csv from mturk generated batch results"""
+    df = pd.read_csv(batch_csv)
+    with open(outcsv, 'wb') as out:
+        writer = csv.writer(out)
+        writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
+        for _, row in df.iterrows():
+            img_url = row['Input.img_url']
+            worker_id = row['WorkerId']
+            q1 = row['Answer.Answer_1']
+            q2 = row['Answer.Answer_2']
+            try:
+                q3 = int(row['Answer.Answer_3'])
+            except ValueError:
+                q3 = row['Answer.Answer_3']
+            try:
+                q4 = int(row['Answer.Answer_4'])
+            except ValueError:
+                q4 = row['Answer.Answer_4']
+            writer.writerow([img_url, worker_id, q1, q2, q3, q4])
+
 def make_datadict(results_csv, keep_url=False):
     """
     Read in the results of MTurk annotation and create
@@ -125,7 +147,7 @@ def write_sentence_csv(datadict, captions_file, out_csv):
                 n_sents += 1
                 sentence = ' '.join(split_line[1:]).lower()
                 annotations = datadict[img_file]
-                if len(annotations) != 4:
+                if len(annotations) != 4: # need to have 4 annotation fields
                     annotations = annotations[0]
                 assert len(annotations) == 4
                 writer.writerow([sentence] + annotations + [img_file])
@@ -135,6 +157,7 @@ def find_unlabeled_sents(captions_file, df):
     """
     Add sentences that match keywords for each label to df
     """
+    #TODO incomplete
     body_of_water_words = ["beach", "lake", "ocean", "sea"]
     in_work_ed_words = ["office", "classroom", "in a shop", "in a store"]
     keywords = {'outdoors/man-made/body_of_water': body_of_water_words,
@@ -157,22 +180,35 @@ def find_unlabeled_sents(captions_file, df):
                 if any(word in sentence for word in words) and not match:
                     match_sentences.append((label, sentences, img))
                     match = True
-    
+
     return match_sentences
 
-def get_annotated_imgs(img_url_file=IMG_URLS, log_file=ANNOTATED_IMGS_FILE):
+def get_img_lists(img_url_file=IMG_URLS, log_file=ANNOTATED_IMGS_FILE,
+                  keep_url=False):
     all_images = set()
     with open(img_url_file, 'rb') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
-            all_images.add(url2filename(row[0]))
+            if keep_url:
+                all_images.add(row[0])
+            else:
+                all_images.add(url2filename(row[0]))
     annotated = set()
     with open(log_file, 'r') as log:
         for line in log:
-            annotated.add(url2filename(line.strip()))
+            if keep_url:
+                annotated.add(line.strip())
+            else:
+                annotated.add(url2filename(line.strip()))
     not_annotated = list(all_images - annotated)
     return annotated, not_annotated
+
+def write_batch_urls_csv(img_urls, n_imgs=100):
+    pass
+
+def write_annotated_urls(urls):
+    pass
 
 def create_unk_labeled_instances_row(sentence, q1, q2, q3, q4, img_file):
     if q2 == 'man-made':

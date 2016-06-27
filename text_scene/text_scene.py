@@ -5,7 +5,7 @@ from preprocessing.data_utils import (
     write_sentence_csv,
     majority_vote_dict,
     write_majority_vote_csv,
-    write_rejected_no_majority_list,
+    write_no_majority_list,
     combine_csvs,
     fleiss_kappa,
     unique_workers
