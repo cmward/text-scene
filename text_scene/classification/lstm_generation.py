@@ -14,10 +14,10 @@ Adapted from
 github.com/fchollet/keras/blob/master/examples/lstm_text_generation.py
 """
 
-df = sentences_df(labels='full')
+df = sentences_df(labels='function')
 labels = np.unique(df.columns)
 
-df_rest = df[df.label == 'indoors/man-made/restaurant']
+df_rest = df[df.label == 'restaurant']
 sents_rest = df_rest['sentence'].values
 text = ' '.join(sent for sent in sents_rest)
 print 'corpus length:', len(text)
@@ -68,8 +68,9 @@ for iteration in range(1, 60):
     print
     print '-' * 50
     print 'Iteration', iteration
-    model.fit(X, y, batch_size=128, nb_epoch=1)
+    model.fit(X, y, batch_size=64, nb_epoch=1)
 
+    if iteration % 5 != 0: continue
     start_index = random.randint(0, len(text) - maxlen - 1)
 
     for diversity in [0.2, 0.5, 1.0, 1.2]:
