@@ -15,7 +15,9 @@ from paths import (
     REDO_IMGS_FILE,
     IMG_URLS,
     COMBINED_MTURK_RESULTS_CSV,
-    BATCH_URLS_CSV
+    MTURK_RESULTS_CSV,
+    BATCH_URLS_CSV,
+    COMBINED_BATCH_RESULTS_CSV
 )
 
 q1map = {'0': 'indoors', '1': 'outdoors'}
@@ -125,13 +127,13 @@ def write_batch_urls_csv(img_urls, outcsv=BATCH_URLS_CSV, n_imgs=100):
         writer = csv.writer(out)
         writer.writerow(['img_url'])
         for img_url in img_urls:
-            writer.writerow([img_url])
+            writer.writerow([img_url.strip()])
 
 def write_annotated_urls(img_urls, outfile=ANNOTATED_IMGS_FILE):
     """given a list of image urls, write them to `annotated_imgs.txt`."""
     with open(outfile, 'a') as f:
         for img_url in img_urls:
-            f.write(img_url + '\n')
+            f.write(img_url.strip() + '\n')
 
 def make_batch(n_imgs=100):
     """Create image url csv file for images to be annotated in the batch
@@ -149,8 +151,8 @@ def write_results_from_batch_csv(batch_csv, outcsv):
         writer = csv.writer(out)
         #writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
         for _, row in df.iterrows():
-            img_url = row['Input.img_url']
-            worker_id = row['WorkerId']
+            img_url = row['Input.img_url'].strip()
+            worker_id = row['WorkerId'].strip()
             q1 = int(row['Answer.Answer_1'])
             q2 = int(row['Answer.Answer_2'])
             try:
@@ -166,6 +168,15 @@ def write_results_from_batch_csv(batch_csv, outcsv):
             elif pd.isnull(q3):
                 q3 = 'NA'
             writer.writerow([img_url, worker_id, q1, q2, q3, q4])
+
+def append_batch_results(batch_results_csv=COMBINED_BATCH_RESULTS_CSV,
+                         mturk_results_csv=MTURK_RESULTS_CSV):
+    with open(mturk_results_csv, 'ab') as mcsv, open(batch_results_csv, 'rb') as bcsv:
+        reader = csv.reader(bcsv)
+        next(reader)
+        writer = csv.writer(mcsv, lineterminator='\n')
+        for row in reader:
+            writer.writerow(row)
 
 ####################
 ### Data loaders ###
