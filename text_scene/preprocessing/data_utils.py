@@ -4,6 +4,8 @@ import pandas as pd
 from math import ceil
 from os.path import basename
 from collections import defaultdict, Counter
+from nltk.stem import PorterStemmer
+from nltk.corpus import stopwords
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from keras.preprocessing.sequence import pad_sequences
@@ -232,7 +234,7 @@ def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
         df = df.drop(['q1', 'q2', 'q3', 'q4'], 1)
         return df
 
-def load_dataset(df, ngram_order=1, pad=False):
+def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     """
     Creates numpy arrays out of a dataframe. If `pad` is set to
     `True`, X array will be of size (n_samples, maxlen), where each
@@ -244,11 +246,23 @@ def load_dataset(df, ngram_order=1, pad=False):
     """
     sentences = df['sentence'].values
     vocab = []
+    stemmer = PorterStemmer()
+    stop = stopwords.words('english')
     for sentence in sentences:
-        sentence = sentence.split()
+        if omit_stop:
+            sentence = [w
+                        for w in sentence.split()
+                        if w not in stop and w not in "?.,-!"]
+        else:
+            sentence = [w
+                        for w in sentence.split()
+                        if w not in "?.,-!"]
         if ngram_order == 1:
             for word in sentence:
-                vocab.append(word)
+                if stem:
+                    vocab.append(stemmer.stem(word))
+                else:
+                    vocab.append(word)
         else:
             for ngram in zip(*[sentence[i:] for i in range(ngram_order)]):
                 vocab.append(ngram)
@@ -256,9 +270,19 @@ def load_dataset(df, ngram_order=1, pad=False):
     word2id = {w:i for i,w in enumerate(set(vocab), start=1)}
     X_ind = []
     for i,sentence in enumerate(sentences):
-        sentence = sentence.split()
+        if omit_stop:
+            sentence = [w
+                        for w in sentence.split()
+                        if w not in stop and w not in "?.,-!"]
+        else:
+            sentence = [w 
+                        for w in sentence.split()
+                        if w not in "?.,-!"]
         if ngram_order == 1:
-            indices = [word2id[w] for w in sentence]
+            if stem:
+                indices = [word2id[stemmer.stem(w)] for w in sentence]
+            else:
+                indices = [word2id[w] for w in sentence]
             X_ind.append(indices)
         else:
             indices = [word2id[n] for n in

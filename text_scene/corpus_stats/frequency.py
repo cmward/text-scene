@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 from collections import defaultdict, Counter
+from nltk.corpus import stopwords
 
-def word_freq_by_labels(df):
+def word_freq_by_labels(df, omit_stop=False):
     """
     Given a dataframe of labeled sentences, return
     a dictionary of word frequencies given a label.
@@ -19,7 +20,13 @@ def word_freq_by_labels(df):
     freqdict = defaultdict(Counter)
     for _, row in df.iterrows():
         label = row['label']
-        tokens = row['sentence'].split()
+        if omit_stop:
+            stop = stopwords.words('english')
+            tokens = [w
+                      for w in row['sentence'].split()
+                      if w not in stop]
+        else:
+            tokens = row['sentence'].split()
         freqdict[label].update(tokens)
     for label, count_dict in freqdict.items():
         total = sum(count_dict.values())
