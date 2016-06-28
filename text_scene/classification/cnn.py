@@ -10,7 +10,6 @@ from keras.layers import Convolution1D, MaxPooling1D
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import BatchNormalization
 from keras.regularizers import l2
-from keras.constraints import maxnorm
 from keras.optimizers import Adam
 from keras import backend as K
 
@@ -75,7 +74,7 @@ class KmaxCNN(object):
     """
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters, dropout_p,
-                 maxnorm_val, trainable_embeddings, pretrained_embeddings):
+                 trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
         self.k = 4
         if pretrained_embeddings is False:
@@ -101,12 +100,10 @@ class KmaxCNN(object):
         merged = merge(conv_pools, mode='concat')
         dropped = Dropout(dropout_p[1])(merged)
         if nb_labels == 2:
-            out = Dense(1, activation='sigmoid',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(1, activation='sigmoid')
             out = out(dropped)
         else:
-            out = Dense(nb_labels, activation='softmax',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(nb_labels, activation='softmax')
             out = out(dropped)
         self.model = Model(input=sentence_input, output=out)
 
@@ -117,7 +114,7 @@ class ParallelCNN(object):
     """
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters, dropout_p,
-                 maxnorm_val, trainable_embeddings, pretrained_embeddings):
+                 trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
         if pretrained_embeddings is False:
             embedding_weights = None
@@ -141,12 +138,10 @@ class ParallelCNN(object):
         merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
         if nb_labels == 2:
-            out = Dense(1, activation='sigmoid',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(1, activation='sigmoid')
             out = out(dropout)
         else:
-            out = Dense(nb_labels, activation='softmax',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(nb_labels, activation='softmax')
             out = out(dropout)
         self.model = Model(input=sentence_input, output=out)
 
@@ -210,7 +205,7 @@ class ParallelColumnCNN(object):
     # (79,10) filters, add parallel conv layer k = ~100
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters, dropout_p,
-                 maxnorm_val, trainable_embeddings, pretrained_embeddings):
+                 trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
         self.k = 100
         if pretrained_embeddings is False:
@@ -254,18 +249,16 @@ class ParallelColumnCNN(object):
         merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
         if nb_labels == 2:
-            out = Dense(1, activation='sigmoid',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(1, activation='sigmoid')
             out = out(dropout)
         else:
-            out = Dense(nb_labels, activation='softmax',
-                        W_constraint=maxnorm(maxnorm_val))
+            out = Dense(nb_labels, activation='softmax')
             out = out(dropout)
         self.model = Model(input=sentence_input, output=out)
 
 def create_model(vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters,
-                 dropout_p, maxnorm_val, trainable_embeddings,
+                 dropout_p, trainable_embeddings,
                  pretrained_embeddings, model_type='parallel'):
     """
     Create CNN with architecture specified by `model_type.`
@@ -280,17 +273,17 @@ def create_model(vocab_size, nb_labels, emb_dim, maxlen,
     elif model_type == 'parallel':
         cnn = ParallelCNN(vocab_size, nb_labels, emb_dim, maxlen,
                           embedding_weights, filter_hs, nb_filters,
-                          dropout_p, maxnorm_val, trainable_embeddings,
+                          dropout_p, trainable_embeddings,
                           pretrained_embeddings)
     elif model_type == 'kmax':
         cnn = KmaxCNN(vocab_size, nb_labels, emb_dim, maxlen,
                       embedding_weights, filter_hs, nb_filters,
-                      dropout_p, maxnorm_val, trainable_embeddings,
+                      dropout_p, trainable_embeddings,
                       pretrained_embeddings)
     elif model_type == 'col':
         cnn = ParallelColumnCNN(vocab_size, nb_labels, emb_dim, maxlen,
                                 embedding_weights, filter_hs, nb_filters,
-                                dropout_p, maxnorm_val, trainable_embeddings,
+                                dropout_p, trainable_embeddings,
                                 pretrained_embeddings)
     else:
         RuntimeError('Must enter a valid model type.')

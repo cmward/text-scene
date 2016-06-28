@@ -22,9 +22,8 @@ from paths import SENTENCES_CSV
 # Model hyperparameters
 emb_dim = 300
 filter_hs = [2,3,4]
-nb_filters = 16
+nb_filters = 32
 dropout_p = [0.2, 0.5] # [input, softmax]
-maxnorm_val = 3
 trainable_embeddings = True
 pretrained_embeddings = True
 
@@ -77,7 +76,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
     if setup_only:
         cnn = create_model(vocab_size, nb_labels, emb_dim, maxlen,
                            embedding_weights, filter_hs, nb_filters,
-                           dropout_p, maxnorm_val, trainable_embeddings,
+                           dropout_p, trainable_embeddings,
                            pretrained_embeddings, model_type=model_type)
         return {'X': X,
                 'y': y,
@@ -93,7 +92,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                 'cnn': cnn}
 
     params = [('filter_hs',filter_hs), ('nb_filters',nb_filters),
-              ('dropout_p',dropout_p), ('maxnorm_val',maxnorm_val),
+              ('dropout_p',dropout_p), 
               ('trainable_embeddings',trainable_embeddings),
               ('pretrained_embeddings',pretrained_embeddings),
               ('batch_size',batch_size), ('nb_epoch',nb_epoch),
@@ -103,7 +102,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
     for (name, value) in params:
         print name + ':', value
 
-    skf = StratifiedKFold(y_orig, n_folds=5, shuffle=True, random_state=0)
+    skf = StratifiedKFold(y_orig, n_folds=10, shuffle=True, random_state=0)
     cv_scores = []
     for i, (train, test) in enumerate(skf):
         start_time = time.time()
@@ -116,7 +115,6 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                            filter_hs,
                            nb_filters,
                            dropout_p,
-                           maxnorm_val,
                            trainable_embeddings,
                            pretrained_embeddings,
                            model_type=model_type)
@@ -136,6 +134,6 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
         print('\nLabel frequencies in predict(y[test])')
         for label, count in c.most_common():
             print l_enc.inverse_transform(label), count, count / total
-        print "fold %i/5 - time: %.2f s - acc: %.4f on %i samples" % \
+        print "fold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
             (i+1, train_time, acc, len(test))
     print "Avg cv accuracy: %.4f" % np.mean(cv_scores)

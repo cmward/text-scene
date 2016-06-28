@@ -148,6 +148,6 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
             print('\nLabel frequencies in predict(y[test])')
             for label, count in c.most_common():
                 print l_enc.inverse_transform(label), count, count / total
-            print "\nfold %i/5 - time: %.2f s - acc: %.4f on %i samples" % \
+            print "\nfold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
                 (i+1, train_time, acc, len(test))
         print "Avg cv accuracy: %.4f" % np.mean(cv_scores)
