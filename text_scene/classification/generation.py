@@ -4,7 +4,7 @@ import os
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
-from keras.layers import LSTM
+from keras.layers import LSTM, GRU
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import sentences_df
 
@@ -14,10 +14,11 @@ Adapted from
 github.com/fchollet/keras/blob/master/examples/lstm_text_generation.py
 """
 
-df = sentences_df(labels='function')
+input_label_set = raw_input('Enter label set: ')
+df = sentences_df(labels=input_label_set)
 labels = np.unique(df.columns)
 
-input_label = raw_input('Enter function category: ')
+input_label = raw_input('Enter label: ')
 df = df[df.label == input_label]
 sents = df['sentence'].values
 text = ' '.join(sent for sent in sents)
@@ -49,8 +50,8 @@ for i, sentence in enumerate(sentences):
 # build the model: 2 stacked LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
-model.add(LSTM(512, return_sequences=False))
+model.add(GRU(512, return_sequences=True, input_shape=(maxlen, len(chars))))
+model.add(GRU(512, return_sequences=False))
 model.add(Dropout(0.2))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
@@ -71,7 +72,6 @@ for iteration in range(1, 61):
     print 'Iteration', iteration
     model.fit(X, y, batch_size=64, nb_epoch=1)
 
-    if iteration % 10 != 0: continue
     start_index = random.randint(0, len(text) - maxlen - 1)
 
     for diversity in [0.2, 0.5, 1.0, 1.2]:
