@@ -1,5 +1,6 @@
 import random
 import sys
+import os
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
