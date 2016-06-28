@@ -349,7 +349,7 @@ def majority_vote_dict(datadict, keep_all=True):
                     no_majority_img = True
                     nb_no_majority_questions += 1
             if no_majority_img:
-                print "no majority: %s" % img_file
+                #print "no majority: %s" % img_file
                 nb_no_majority_imgs += 1
             voted_datadict[img_file] = majority_answers
             if not keep_all:
