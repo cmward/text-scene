@@ -39,7 +39,7 @@ class FeedforwardNN(object):
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out
         if self.nb_labels == 2:
-            out = Dense(nb_labels, activation='sigmoid')
+            out = Dense(1, activation='sigmoid')
         else:
             out = Dense(nb_labels, activation='softmax')
         out = out(hidden_layers[-1])
