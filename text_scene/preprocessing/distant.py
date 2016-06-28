@@ -2,6 +2,22 @@ import numpy as np
 import pandas as pd
 from collections import defaultdict
 
+q1map = {'0': 'indoors', '1': 'outdoors'}
+q2map = {'0': 'man-made', '1': 'natural'}
+q3map = {'0': 'transportation_urban',
+         '1': 'restaurant',
+         '2': 'recreation',
+         '3': 'domestic',
+         '4': 'work_education',
+         '5': 'other_unclear',
+         'NA': 'NA'}
+q4map = {'0': 'body_of_water',
+         '1': 'field',
+         '2': 'mountain',
+         '3': 'forest_jungle',
+         '4': 'other_unclear',
+         'NA': 'NA'}
+
 def create_unk_labeled_instances_row(sentence, q1, q2, q3, q4, img_file):
     if q2 == 'man-made':
         new_q3 = [l for l in q3map.values()

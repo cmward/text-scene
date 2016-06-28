@@ -30,7 +30,7 @@ beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
 
-def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
+def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
           drop_unk=False, word_vecs=None, return_net=False, cv=5,
           label_unk=False):
     print "Loading data..."
@@ -65,7 +65,7 @@ def train(label_set='full', pool_mode='max', layer_sizes=[256, 256],
 
     if label_unk:
         unk_df = pd.read_csv(SENTENCES_CSV)
-        unk_df = unk_df[(unk_df.q3 == 'other_unclear')| (unk_df.q4 == 'other_unclear')]
+        unk_df = unk_df[(unk_df.q3 == 'other_unclear') | (unk_df.q4 == 'other_unclear')]
         df2 = create_unk_labeled_instances(unk_df)
         df3 = sentences_df(label_unk=df2)
         X_unk, y_unk, _, _ = load_dataset(df3, pad=True)
