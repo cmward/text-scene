@@ -17,7 +17,7 @@ github.com/fchollet/keras/blob/master/examples/lstm_text_generation.py
 df = sentences_df(labels='function')
 labels = np.unique(df.columns)
 
-input_label = input(prompt='Enter function category:')
+input_label = raw_input(prompt='Enter function category:')
 df = df[df.label == input_label]
 sents = df['sentence'].values
 text = ' '.join(sent for sent in sents_rest)
