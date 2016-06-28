@@ -17,8 +17,9 @@ github.com/fchollet/keras/blob/master/examples/lstm_text_generation.py
 df = sentences_df(labels='function')
 labels = np.unique(df.columns)
 
-df_rest = df[df.label == 'restaurant']
-sents_rest = df_rest['sentence'].values
+input_label = input(prompt='Enter function category:')
+df = df[df.label == input_label]
+sents = df['sentence'].values
 text = ' '.join(sent for sent in sents_rest)
 print 'corpus length:', len(text)
 
@@ -64,13 +65,13 @@ def sample(a, temperature=1.0):
     return np.argmax(np.random.multinomial(1, a, 1))
 
 # train the model, output generated text after each iteration
-for iteration in range(1, 60):
+for iteration in range(1, 61):
     print
     print '-' * 50
     print 'Iteration', iteration
     model.fit(X, y, batch_size=64, nb_epoch=1)
 
-    if iteration % 5 != 0: continue
+    if iteration % 10 != 0: continue
     start_index = random.randint(0, len(text) - maxlen - 1)
 
     for diversity in [0.2, 0.5, 1.0, 1.2]:
