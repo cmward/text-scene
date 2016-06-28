@@ -12,12 +12,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import (
     load_bin_vec,
     sentences_df,
+    add_unknown_words,
     load_dataset,
 )
-from preprocessing.distant import (
-    add_unknown_words,
-    create_unk_labeled_instances
-)
+from preprocessing.distant import create_unk_labeled_instances
 from corpus_stats.frequency import print_label_frequencies
 from feedforward import FeedforwardNN, train_and_test_model
 from paths import SENTENCES_CSV
