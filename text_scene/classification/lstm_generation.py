@@ -4,6 +4,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.layers import LSTM
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import sentences_df
 
 """Use an char-lstm to generate text. Train a model for each label.
