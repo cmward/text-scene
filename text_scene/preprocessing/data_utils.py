@@ -275,7 +275,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
                         for w in sentence.split()
                         if w not in stop and w not in "?.,-!"]
         else:
-            sentence = [w 
+            sentence = [w
                         for w in sentence.split()
                         if w not in "?.,-!"]
         if ngram_order == 1:
