@@ -31,7 +31,7 @@ beta_2 = 0.999
 epsilon = 1e-08
 
 def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
-          drop_unk=False, word_vecs=None, return_net=False, cv=5,
+          drop_unk=False, word_vecs=None, return_net=False, cv=10,
           label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
