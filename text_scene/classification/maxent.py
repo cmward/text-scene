@@ -37,7 +37,7 @@ def train_test_bow(ngram_order, batch_size=128, n_epoch=3):
             fold_score = clf.score(X_test, y_test)
             print "Fold acc: %.4f" % fold_score
             scores.append(fold_score)
-        print '%s label mean cv accuracy: %.2f\n' % (label_set, np.mean(scores))
+        print '%s label mean cv accuracy: %.4f\n' % (label_set, np.mean(scores))
 
 def train_test_feats():
     pass

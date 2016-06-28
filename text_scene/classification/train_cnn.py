@@ -136,6 +136,6 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
         print('\nLabel frequencies in predict(y[test])')
         for label, count in c.most_common():
             print l_enc.inverse_transform(label), count, count / total
-        print "fold %i/5 - time: %.2f s - acc: %.2f on %i samples" % \
+        print "fold %i/5 - time: %.2f s - acc: %.4f on %i samples" % \
             (i+1, train_time, acc, len(test))
-    print "Avg cv accuracy: %.2f" % np.mean(cv_scores)
+    print "Avg cv accuracy: %.4f" % np.mean(cv_scores)

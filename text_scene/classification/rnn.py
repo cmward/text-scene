@@ -55,6 +55,7 @@ def main(rnn_layer='lstm', word_vecs=None):
     print "Loading data...",
     df = sentences_df(SENTENCES_CSV)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
+    print X.shape
     y_binary = to_categorical(y)
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
