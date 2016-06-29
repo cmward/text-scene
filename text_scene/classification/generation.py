@@ -27,13 +27,13 @@ def sample(a, temperature=1.0):
     a = np.exp(a) / np.sum(np.exp(a))
     return np.argmax(np.random.multinomial(1, a, 1))
 
-def train_and_generate(nb_chars, X, y, model, text, indices_char, out):
+def train_and_generate(nb_chars, X, y, model, text, maxlen, indices_char, out):
     # train the model, output generated text after each iteration
     for iteration in range(1, 61):
         log('-' * 50 + '\n', out)
         log('Iteration %i\n' % iteration, out)
         model.fit(X, y, batch_size=64, nb_epoch=1)
-        generate(nb_chars, model, text, indices_char, out)
+        generate(nb_chars, model, text, maxlen, indices_char, out)
         log('\n', out)
     out.close()
 
