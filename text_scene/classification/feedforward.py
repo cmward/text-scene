@@ -5,6 +5,7 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input, BatchNormalization
+from keras.layers.advanced_layers import LeakyReLU
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras import backend as K
@@ -34,7 +35,7 @@ class FeedforwardNN(object):
         for layer_size in layer_sizes:
             hidden_in = Dense(layer_size)(prev_layer)
             hidden_bn = BatchNormalization()(hidden_in)
-            hidden_activation = Activation('relu')(hidden_bn)
+            hidden_activation = LeakyReLU()(hidden_bn)
             hidden_out = Dropout(0.5)(hidden_activation)
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out
