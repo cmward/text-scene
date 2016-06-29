@@ -5,6 +5,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.layers import LSTM, GRU
+from keras.utils.layer_utils import print_summary
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import sentences_df
 from paths import GENERATED_TEXT
@@ -33,7 +34,7 @@ def train_and_generate(nb_chars, X, y, model, text, maxlen, chars,
     for iteration in range(1, 61):
         log('-' * 50 + '\n', out)
         log('Iteration %i\n' % iteration, out)
-        model.fit(X, y, batch_size=64, nb_epoch=1)
+        model.fit(X, y, batch_size=32, nb_epoch=1)
         generate(nb_chars, model, text, maxlen, chars,
                  indices_char, char_indices, out)
         log('\n', out)
@@ -73,7 +74,8 @@ def main():
     label_set = 'function'
     df = sentences_df(labels=label_set)
     labels = np.unique(df.label.values)
-    labels = np.delete(labels, np.where(labels=='domestic')[0])
+    labels = np.delete(labels,
+                       np.where((labels=='domestic') | (labels=='natural'))[0])
 
     out = open(GENERATED_TEXT, 'a')
 
@@ -109,13 +111,19 @@ def main():
         # build the model: 2 stacked LSTM
         print 'Build model...'
         model = Sequential()
-        model.add(LSTM(256, return_sequences=True, input_shape=(maxlen, len(chars))))
-        model.add(LSTM(256, return_sequences=False))
+        model.add(GRU(256, return_sequences=True,
+                      input_shape=(maxlen, len(chars)), activation='relu',
+                      dropout_W=0.2, dropout_U=0.2))
+        model.add(GRU(256, return_sequences=True,
+                      input_shape=(maxlen, len(chars)), activation='relu',
+                      dropout_W=0.2, dropout_U=0.2))
+        model.add(GRU(256, return_sequences=False))
         model.add(Dropout(0.5))
         model.add(Dense(len(chars)))
         model.add(Activation('softmax'))
 
         model.compile(loss='categorical_crossentropy', optimizer='adam')
+        print_summary(model.layers)
 
         log('label: %s\n' % label, out)
         train_and_generate(600, X, y, model, text, maxlen, chars,
@@ -123,3 +131,6 @@ def main():
 
     out.close()
 
+
+if __name__ == '__main__':
+    main()
