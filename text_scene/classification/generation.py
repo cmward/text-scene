@@ -27,17 +27,17 @@ def sample(a, temperature=1.0):
     a = np.exp(a) / np.sum(np.exp(a))
     return np.argmax(np.random.multinomial(1, a, 1))
 
-def train_and_generate(nb_chars, text, indices_char, out):
+def train_and_generate(nb_chars, X, y, model, text, indices_char, out):
     # train the model, output generated text after each iteration
     for iteration in range(1, 61):
-        log('-' * 50, out)
-        log('Iteration ' + iteration, out)
+        log('-' * 50 + '\n', out)
+        log('Iteration %i\n' % iteration, out)
         model.fit(X, y, batch_size=64, nb_epoch=1)
-        generate(nb_chars, text, indices_char, out)
+        generate(nb_chars, model, text, indices_char, out)
         log('\n', out)
     out.close()
-    
-def generate(nb_chars, text, indices_char, out):
+
+def generate(nb_chars, model, text, indices_char, out):
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
@@ -65,6 +65,7 @@ def generate(nb_chars, text, indices_char, out):
 
             log(next_char, out)
             sys.stdout.flush()
+        log('\n', out)
 
 def main():
     label_set = 'function'
@@ -105,16 +106,16 @@ def main():
         # build the model: 2 stacked LSTM
         print 'Build model...'
         model = Sequential()
-        model.add(GRU(512, return_sequences=True, input_shape=(maxlen, len(chars))))
-        model.add(GRU(512, return_sequences=False))
+        model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
+        model.add(LSTM(512, return_sequences=False))
         model.add(Dropout(0.2))
         model.add(Dense(len(chars)))
         model.add(Activation('softmax'))
 
         model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-        log('label: %s\n' label, outfile)
-        train_and_generate(400, text, indices_char, out)
+        log('label: %s\n' % label, out)
+        train_and_generate(400, X, y, model, text, indices_char, out)
 
     out.close()
 
