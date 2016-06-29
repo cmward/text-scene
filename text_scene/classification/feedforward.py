@@ -5,7 +5,7 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input, BatchNormalization
-from keras.layers.advanced_layers import LeakyReLU
+from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras import backend as K
