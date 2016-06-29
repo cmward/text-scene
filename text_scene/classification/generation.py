@@ -42,7 +42,7 @@ def generate(nb_chars, model, text, maxlen, indices_char, out):
     start_index = random.randint(0, len(text) - maxlen - 1)
 
     for diversity in [0.2, 0.5, 1.0, 1.2]:
-        log('----- diversity: ' + diversity, out)
+        log('----- diversity: %f' % diversity, out)
 
         generated = ''
         sentence = text[start_index: start_index + maxlen]
