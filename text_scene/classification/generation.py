@@ -106,13 +106,13 @@ def main():
         # build the model: 2 stacked LSTM
         print 'Build model...'
         model = Sequential()
-        model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
-        model.add(LSTM(512, return_sequences=False))
-        model.add(Dropout(0.2))
+        model.add(LSTM(256, return_sequences=True, input_shape=(maxlen, len(chars))))
+        model.add(LSTM(256, return_sequences=False))
+        model.add(Dropout(0.5))
         model.add(Dense(len(chars)))
         model.add(Activation('softmax'))
 
-        model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+        model.compile(loss='categorical_crossentropy', optimizer='adam')
 
         log('label: %s\n' % label, out)
         train_and_generate(400, X, y, model, text, indices_char, out)
