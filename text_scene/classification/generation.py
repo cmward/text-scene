@@ -28,17 +28,18 @@ def sample(a, temperature=1.0):
     return np.argmax(np.random.multinomial(1, a, 1))
 
 def train_and_generate(nb_chars, X, y, model, text, maxlen, chars,
-                       indices_char, out):
+                       indices_char, char_indices, out):
     # train the model, output generated text after each iteration
     for iteration in range(1, 61):
         log('-' * 50 + '\n', out)
         log('Iteration %i\n' % iteration, out)
         model.fit(X, y, batch_size=64, nb_epoch=1)
-        generate(nb_chars, model, text, maxlen, indices_char, out)
+        generate(nb_chars, model, text, maxlen, chars,
+                 indices_char, char_indices, out)
         log('\n', out)
-    out.close()
 
-def generate(nb_chars, model, text, maxlen, chars, indices_char, out):
+def generate(nb_chars, model, text, maxlen, chars,
+             indices_char, char_indices, out):
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
@@ -49,7 +50,7 @@ def generate(nb_chars, model, text, maxlen, chars, indices_char, out):
         sentence = text[start_index: start_index + maxlen]
         generated += sentence
 
-        log('----- Generating with seed: "' + sentence + '"', out)
+        log('----- Generating with seed: "' + sentence + '"\n', out)
         log(generated, out)
 
         for i in range(nb_chars):
@@ -72,6 +73,7 @@ def main():
     label_set = 'function'
     df = sentences_df(labels=label_set)
     labels = np.unique(df.label.values)
+    labels = np.delete(labels, np.where(labels=='domestic')[0])
 
     out = open(GENERATED_TEXT, 'a')
 
@@ -116,8 +118,8 @@ def main():
         model.compile(loss='categorical_crossentropy', optimizer='adam')
 
         log('label: %s\n' % label, out)
-        train_and_generate(400, X, y, model, text, maxlen, chars,
-                           indices_char, out)
+        train_and_generate(600, X, y, model, text, maxlen, chars,
+                           indices_char, char_indices, out)
 
     out.close()
 
