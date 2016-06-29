@@ -20,3 +20,4 @@ INSTRUCTIONS_HTML = pjoin(ROOT, 'mturk/instructions.html')
 BATCH_URLS_CSV = pjoin(DATAFILES, 'batch_urls.csv')
 COMBINED_BATCH_RESULTS_CSV = pjoin(
     DATAFILES, 'batch_results/batch_results.csv')
+GENERATED_TEXT = pjoin(DATAFILES, 'generated_text.txt')
