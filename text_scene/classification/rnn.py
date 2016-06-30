@@ -6,6 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import LSTM, GRU
+from keras.layers.advanced_activations import PReLU
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
 from sklearn.cross_validation import StratifiedKFold
@@ -37,8 +38,10 @@ def create_model(n_vocab, n_labels, vocab_dim,
         model.add(LSTM(128, dropout_W=0.2, dropout_U=0.2,
                        return_sequences=False))
     elif rnn_layer == 'gru':
-        model.add(GRU(128, dropout_W=0.2, dropout_U=0.2,
-                      return_sequences=False))
+        model.add(GRU(512, dropout_W=0.2, dropout_U=0.2,
+                      return_sequences=True, activation='relu'))
+        model.add(GRU(512, dropout_W=0.2, dropout_U=0.2,
+                      return_sequences=False, activation='relu'))
     model.add(Dense(n_labels, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
@@ -46,9 +49,9 @@ def create_model(n_vocab, n_labels, vocab_dim,
     return model
 
 def train_and_test_model(model, X_train, y_train, X_test, y_test):
-    model.fit(X_train, y_train, batch_size=32, nb_epoch=5,
-              validation_split=0.2)
-    score = model.evaluate(X_test, y_test, batch_size=32)
+    model.fit(X_train, y_train, batch_size=16, nb_epoch=5,
+              validation_split=0.1)
+    score = model.evaluate(X_test, y_test, batch_size=64)
     return score
 
 def main(rnn_layer='lstm', word_vecs=None):
@@ -63,7 +66,7 @@ def main(rnn_layer='lstm', word_vecs=None):
 
     labels = np.unique(y)
     n_labels = labels.shape[0]
-    max_len = 82
+    max_len = 79
     vocab_dim = 300
     n_vocab = len(word2idx) + 1 # 0 masking
     embedding_weights = np.zeros((n_vocab+1, vocab_dim))
@@ -80,7 +83,7 @@ def main(rnn_layer='lstm', word_vecs=None):
         score = train_and_test_model(model, X[train], y_binary[train],
                                      X[test], y_binary[test])
         train_time = time.time() - start_time
-        print "fold %i/10 - time: %.2f s - acc: %.2f on %i samples" % \
+        print "fold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
             (i+1, train_time, score[1], len(test))
 
 if __name__ == '__main__':
