@@ -80,8 +80,8 @@ def main():
     out = open(GENERATED_TEXT, 'a')
 
     for label in labels:
-        df = df[df.label == label]
-        sents = df['sentence'].values
+        label_df = df[df.label == label]
+        sents = label_df['sentence'].values
         text = '\n'.join(sent for sent in sents)
         print 'corpus length:', len(text)
 
