@@ -86,6 +86,9 @@ def write_sentence_csv(datadict, captions_file, out_csv):
         n_sents = 0
         for line in cfile:
             split_line = line.split()
+            split_line = [w if not w.isdigit()
+                          else '<NUMBER>'
+                          for w in split_line]
             img_file = split_line[0].split('#')[0]
             if img_file in datadict:
                 n_sents += 1
