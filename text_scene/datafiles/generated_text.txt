@@ -1,119 +1,923 @@
-label: work_education
+label: domestic
 --------------------------------------------------
 Iteration 1
 
 --------------------------------------------------
 Iteration 2
-label: work_education
+
 --------------------------------------------------
-Iteration 0
------ diversity: 0.200000----- Generating with seed: ".
-a young boy taking a picture through the glass and two fem"
-.
-a young boy taking a picture through the glass and two feman in a bout a dore .
-a man a tan a shere .
-a goung a woman in a pool .
-a man in a bout on a poot a shere a cout a poung .
-a man in a shele .
-a ban the shith a shite a shite .
-a man an and .
-a woman wothe working a man a shele shile shere .
-a man in a woman in a poon shite worker .
-a man in a man working a groung shith a pook .
-a man in a man in a man in a ground sher .
-a man in a stand a shith a worker a shith a shere shite shict an a shite a store shere shore shith a porking a shing a poon a band a shere shering a bal .
-a working a poop the woman in a man in a pooping a gore shing a bout .
+Iteration 3
+
+--------------------------------------------------
+Iteration 4
+
+--------------------------------------------------
+Iteration 5
+
+--------------------------------------------------
+Iteration 6
+
+--------------------------------------------------
+Iteration 7
+
+--------------------------------------------------
+Iteration 8
+
+--------------------------------------------------
+Iteration 9
+
+--------------------------------------------------
+Iteration 10
+----- diversity: 0.200000----- Generating with seed: "red shirt , standing on top of a bench in the shower .
+a you"
+red shirt , standing on top of a bench in the shower .
+a young boy is sitting on a couch and a book .
+a man is playing a book .
+a man is sitting on a brown short .
+a man is sitting on a couch sitting on a couch .
+a young boy is on a couch .
+a boy is sitting on a couch and a book .
+a boy is sitting on a couch and a black shirt is sitting on a couch couch .
+a woman is watching a baby in a blue shirt stands on a couch .
+a boy is sitting on a couch .
+a young boy in a red shirt is sitting on a couch .
+a man is sitting on a couch and a toy on a couch .
+a black dog is sitting on a couch sitting on a couch and a building .
+a woman in a blue shirt is sitting on
+----- diversity: 0.500000----- Generating with seed: "red shirt , standing on top of a bench in the shower .
+a you"
+red shirt , standing on top of a bench in the shower .
+a young girl is sitting on a red outside the floor .
+a woman sits on a stool in a large hand .
+a young girl is playing on a stool .
+a woman is standing on a trampoline .
+two people stands around a girl with the stume .
+a woman is closing to a bed .
+a woman is giving together in a white shirt .
+a young woman in a purple shirt is sitting on a stools .
+a little girl is green and a building .
+two people stands on a brown book .
+a girl shirt and a table in his ball .
+a man is sitting on a couch on a chair .
+a woman is standing in a backyard .
+a woman is sotting on a trampoline .
+a man is wearing a stuir
+----- diversity: 1.000000----- Generating with seed: "red shirt , standing on top of a bench in the shower .
+a you"
+red shirt , standing on top of a bench in the shower .
+a young man holding a other and tree .
+a fin-his lack hat standing outside .
+a tan child is watching to his ingath other is tanking with head .
+three men and wuth people grill .
+a little girls in the shorls , red shirt talk is tulking op people in floor with a planter as a hind girl wearing a headpogaries on a hibloraughting playing a baby on dressous clutter .
+a dog luips crying down the horse .
+two small man in a blue shirt wrapping a rubs hands .
+a boy laying on his wooden dow .
+a blond dog is playing parks of she jeans .
+two women are bathing .
+swimoside smiling next to tabrighting from her .
 a
------ diversity: 0.500000----- Generating with seed: ".
-a young boy taking a picture through the glass and two fem"
-.
-a young boy taking a picture through the glass and two feman wamen the to cooking .
-a worfe shile of a cacaing on a man an a mor .
-a worker an on a blet ar the the in the waling .
-a man a the wearing s and in a while a a shate shan in a shis .
-a coands a woman in a tacpele .
-the frore shist a poshen a pola stere shore the man in the worand stan in a poop he sadd .
-a gorls and an on of book of somen sith tade in a whith a bhe a sepen ane a peleling the shith a coen s and a man in a pool on an man a pang an and a sheree sheling woaning .
-a band soman in a ta gith a to in a jace shith in a can a boy in a pored .
-a coman ble uole in a elols a man in a ha
------ diversity: 1.000000----- Generating with seed: ".
-a young boy taking a picture through the glass and two fem"
-.
-a young boy taking a picture through the glass and two feman with a tca;es hsthe liryer sheotvse sorseg waile .
-a shing .
-a copal .
-a mon porkere pians of women ands roasting pomand ontts .
-thrors fricer ba pyotnsoutedidbs in a chelg flreutbns do the stoprtons the goutiuns maleucts .
-tore cimk chile a trohus honips a a corkaorset hetp se llete cofkardr gcit man io shiptingy in a bar hands baefalatseeg .
-a yigts ta mallipst the uofsse.s slaits so bovle o
-sping arkereliond woiom .
-a detofad , nn drthing gacrigk e
-th oofntsrolsedstomen peols if , bfaine bmil .
-ths and wapmoring lodingan jeme wire a fafel sith a at th lecing an piat .
-the mar whale wonk 
------ diversity: 1.200000----- Generating with seed: ".
-a young boy taking a picture through the glass and two fem"
-.
-a young boy taking a picture through the glass and two femat .
-plu a de lof thal ica m
-mon in a ous a whirn ey ats on wope thalle pwilging styes sliute withe .
-a woukcbxheevs saemying s-in atd voung a sile aw in bves inssom dellnaas2r galy ban in in gupther coruf ncal ta man spipeix sitaning loound iding a s andut sho2l
-focwsist a smtareint a kor to nel"hing mabloctus blurds thekere ndexthi lidthet wory was te leontman fntal id whttrte shout .
-a woman leyarnat pouwmansothrling h graradrgiivits baynle upest, and shewitheret inslalinge to a bocmey withir popmicidoteing ote ds .
-the .
-g a anmadussiln pionedg on syralting whits .
-a gache poree gan l fion
+----- diversity: 1.200000----- Generating with seed: "red shirt , standing on top of a bench in the shower .
+a you"
+red shirt , standing on top of a bench in the shower .
+a young to teed biy in sitto a clothen .
+a tusty in peacher naking a doy .
+a little girl in a purple are stacking over a dractor from one aworvy fhom her is holding a backyorn ot a yamus of other .
+a woman reading toward back p wifa bearls up .
+long to mage poses with choir neck while on to her jand to near a camera .
+sorks driup carbove with a naking 's wroshing .
+a toddler is holding a red shirt drips is curting to the table .
+a round guys hish .
+a baby with fares woman are slaving beping muecher tha kitchen of pumping at a paper .
+man is jumping colkamer that hang .
+man over a crown shirt , shov
 
-label: recreation
 --------------------------------------------------
-Iteration 0
-label: work_education
---------------------------------------------------
-Iteration 0
------ diversity: 0.200000----- Generating with seed: "ng good eggs
-a man in a hat leans on a partially constructed"
-ng good eggs
-a man in a hat leans on a partially constructed .
-a man an a shile shere the shith a groung .
-a man woman a man shite shith a bace shing a boon a man in a poon shing a shels an a poon a the shing a pale a shith a bope .
-a man in a man shith a man in a shite a pore the a man stand shite shite a shere .
-a poon shith a boung woman a shith a groung a the poop a sher shite shore shite a poop a shith a the shith a poon sher a shere shing a bour a book an a working a bore shith a poon a shith a sore the the a workeng a man shitt a poop shere the shere sher .
-a man in a woman a sore shith a gort a shere a cond a sore shist a man in a working a man
------ diversity: 0.500000----- Generating with seed: "ng good eggs
-a man in a hat leans on a partially constructed"
-ng good eggs
-a man in a hat leans on a partially constructed a los , e a colling a worle hel a peutter in a graker a working a yeart and a a bocule .
-a goon sheon wore work a prole porens at man and on a woman a bol a ge las in a soret reans ta man in a boulle the a groping the stel sted work a man in a shore shile and white shile soman .
-a man is a peent a dans and thing .
-a woman frole the too at a thele at uns a shers and gith a bou ston of shors an a broad us poal the a the shen a man in a oan in in a later on a man a guof no shere a pinge ther a bal .
-a man in a on woman a peale pile duglitl a coold a tanding coman .
-a women woaring a shirt an a b
------ diversity: 1.000000----- Generating with seed: "ng good eggs
-a man in a hat leans on a partially constructed"
-ng good eggs
-a man in a hat leans on a partially constructeditg ut of sogice .
-a las men on frobting a gluog vistongriun wlere chokieg saigilon grals wheorling thes lofcpomen a samrus anshing chem of shidg gnre utisits in fryon .
-atoro man slla githite peanoye , in on shilt bofis
-warf ant th nd gottis bomists shidetce a wiet in on a dee ghark rlaudn jonndsyoef hitle grehee ar poligg hing a sate nul a shehtroon funn th a bovspissting .
-a mou .
-gow a bompese a man seoard .
-to facrigk e
-th oofntsrolsedstomen peols if , bfaine bmil .
-ths and wapmoring lodingan jeme wire a fafel sith a at th lecing an piat .
-the mar whale wonk .
-sworic man pbond .
-a grocshi
------ diversity: 1.200000----- Generating with seed: "ng good eggs
-a man in a hat leans on a partially constructed"
-ng good eggs
-a man in a hat leans on a partially constructed bonluutn foft vishp , witte yalle pwilging styes sliute withe .
-a woukcbxheevs saemying s-in atd voung a sile aw in bves inssom dellnaas2r galy ban in in gupther coruf ncal ta man spipeix sitaning loound iding a s andut sho2l
-focwsist a smtareint a kor to nel"hing mabloctus blurds thekere ndexthi lidthet wory was te leontman fntal id whttrte shout .
-a woman leyarnat pouwmansothrling h graradrgiivits baynle upest, and shewitheret inslalinge to a bocmey withir popmicidoteing ote ds .
-the .
-g a anmadussiln pionedg on syralting whits .
-a gache poree gan l fiongel popsdyldang while on shiate salot
+Iteration 11
 
-label: recreation
 --------------------------------------------------
-Iteration 0
+Iteration 12
+
+--------------------------------------------------
+Iteration 13
+
+--------------------------------------------------
+Iteration 14
+
+--------------------------------------------------
+Iteration 15
+
+--------------------------------------------------
+Iteration 16
+
+--------------------------------------------------
+Iteration 17
+
+--------------------------------------------------
+Iteration 18
+
+--------------------------------------------------
+Iteration 19
+
+--------------------------------------------------
+Iteration 20
+----- diversity: 0.200000----- Generating with seed: "nd looking at chopped up food .
+bald chef chops up ingredien"
+nd looking at chopped up food .
+bald chef chops up ingredients and a small child in a shovel and shovels a table .
+a man in a black shirt is sitting on a large site counter .
+a baby is sitting on a couch , and a boy in a blue shirt standing in a band behind a baby sitting on a couch , and a baby is sitting on a couch , and a baby sitting on a brown ball .
+a man in a black shirt is sitting on a couch , and a baby in a red shirt is sitting on a pland building .
+a boy is sitting on a couch , one man in a stone in front of a chair .
+a man in a white shirt is sitting on a pronce .
+a man is sitting on a stone .
+a man is sitting on a brook with a collack ball
+----- diversity: 0.500000----- Generating with seed: "nd looking at chopped up food .
+bald chef chops up ingredien"
+nd looking at chopped up food .
+bald chef chops up ingredient standing at a pants .
+a baby wearing shorts and red shirt is sitting on a sine on a sine .
+a man is doing a building .
+a boy is sitting on a stove .
+a woman sits in front of his lap in a floar bath on the camera .
+a man with a blue shirt standing in the sone with a bunket in a backyard .
+a man in a blue shirt stands in front of a piene .
+a man in a blue shirt holds a baby in a blue some water in a long-sleeved hand watches .
+a man is sitting on a couch in the doorway .
+a man is sitting on a pant .
+a man is sitting in a pink shirt is sitting on a stool .
+a man with a green shirt is sitting on
+----- diversity: 1.000000----- Generating with seed: "nd looking at chopped up food .
+bald chef chops up ingredien"
+nd looking at chopped up food .
+bald chef chops up ingredienting with a plustic sweatshirt sut in her hands and ruck being onis to do seleving her playing up at a formal to do a mock .
+a woman floar mooping down a toy windle .
+a family pants and an older man chess with eycas sleeps .
+blue wearing closed tigs meal and jeans .
+two girls watching from extenee and vaines laush .
+four well while one child in front of a saidet lesting , one
+a digwned shirts to cut a bedrin bore , open in front of dincersing shorts and his srieps .
+young girl plays with smorings boll while some kids undack .
+a upblack dog sitting on a window in front of his wall , and laughin
+----- diversity: 1.200000----- Generating with seed: "nd looking at chopped up food .
+bald chef chops up ingredien"
+nd looking at chopped up food .
+bald chef chops up ingredientted in hus cup of a camera with the woman in troet cands .
+two small group of wothered dan camily appear a ricaly wam. on a house .
+a young boy in a yellow mocking and green and red grill , blouped by chats the fennel gramplooks the vise is brick in front of outfood .
+young dog jumps up to k ald blue collas up
+a girl is sitting in their fistured with a mop sweeping for the man standing at a stowlap .
+two girls on hands , one on a krick two bes .
+she veallake as a young boy is sweeping and waxes .
+woman is washing the out to de .
+a man is holding a young woman building outside for what by a fl
+
+--------------------------------------------------
+Iteration 21
+
+--------------------------------------------------
+Iteration 22
+
+--------------------------------------------------
+Iteration 23
+
+--------------------------------------------------
+Iteration 24
+
+--------------------------------------------------
+Iteration 25
+
+--------------------------------------------------
+Iteration 26
+
+--------------------------------------------------
+Iteration 27
+
+--------------------------------------------------
+Iteration 28
+
+--------------------------------------------------
+Iteration 29
+
+--------------------------------------------------
+Iteration 30
+----- diversity: 0.200000----- Generating with seed: " window seal of a brick building as a young boy watches on ."
+ window seal of a brick building as a young boy watches on .
+a girl is sitting on a couch .
+a young boy is lying on a broom outside of a building .
+a boy is watching a book .
+a man is watching a small boy with a blue ball .
+a young boy is standing on a broon couch .
+three women are sitting on a couch .
+a man in a black shirt is smiling and shirts and a black shirt is standing on the floor .
+a young boy is looking in a blue shirt .
+a woman in a blue shirt is smiling and shirt is smiling and shirt .
+a man in a blue shirt is smiling and standing in front of a christmas tree .
+a man in a blue shirt is standing in front of a dinger behind his family .
+a man
+----- diversity: 0.500000----- Generating with seed: " window seal of a brick building as a young boy watches on ."
+ window seal of a brick building as a young boy watches on .
+two tenna happily a boy in a pink playpunge and shirt .
+a young boy is climing the big .
+two young boys looking at the camera with a blue backyard with a coman in a blue shirt , plays with a smile the tan are holding a stocking from a wall .
+a young boy is looking in a blue shirt .
+a boy is watching a large blue striped and shorts sits on a kitchen .
+a man in a green shirt is standing in front of a girl in a came a food .
+two blond women are having a girl .
+two children sit in a boxe dogs are sitting on a large red and the baby with a sponded by .
+a man hangs with a table .
+a man in a blue sh
+----- diversity: 1.000000----- Generating with seed: " window seal of a brick building as a young boy watches on ."
+ window seal of a brick building as a young boy watches on .
+the woman is shaves his eets of party .
+a little boy laying with a trie tartice with a print a conground .
+two smiling girls , chairs on a trampoline .
+a small child in pink wathing is reading a book .
+a man reading to a toy construct on a patie .
+a man with black snow blue and blue ders and looking down the stairs .
+long redress in a girl in an orange switting with a drink with the stuind .
+three boys holding up in a diveman sitting on front of a couch sitting on a rrow , one hand as a stuman playing with a tries .
+baby standing in a kitchen kitchen that jumping on a trampoline .
+the dog leo
+----- diversity: 1.200000----- Generating with seed: " window seal of a brick building as a young boy watches on ."
+ window seal of a brick building as a young boy watches on .
+two very shifters in a large wighing eycup conormer .
+a child sitting next to a yard , while another little boy in a front shirt , logs moline .
+four people eating aling living and reading from the cums .
+young fhimaded guy are playing down and hear man unwraps the sing of finge spots through beer the fun .
+a dog of voloras sit and jumping out flower in front of a party , as her the wedding iving serse that looking towraching a next to the toy .
+the woman are boy working on the couch .
+two girl noughcllars blue , one protage , rodry nairs ball .
+a woman , happily on her watching brown dog .
+p
+
+--------------------------------------------------
+Iteration 31
+
+--------------------------------------------------
+Iteration 32
+
+--------------------------------------------------
+Iteration 33
+
+--------------------------------------------------
+Iteration 34
+
+--------------------------------------------------
+Iteration 35
+
+--------------------------------------------------
+Iteration 36
+
+--------------------------------------------------
+Iteration 37
+
+--------------------------------------------------
+Iteration 38
+
+--------------------------------------------------
+Iteration 39
+
+--------------------------------------------------
+Iteration 40
+----- diversity: 0.200000----- Generating with seed: "ge speaks to the blond bride .
+a bride in a wedding dress , "
+ge speaks to the blond bride .
+a bride in a wedding dress , and a black shorts sitting in a kitchen .
+a man is sharing a bubble behind a boy in a light .
+a man is sitting on a stone bed .
+a man is sitting on a bench on a couch , one hirted boy .
+a man is sitting on a stone stocking at a man in a red shirt is standing in front of a house .
+a man in a green shirt is standing in front of a house .
+a man is coveling his family .
+a man is sitting on a couch , one hirt is sitting on a couch , one hand .
+a man is sitting on a couch , one hand and a chair .
+a man is sitting on a couch , one hand and a small child wearing a red shirt and a black shorts share si
+----- diversity: 0.500000----- Generating with seed: "ge speaks to the blond bride .
+a bride in a wedding dress , "
+ge speaks to the blond bride .
+a bride in a wedding dress , and wearing a brown shirt is standing on the blond chair .
+a man in a black shirt is sharing a standing at a toy building .
+a woman in a black shirt is standing in a kitchen .
+a baby standing on a couch , and has a small child in a blue shirt standing in a kitchen .
+a baby in a yellow shirt talking at a counter .
+a boy smiling and butting .
+a  man with a blue shirt and black pants is swinging a green dog .
+a young boy in a striped shirt is sweeping at a red shirt and grass walking .
+a woman in a black shirt is standing in a spots on a brick building .
+a woman wearing a red jacket as a girl in 
+----- diversity: 1.000000----- Generating with seed: "ge speaks to the blond bride .
+a bride in a wedding dress , "
+ge speaks to the blond bride .
+a bride in a wedding dress , are playing with a sanibusted with a toy boy asleep on a couch and brown couch and colorrung on in a doors with dark cake the ground .
+a phocoured dog in his hand on a lady haghing reading from a book .
+a cutting in a tan and feother van in people in the background .
+four people are sitting in a suit green shirt tearing a white baby .
+two tennis sitting aton and hands , are a fent , and head and another dors .
+three women and the woman is with bright big .
+a woman and a child stands in front of a birt , 's up .
+a motker in a red shirt is holding her table .
+a man shoves a child with a child wi
+----- diversity: 1.200000----- Generating with seed: "ge speaks to the blond bride .
+a bride in a wedding dress , "
+ge speaks to the blond bride .
+a bride in a wedding dress , is ghting jeans and crain , sits in the white shirt wearing yard wearing some bucket with a bunbe with lits down .
+a man in a red-hair laying with a whise and seated at the band down .
+a woman is in a blue jucket and dishes full on a band chair on the around .
+a boy wearing a pink juck bestuce dress as she holds a house in the background .
+a small child is crying .
+a tenne sitting in her room on a diper wearing a red shirt is slacking a nows on a stands in the air .
+a child in a red shirt is a shoveling snow , one and a table outside swimmful behind a yellow rabling food wearing a bubble .
+a g
+
+--------------------------------------------------
+Iteration 41
+
+--------------------------------------------------
+Iteration 42
+
+--------------------------------------------------
+Iteration 43
+
+--------------------------------------------------
+Iteration 44
+
+--------------------------------------------------
+Iteration 45
+
+--------------------------------------------------
+Iteration 46
+
+--------------------------------------------------
+Iteration 47
+
+--------------------------------------------------
+Iteration 48
+
+--------------------------------------------------
+Iteration 49
+
+--------------------------------------------------
+Iteration 50
+----- diversity: 0.200000----- Generating with seed: "er while sitting in a floral armchair .
+a man is sitting in "
+er while sitting in a floral armchair .
+a man is sitting in a white shirt .
+a baby is sitting on a chair on a couch with a bride in a ball .
+a man is sitting on a small coffee dog 's food .
+a baby is sitting in front of a pink towel .
+a man is sitting on a couch in a long dog with a black dog .
+a boy is sitting on a stool in a collared and white she winded by a pants .
+a man is sitting on a couch in a dirt in front of a christmas tree .
+a young child in a blue shirt is smiling a backyard .
+smiling woman in a white shirt and a black shirt is sitting on a silook .
+a man is sitting on a couch , and holding a baby with a collage .
+a man is reaching a book 
+----- diversity: 0.500000----- Generating with seed: "er while sitting in a floral armchair .
+a man is sitting in "
+er while sitting in a floral armchair .
+a man is sitting in a pink shirt laughing a computer .
+two men are standing in front of a dreep of kitchen .
+a man is looking at her kitchen .
+two women are shirt is running on the floor .
+two toddler girls are looking up in a bowl of fross his ball .
+a little girl with brown dogs looking at a men and a largery with a man toys .
+a woman in a blue shirt is watching his black shorts , and black shorts stands in front of a white some water while a man while the dog is sitting on a white frong white ball .
+a young girl is sitting on a large blue blue toy with her hair .
+leager black shirt is sitting on a ladge neck ,
+----- diversity: 1.000000----- Generating with seed: "er while sitting in a floral armchair .
+a man is sitting in "
+er while sitting in a floral armchair .
+a man is sitting in a chair toy is standing in front of a camera with her hair on the floors .
+a young girl wrastic tooss set up side .
+a father is wrising a green can sitecul child in front of the building while a dog is sharing a through the woman .
+redressumptlees grill from the sind down .
+a garden toy is jumping at a baby .
+a black dog with toy holding colored ball in the showing a vorich .
+a young girl his people are , one shirt from a woman .
+a man in a blue shirt looking up cooking for a pink tube .
+woman shirt is covering his face while a the look nim .
+a young girl in a white shirs is looking at her oth
+----- diversity: 1.200000----- Generating with seed: "er while sitting in a floral armchair .
+a man is sitting in "
+er while sitting in a floral armchair .
+a man is sitting in a window dries a white famera .
+two wedding dogs cup .
+a boy holds a mendoar bottle toy and a baby with large red , whorea toy .
+a boy while skirts knees on a front lo gift a tub of a pritter dog .
+rond pink play opening a card with a blue pecrow bed .
+a child is standing on a floor blue striped sock , one in a habricul for her ture .
+a child holds a splater and yellow indoor playing with toys with two white wall and long , cellowers a stocfing in a yard .
+two men are seated .
+two young boys laoks next to a jumper .
+a boy holds a board riall boy sitting .
+a woman and white dog playing on to br
+
+--------------------------------------------------
+Iteration 51
+
+--------------------------------------------------
+Iteration 52
+
+--------------------------------------------------
+Iteration 53
+
+--------------------------------------------------
+Iteration 54
+
+--------------------------------------------------
+Iteration 55
+
+--------------------------------------------------
+Iteration 56
+
+--------------------------------------------------
+Iteration 57
+
+--------------------------------------------------
+Iteration 58
+
+--------------------------------------------------
+Iteration 59
+
+--------------------------------------------------
+Iteration 60
+----- diversity: 0.200000----- Generating with seed: "s on the phone .
+four boys are shown in a house playing and "
+s on the phone .
+four boys are shown in a house playing and smiling .
+a man is looking at her .
+a man is working on a brown couch .
+a black and black and white dog is jumping out of a building .
+a person is sitting on a large grass is in the middle of a barbecuing the wall .
+a woman in a black shirt is slacing his back and snorking in a red shirt .
+a child in a yellow shirt is sitting on a stick .
+a man in a black shirt is slacing his barbes a book .
+a boy in a white shirt is standing in front of a brick building .
+a woman in a black dog jumps her to be hamps ont top of a couch in front of a brick building .
+a woman in a black dog jumping over the book
+----- diversity: 0.500000----- Generating with seed: "s on the phone .
+four boys are shown in a house playing and "
+s on the phone .
+four boys are shown in a house playing and small while a man with a child star star .
+a woman is boy looking at her food .
+a man is a man with black hair are pants and a baby walking throwing a woman in a black shirt is standing in front of a proct .
+a young boy with colored pents , sitting in chairs on a couch .
+a young boy in pink plays with a blond boy with her hair .
+leating a white shirt has shirt wearing a black shirt is swinging a tree .
+a black and white dog is sitting on a stive floor , and the other while a through made of a female girl watches .
+two young boys play of a book .
+a young boy is playing on the bath .
+a man is bu
+----- diversity: 1.000000----- Generating with seed: "s on the phone .
+four boys are shown in a house playing and "
+s on the phone .
+four boys are shown in a house playing and a man with a game with a computer .
+a black dog plays outside in a backyard sitting atoa toy .
+a plays with two reds a book on a couch in a roof flowers in front of the pile of stuffed corver .
+a guy and his pajamas playing with a rot of family with food .ated by another woman chairs on a large grand book in his lap as a party .
+a toddler bibying the tan wake .
+a bed girl posing cooking with a red baby sitting on the white building , white hoge .
+a little girl are talking to the building .
+three kids are taking a kitchen .
+an infant some as a foor grill .
+a mot clothes of a lady in a pink shir
+----- diversity: 1.200000----- Generating with seed: "s on the phone .
+four boys are shown in a house playing and "
+s on the phone .
+four boys are shown in a house playing and a hatce amally while sitting down .
+three young children are food on his happy collared room .
+the boy in a chair are standing in front of the middle of a bed at a younled by renching for the yer women .
+four men are tuck walking brick read hoise .
+a little girl green are on a runby lears man 's antard pull .
+the lady is cries walking for her man working on reder , while sitting on a fincers
+one woman in glasses wearing a girl in a kitchen computer .
+a woman reads a book .
+two toddlers while brick wall .
+a young boy are excocking shirt in her legs at a pants .
+a man is blowing her tanket .
+an 
+
+--------------------------------------------------
+Iteration 61
+
+--------------------------------------------------
+Iteration 62
+
+--------------------------------------------------
+Iteration 63
+
+--------------------------------------------------
+Iteration 64
+
+--------------------------------------------------
+Iteration 65
+
+--------------------------------------------------
+Iteration 66
+
+--------------------------------------------------
+Iteration 67
+
+--------------------------------------------------
+Iteration 68
+
+--------------------------------------------------
+Iteration 69
+
+--------------------------------------------------
+Iteration 70
+----- diversity: 0.200000----- Generating with seed: " next to a black guitar and looks at a book .
+a boy sitting "
+ next to a black guitar and looks at a book .
+a boy sitting in a pink in a kitchen .
+a group of people stand on a couch while a man in a white shirt tracting .
+a man in a green shirt and grass washing his pants .
+a man is sitting on a stone floor , one hand while another woman sits in front of a brick bath .
+a man in a blue shirt and black shirt is standing in a kitchen .
+a young blond woman in a black shirt is sleeping on a small trampoline .
+a boy in a blue shirt is and a black shirt and dark pants stand in front of a grill .
+a man is sitting on a stone floor , one hand while a man in a white shirt trampoline .
+a young child are sitting on a couch in
+----- diversity: 0.500000----- Generating with seed: " next to a black guitar and looks at a book .
+a boy sitting "
+ next to a black guitar and looks at a book .
+a boy sitting at a table on the brick back .
+a young boy in a pink shirt is grill playing with a blue toy .
+a group of people stand bubble are sitting on a brack .
+a group of female people stand by a grill with a green shirt .
+a man wearing glasses and a black and white dog jumps her to the wall .
+a man in a black dog playing with a toy stand with a small cheir .
+a girl dressed in black shorts and pink shoe is swinging a christmas presents down the stairs .
+three women are playing with a toy laughs down and a proteletion .
+a young girl playing with a toy laughing .
+a man in a white shirt is playing with a g
+----- diversity: 1.000000----- Generating with seed: " next to a black guitar and looks at a book .
+a boy sitting "
+ next to a black guitar and looks at a book .
+a boy sitting at a table wearing construction , plasters with plastic togss the floor .
+a young child the stairs in a large nelding man with a brown to rea .
+a girl with perpos sleeps playing a mocking with inside a bampered and spaced awer .
+a little girl sweeps and people playing with a bed and hands on his back .
+a toddler as a man living room that siand clother room with a large ssmiling .
+an infant in the air in a book with a drapple eating a collage and hand .
+a plays dog in a large television .
+a girl child in a tile pats behind her dauch .
+a man in olanget with a large green shirt stands with family
+----- diversity: 1.200000----- Generating with seed: " next to a black guitar and looks at a book .
+a boy sitting "
+ next to a black guitar and looks at a book .
+a boy sitting at a table and shirt and pink playing a woman in a white wall with a gedvews .
+a woman and a woman are standing and to open wathing frisbee .
+a woman while another standing boy dressed are in a blue trampoline corn ed chairs of pinket .
+a man in a red dress jacket and shirt , plays with lorn garden stands .
+a woman with a red on a couch , applared woman as hree groups off with a red biting at colored biting rings on the striped .
+two women are talking on her kids .
+a young man sits on a red and white striped shirt and white and coldar grill , shirt sits on the stove .
+a guy a gadders reading a
+
+--------------------------------------------------
+Iteration 71
+
+--------------------------------------------------
+Iteration 72
+
+--------------------------------------------------
+Iteration 73
+
+--------------------------------------------------
+Iteration 74
+
+--------------------------------------------------
+Iteration 75
+
+--------------------------------------------------
+Iteration 76
+
+--------------------------------------------------
+Iteration 77
+
+--------------------------------------------------
+Iteration 78
+
+--------------------------------------------------
+Iteration 79
+
+--------------------------------------------------
+Iteration 80
+----- diversity: 0.200000----- Generating with seed: " shirt peering through a large bubble .
+the boy wearing a bl"
+ shirt peering through a large bubble .
+the boy wearing a blue shirt is smiling at his beer .
+a man is covering his face while sitting on a couch .
+a boy in a purple shirt is standing in front of a grill .
+a man in a black shirt is playing with a toy standing in the man in the showing a patio .
+a young girl is sitting on a stone floor , and the baby sitting on the couch .
+a young boy in a blue shirt is sitting on a couch .
+a girl in a purple shirt is sitting on a sinn .
+a man in a black shirt is swinging a thind dressed in blue colored bow .
+a man in a black shirt is swinging a his the camera .
+a man is sitting on a stone floor , while another woman in
+----- diversity: 0.500000----- Generating with seed: " shirt peering through a large bubble .
+the boy wearing a bl"
+ shirt peering through a large bubble .
+the boy wearing a blue shirt is sitting in front of a grill .
+a man in a black dress sitting in the book .
+a boy in a yellow shirt is standing on a plant brown sof .
+two people playing a poule conversation , while a christmas tree .
+three people stands on the country .
+three girls playing with a white building .
+a woman in a black dog 's game and standing in front of a grill .
+a young boy wearing shorts and black pants pajamas is sitting on a sinn .
+a man in a black dress standing in the man in the and black shirt with a blue shirt .
+a man in a red shirt is covered in and long pants while a small child with a whi
+----- diversity: 1.000000----- Generating with seed: " shirt peering through a large bubble .
+the boy wearing a bl"
+ shirt peering through a large bubble .
+the boy wearing a black apron in black inglessed shirt creassing a snaw shirt with one while sitting on a front of his bits the fine .
+two children are and eaping out a couch .
+two men one in a white dressed in white shirt is posing .
+two the bed is looking at her dover with gift .
+two men sitting on the floor with the sharound .
+man in a large dressed in a large sitting on a kitchen bed on a deane behind him .
+a man hanging a datceeted woman and a tondurion doll .
+a man is putting dresssing from a wall .
+a woman in a white shirt enjoying while leaping out a pacifier .
+a man with a holich is looking at her baby i
+----- diversity: 1.200000----- Generating with seed: " shirt peering through a large bubble .
+the boy wearing a bl"
+ shirt peering through a large bubble .
+the boy wearing a blue shirt orange shirt wearing a green and black baby .
+an intires standing on a couch and red , green blotsed in his rinding on a grill .
+a young girl is happily sitting on broche cup .
+a woman making pink and blue gard mate undanned .
+the woman is wriping plays with counter with his arms drinks .
+a woman hawp apless girl is washing his chair .
+woman is mowing been at the marty of a woman in a green hair .
+two people standing at a rop tanket inside a handstand .
+an elderly man are playing with a bat grats sitting outside floor .
+a boy in a red shirt is looking at a kst room gut .
+a man showing
+
+--------------------------------------------------
+Iteration 81
+
+--------------------------------------------------
+Iteration 82
+
+--------------------------------------------------
+Iteration 83
+
+--------------------------------------------------
+Iteration 84
+
+--------------------------------------------------
+Iteration 85
+
+--------------------------------------------------
+Iteration 86
+
+--------------------------------------------------
+Iteration 87
+
+--------------------------------------------------
+Iteration 88
+
+--------------------------------------------------
+Iteration 89
+
+--------------------------------------------------
+Iteration 90
+----- diversity: 0.200000----- Generating with seed: "a woman looking at a book .
+a woman holds a drink while a ma"
+a woman looking at a book .
+a woman holds a drink while a man with a blue shirt .
+a man in a blue shirt snaw sweatshirt standing in the and with a spider the middle of a dark .
+a man with a black shirt is playing with a glass of wite brown hores .
+a group of people sitting on a stone floor , and a boy in a pink shirt walking for his family .
+a man in a black shirt is standing in the and one woman smiles and a black shirt is standing in front of a white building .
+a person is watching with black and blue striped shirt is smiling at the caminal in a shirt is standing on a stone bed .
+a man is couting on a chair on the floor .
+an older woman in a blue shi
+----- diversity: 0.500000----- Generating with seed: "a woman looking at a book .
+a woman holds a drink while a ma"
+a woman looking at a book .
+a woman holds a drink while a man in a white shirt stands in the sode .
+a man has a blue book while a man in a blue shirt holds a snow and standing bes with a small tree .
+a man is chapping a tigeth boy little boy a gardet on the camera .
+a man with glasses is smiling and wearing a red corn shirt .
+a girl in a prepare a small brown shorts wearing a long surt of stoopen .
+a man is chasing a tinger .
+a woman and young girl in a blue shirt standing in the middle of a lady in a kitchen .
+three people are counting in a lovers snow in a prances on a clotherious book .
+a woman is sitting on a striped plack into a long-sleeved shirt
+----- diversity: 1.000000----- Generating with seed: "a woman looking at a book .
+a woman holds a drink while a ma"
+a woman looking at a book .
+a woman holds a drink while a man throwing a padires at them walking to her hands .
+a woman wearing a some olded woman with eartial comstands .
+a man in works in croofs being edowide some funning .
+a man with young blond girl dressed in a red shirt next to he eating from a kitchen .
+all people wearing teeping agrisses with orange sandles and drinking down .
+a young male and smiling shirt on and white and light computer .
+a young child in pink and sherts sitting on a caurboard reople walls on a stool near a building woman in a hith dressed in wed ap of pants .
+two men on a woman running out of a people sitting in front of a f
+----- diversity: 1.200000----- Generating with seed: "a woman looking at a book .
+a woman holds a drink while a ma"
+a woman looking at a book .
+a woman holds a drink while a man in a green shirt watches and a pongs on a collar on an old man in the showing plastic bowls .
+flowers hug are having some pink , cuply and clates and leaning a littres on a couch watching .
+a young boy in ping old with her kneep in the noddler .
+two men on a wooden tree is towhthand to hat .
+a young boy is in a kitchen , leaning outside in their lack stas in the background .
+for the man is covering his fect a boy in a red christmas tree .
+a man in a black skitting closed in a tile while one woman together .
+a little girl holds a ing a for a micror .
+a young man in a red shirt has shirt sitti
+
+--------------------------------------------------
+Iteration 91
+
+--------------------------------------------------
+Iteration 92
+
+--------------------------------------------------
+Iteration 93
+
+--------------------------------------------------
+Iteration 94
+
+--------------------------------------------------
+Iteration 95
+
+--------------------------------------------------
+Iteration 96
+
+--------------------------------------------------
+Iteration 97
+
+--------------------------------------------------
+Iteration 98
+
+--------------------------------------------------
+Iteration 99
+
+--------------------------------------------------
+Iteration 100
+----- diversity: 0.200000----- Generating with seed: "g with a painting .
+a man grilling meats and mushrooms on a "
+g with a painting .
+a man grilling meats and mushrooms on a grill .
+a man is laying on a white building , bubble on a brown dog .
+bout , little boy in a blue shirt and grass with a green shirt is standing in front of a child in front of his back of a building .
+a woman dressed in and black apron pants and a baby can and a baby spared on a chair on her head .
+a woman wall in a white shirt and an orange shirt is standing in front of a christmas tree .
+a man in a bneculls and dack and dark on a child in a red and blue shirt are playing with a black sparse .
+a group of people are sitting around a small child in front of a christmas tree .
+a man in a black 
+----- diversity: 0.500000----- Generating with seed: "g with a painting .
+a man grilling meats and mushrooms on a "
+g with a painting .
+a man grilling meats and mushrooms on a white from .
+a young boy is looking at the camera .
+two women , and drinking a man with woman and a man is looking at his bed .
+a woman is holding a yellow toy .
+a man is kisking in a kitchen .
+two wears a small pown and black pappy sitting on a stiffe .
+two women are sitting on the black dance is with a pants mouth .
+a black dog with black dog is looking at his bed .
+a man wearing a bubble baby holding a baby boy in a celloral costume .
+a man in a blue shirt on in a long-sleeved shirt is standing in front of a christmas tree .
+a tenner young children in a pancc and a man with woman and a grou
+----- diversity: 1.000000----- Generating with seed: "g with a painting .
+a man grilling meats and mushrooms on a "
+g with a painting .
+a man grilling meats and mushrooms on a white .
+a group of people playing man 's on the elverfol .
+a gard man reads to play on and red .
+a little boy in a plack shirt is playing chewrying a knitended verying .
+a man dressed in an are dressed in blue instruct of a food food .
+a small child with the stacking over the pillow sof .
+two men stand on a large red hat holds a baby .
+a man in a black skilts and dark and light covera swimmmen .
+a man in a black shirt on in a chair .
+a polorful girl in a pink shirt holding a ying baby in a red and brown shows .
+a child in a pink shirt prepbing a girl with the white .
+a man with the white shirt
+----- diversity: 1.200000----- Generating with seed: "g with a painting .
+a man grilling meats and mushrooms on a "
+g with a painting .
+a man grilling meats and mushrooms on a grill .
+a child jomen over his people are talking .
+a small boy with brown grass set ifs is mowing a toy colored rearb
+a man playing with a brund-haired adilling cands .
+two children in front of the romf from a woman hearby .
+a woman unin a bride pants , one in a large red shirt being a front hoved to her back of her .
+a man reads mooreats a project .
+the brown dog is laying on the couch , and his toy playing with colorful cooks .
+a man in glasses and a littee chair wearing a purple shirt and his pentless of pull .
+the is with glasses and a fliend bubble wat coman to the kitchen .
+three young 
+
+--------------------------------------------------
+Iteration 101
+
+--------------------------------------------------
+Iteration 102
+
+--------------------------------------------------
+Iteration 103
+
+--------------------------------------------------
+Iteration 104
+
+--------------------------------------------------
+Iteration 105
+
+--------------------------------------------------
+Iteration 106
+
+--------------------------------------------------
+Iteration 107
+
+--------------------------------------------------
+Iteration 108
+
+--------------------------------------------------
+Iteration 109
+
+--------------------------------------------------
+Iteration 110
+----- diversity: 0.200000----- Generating with seed: "nnel contraption .
+a black man , dumping a bowl of meat into"
+nnel contraption .
+a black man , dumping a bowl of meat into a building .
+a woman with an apring her hands and claying with a stick .
+a man in a black shirt is shand with a gleen to her hair .
+a woman is looking at he playing with a black shirt .
+a little girl in a pink shirt is grioks and sutting boy in a white shirt .
+a woman is watching a baby stands next to a black shirt .
+a man is sitting in a kitchen making and colored boar .
+a man in a black shirt is swing in a pink shirt is playing with a toy in a yard while a woman in a white shirt stands by a paper .
+two men are sitting on a couch .
+a young boy in a plack shirt is slicing on a brown playp bed
+----- diversity: 0.500000----- Generating with seed: "nnel contraption .
+a black man , dumping a bowl of meat into"
+nnel contraption .
+a black man , dumping a bowl of meat into a stowed hair .
+a woman in a black shirt is shand with a green shirt with her house .
+a woman is washing his child around on her hands sitting on the pillow .
+a woman in a black skirt is walking in chairs on a looks at a gift on a proreet .
+a man in a green shirt is swinging a christmas stacking on a couch .
+a young boy in a bedry in a colored baby dry hat .
+a boy in a blue shirt on his head and light to do like s a kitchen .
+a blue playing with a clother ball .
+a child in a white dressed in pink , on his showing a blue show .
+a woman in a white shirt is washing his case .
+man looking outside
+----- diversity: 1.000000----- Generating with seed: "nnel contraption .
+a black man , dumping a bowl of meat into"
+nnel contraption .
+a black man , dumping a bowl of meat into a red ball .
+a young people ringing a book in a red and blue shari green are carries a building .
+a woman wearing a bubble in a sunglasses is playing muntig-soy .
+three yard dogs playing with a pacifier at the building .
+a woman working on a brown docressed and talk 's hamm .
+a man and a girl posing a contropeg .
+some black dogs to catch a next to a dall of a tub in his hand .
+a nishades makeufle and smiling suit is checked .
+for and holding a yellow snow hair .
+a woman is chairing new , and brown to be seated beand with her hands on her head .
+a woman wearing a white does a lady get boy in h
+----- diversity: 1.200000----- Generating with seed: "nnel contraption .
+a black man , dumping a bowl of meat into"
+nnel contraption .
+a black man , dumping a bowl of meat into a star from behind a pacifier .
+a girl dressed in white shirt lays a stodes light .
+a young boy wearing a brown fring dress of paper atoor with a drink .
+a man fevsed white sweater and a younger child playing in the cat of a meal .
+child in front of a cup with wearing a traings bitting laying on a striped floor , one hand and a lady in black dog .
+walking for a pillogeto the camera with right sian .
+a woman reads wooden pajamas baking pants with the stristures .
+walling man polish .
+two talk in his hand .
+a child cooking playing with a spinking on a fron tige .
+a man in wearing a long-sleever
+
+--------------------------------------------------
+Iteration 111
+
+--------------------------------------------------
+Iteration 112
+
+--------------------------------------------------
+Iteration 113
+
+--------------------------------------------------
+Iteration 114
+
+--------------------------------------------------
+Iteration 115
+
+--------------------------------------------------
+Iteration 116
