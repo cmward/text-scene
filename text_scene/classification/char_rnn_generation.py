@@ -32,7 +32,7 @@ def sample(a, temperature=1.0):
 def train_and_generate(nb_chars, X, y, model, text, maxlen, chars,
                        indices_char, char_indices, out):
     # train the model, output generated text after each iteration
-    for iteration in range(1):
+    for iteration in range(1, 301):
         log('-' * 50 + '\n', out)
         log('Iteration %i\n' % iteration, out)
         model.fit(X, y, batch_size=64, nb_epoch=1)
@@ -110,10 +110,12 @@ def main():
 
         print 'Build model...'
         model = Sequential()
-        model.add(GRU(256, return_sequences=True,
-                      input_shape=(maxlen, len(chars)), activation='relu',))
+        model.add(GRU(512, return_sequences=True,
+                      input_shape=(maxlen, len(chars)), activation='relu'))
         model.add(Dropout(0.5))
-        model.add(GRU(256, return_sequences=False, activation='relu'))
+        #model.add(GRU(512, return_sequences=True, activation='relu'))
+        #model.add(Dropout(0.5))
+        model.add(GRU(512, return_sequences=False, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(len(chars), activation='softmax'))
 
@@ -123,6 +125,8 @@ def main():
         log('label: %s\n' % label, out)
         train_and_generate(600, X, y, model, text, maxlen, chars,
                            indices_char, char_indices, out)
+
+        model.save_weights('%s.h5' % label)
 
     out.close()
 

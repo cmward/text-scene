@@ -39,7 +39,7 @@ step = 2
 sentences = []
 next_words = []
 mask = np.nonzero(sents)
-text = sents[mask]
+text = sents[mask].astype(np.int32)
 for i in range(0, len(text) - seqlen, step):
     sentences.append(text[i: i + seqlen])
     next_words.append(text[i + seqlen])
@@ -55,13 +55,14 @@ for i, sentence in enumerate(sentences):
 
 
 # load word vectors
-word_vecs = '/Users/chris/code/repos/thesis/data/GoogleNews-vectors-negative300.bin'
+word_vecs = sys.argv[1]
 word_vectors = load_bin_vec(word_vecs, word2idx)
 add_unknown_words(word_vectors, word2idx)
 embedding_weights = np.zeros((len(vocab)+1, 300))
 for word, index in word2idx.items():
     embedding_weights[index,:] = word_vectors[word]
 print "X shape:", X.shape, "y shape:", y.shape
+print "len(vocab):", len(vocab)
 
 # build model
 sentence_input = Input(shape=(seqlen,), dtype='int32')
@@ -79,12 +80,15 @@ softmax = Dense(len(vocab)+1, activation='softmax')(gru_2_out)
 model = Model(input=sentence_input, output=softmax)
 
 model.compile(loss='categorical_crossentropy', optimizer='adam')
+print_summary(model.layers)
 
 def sample(a, temperature=1.0):
     # helper function to sample an index from a probability array
     a = np.log(a) / temperature
     a = np.exp(a) / np.sum(np.exp(a))
     return np.argmax(np.random.multinomial(1, a, 1))
+
+out = open('datafiles/word_generated.txt', 'a')
 
 for iteration in range(1, 61):
     model.fit(X, y, batch_size=64, nb_epoch=1)
@@ -95,25 +99,26 @@ for iteration in range(1, 61):
         log('----- diversity: %f' % diversity, out)
 
         generated = ''
-        sentence = text[start_index: start_index + maxlen]
-        generated += sentence
+        sentence = text[start_index: start_index + seqlen]
+        generated += ' '.join([idx2word[i] for i in sentence])
 
-        log('----- Generating with seed: "' + sentence + '"\n', out)
+        log('----- Generating with seed: "' + generated + '"\n', out)
         log(generated, out)
 
+        X_pred = np.zeros((1, seqlen), dtype=np.int32)
         for i in range(100):
-            x = np.zeros((1, maxlen, len(vocab)))
             for t, word in enumerate(sentence):
-                x[0, t, word2idx[char]] = 1.
+                X_pred[0, t] = word
 
-            preds = model.predict(x, verbose=0)[0]
+            preds = model.predict(X_pred, verbose=0)[0]
             next_index = sample(preds, diversity)
-            next_word = word2idx[next_index]
+            next_word = idx2word[next_index]
 
-            generated += nextword_
-            sentence = sentence[1:] + next_word
+            generated += next_word
+            sentence = np.append(sentence[1:], [next_index])
+            print sentence
 
-            log(next_word, out)
+            log(next_word + ' ', out)
             sys.stdout.flush()
         log('\n', out)
 
