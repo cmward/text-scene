@@ -152,7 +152,7 @@ def write_results_from_batch_csv(batch_csv, outcsv):
     """write results csv from mturk generated batch results.
     Writes to `outcsv`."""
     df = pd.read_csv(batch_csv)
-    with open(outcsv, 'ab') as out:
+    with open(outcsv, 'wb') as out:
         writer = csv.writer(out)
         writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
         for _, row in df.iterrows():
