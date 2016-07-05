@@ -21,15 +21,15 @@ from paths import SENTENCES_CSV
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [2,3,4]
-nb_filters = 32
+filter_hs = [2,3,4,5]
+nb_filters = 16
 dropout_p = [0.2, 0.5] # [input, softmax]
 trainable_embeddings = True
 pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
-batch_size = 64
-nb_epoch = 20
+batch_size = 128
+nb_epoch = 12
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
