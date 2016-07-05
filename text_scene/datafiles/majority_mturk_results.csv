@@ -3457,7 +3457,7 @@ image_url,worker_id,q1,q2,q3,q4
 1673433891.jpg,majority,indoors,man-made,domestic,NA
 4791487303.jpg,majority,outdoors,natural,NA,other_unclear
 2285570521.jpg,majority,outdoors,natural,NA,mountain
-998845445.jpg,majority,outdoors,man-made,transportation_urban,NA
+998845445.jpg,majority,outdoors,natural,NA,body_of_water
 4389771247.jpg,majority,indoors,man-made,recreation,NA
 521083170.jpg,majority,outdoors,man-made,transportation_urban,NA
 357924786.jpg,majority,indoors,man-made,restaurant,NA
