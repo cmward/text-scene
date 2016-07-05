@@ -21,15 +21,15 @@ from paths import SENTENCES_CSV
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [2,3,4,5]
-nb_filters = 16
-dropout_p = [0.2, 0.5] # [input, softmax]
+filter_hs = [2,3,4,5,6,7,8,9,10]
+nb_filters = 10
+dropout_p = [0.2,0.5] # [input, softmax]
 trainable_embeddings = True
 pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
-batch_size = 128
-nb_epoch = 12
+batch_size = 64
+nb_epoch = 10
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
@@ -92,7 +92,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                 'cnn': cnn}
 
     params = [('filter_hs',filter_hs), ('nb_filters',nb_filters),
-              ('dropout_p',dropout_p), 
+              ('dropout_p',dropout_p),
               ('trainable_embeddings',trainable_embeddings),
               ('pretrained_embeddings',pretrained_embeddings),
               ('batch_size',batch_size), ('nb_epoch',nb_epoch),

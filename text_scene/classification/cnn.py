@@ -9,7 +9,9 @@ from keras.layers import Embedding, Input, Permute
 from keras.layers import Convolution1D, MaxPooling1D
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU, PReLU, ELU
 from keras.regularizers import l2
+from keras.constraints import maxnorm
 from keras.optimizers import Adam
 from keras import backend as K
 
@@ -74,10 +76,12 @@ class ParallelCNN(object):
         x = x(sentence_input)
         conv_pools = []
         for filter_h in filter_hs:
-            conv = Convolution1D(nb_filters, filter_h, border_mode='same')
+            conv = Convolution1D(nb_filters, filter_h, border_mode='same',
+                                 W_constraint=maxnorm(2))
             conved = conv(x)
             batchnorm = BatchNormalization()(conved)
-            conved_relu = Activation('relu')(batchnorm)
+            #conved_relu = Activation('relu')(batchnorm)
+            conved_relu = PReLU()(batchnorm)
             pool = Lambda(max_1d, output_shape=(nb_filters,))
             pooled = pool(conved_relu)
             conv_pools.append(pooled)
