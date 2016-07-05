@@ -79,7 +79,7 @@ class ParallelCNN(object):
             batchnorm = BatchNormalization()(conved)
             conved_relu = Activation('relu')(batchnorm)
             pool = Lambda(max_1d, output_shape=(nb_filters,))
-            pooled = pool(batchnorm)
+            pooled = pool(conved_relu)
             conv_pools.append(pooled)
         merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
