@@ -150,11 +150,11 @@ def make_batch(n_imgs=100):
 
 def write_results_from_batch_csv(batch_csv, outcsv):
     """write results csv from mturk generated batch results.
-    Appends to `outcsv`."""
+    Writes to `outcsv`."""
     df = pd.read_csv(batch_csv)
     with open(outcsv, 'ab') as out:
         writer = csv.writer(out)
-        #writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
+        writer.writerow(['image_url', 'worker_id', 'q1', 'q2', 'q3', 'q4'])
         for _, row in df.iterrows():
             img_url = row['Input.img_url'].strip()
             worker_id = row['WorkerId'].strip()
