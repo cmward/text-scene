@@ -19,8 +19,8 @@ from ensemble import train_and_test_model, EnsembleNN
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [2,3,4,5,6,7,8,9,10]
-nb_filters = 10
+filter_hs = [1,2,3,4,5,7,9,11,13,15,20,25,30]
+nb_filters = 4
 dropout_p = [0.2,0.5] # [input, softmax]
 trainable_embeddings = True
 pretrained_embeddings = True

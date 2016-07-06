@@ -24,7 +24,7 @@ from paths import SENTENCES_CSV
 # hyperparameters
 emb_dim = 300
 batch_size = 64
-nb_epoch = 12
+nb_epoch = 16
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
