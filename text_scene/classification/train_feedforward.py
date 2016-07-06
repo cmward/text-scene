@@ -151,3 +151,4 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
             print "\nfold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
                 (i+1, train_time, acc, len(test))
         print "Avg cv accuracy: %.4f" % np.mean(cv_scores)
+        return cv_scores
