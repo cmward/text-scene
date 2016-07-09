@@ -32,7 +32,7 @@ class FeedforwardNN(object):
         pool_out = Dropout(0.5)(pool(x))
         hidden_layers = []
         prev_layer = pool_out
-        for layer_size in layer_sizes:
+        for layer_size in layer_sizes[:-1]:
             hidden_in = Dense(layer_size)(prev_layer)
             hidden_bn = BatchNormalization()(hidden_in)
             if activation == 'relu':
@@ -46,11 +46,20 @@ class FeedforwardNN(object):
             hidden_out = Dropout(0.5)(hidden_activation)
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out
+        final_hidden_in = Dense(layer_sizes[-1])(hidden_layers[-1])
+        if activation == 'relu':
+            final_hidden_activation = Activation('relu')(final_hidden_in)
+        elif activation == 'prelu':
+            final_hidden_activation = PReLU()(final_hidden_in)
+        elif activation == 'leakyrelu':
+            final_hidden_activation = LeakyReLU()(final_hidden_in)
+        else: #ELU
+            final_hidden_activation = ELU()(final_hidden_in)
         if self.nb_labels == 2:
             out = Dense(1, activation='sigmoid')
         else:
             out = Dense(nb_labels, activation='softmax')
-        out = out(hidden_layers[-1])
+        out = out(final_hidden_activation)
         self.model = Model(input=sentence_input, output=out)
 
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
