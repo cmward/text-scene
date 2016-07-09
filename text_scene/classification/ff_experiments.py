@@ -1,5 +1,6 @@
-import numpy as np
+import sys
 import time
+import numpy as np
 from train_feedforward import train
 
 layer_sizes = [[128, 128],
@@ -22,6 +23,7 @@ layer_sizes = [[128, 128],
 pool_modes = ['sum', 'max', 'mean', 'concat']
 label_sets = ['full', 'function', '3way']
 activations = ['relu', 'leakyrelu', 'prelu', 'elu']
+word_vecs = sys.argv[1]
 
 
 with open('datafiles/ff_log.txt', 'wa') as log:
@@ -35,7 +37,7 @@ with open('datafiles/ff_log.txt', 'wa') as log:
                                           layer_sizes=layer_size,
                                           activation=activation,
                                           drop_unk=True,
-                                          word_vecs='../../GoogleNews-vectors-negative300.bin')
+                                          word_vecs=word_vecs)
                         log.write(('%s\t%s\t%s\t%s\t%.4f\n') %
                             (str(layer_size),
                              pool_mode,
