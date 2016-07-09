@@ -5,14 +5,14 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input, BatchNormalization
-from keras.layers.advanced_activations import LeakyReLU, PReLU
+from keras.layers.advanced_activations import LeakyReLU, PReLU, ELU
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras import backend as K
 
 class FeedforwardNN(object):
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, layer_sizes,
-                 embedding_weights, pool_mode='max'):
+                 embedding_weights, pool_mode='max', activation='relu'):
         self.nb_labels = nb_labels
         sentence_input = Input(shape=(maxlen,), dtype='int32')
         x = Embedding(input_dim=vocab_size+1,
@@ -35,7 +35,14 @@ class FeedforwardNN(object):
         for layer_size in layer_sizes:
             hidden_in = Dense(layer_size)(prev_layer)
             hidden_bn = BatchNormalization()(hidden_in)
-            hidden_activation = PReLU()(hidden_bn)
+            if activation == 'relu':
+                hidden_activation = Activation('relu')(hidden_bn)
+            elif activation == 'prelu':
+                hidden_activation = PReLU()(hidden_bn)
+            elif activation == 'leakyrelu':
+                hidden_activation = LeakyReLU()(hidden_bn)
+            else: #ELU
+                hidden_activation = ELU()(hidden_bn)
             hidden_out = Dropout(0.5)(hidden_activation)
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out

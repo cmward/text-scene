@@ -23,7 +23,7 @@ from paths import SENTENCES_CSV
 
 # hyperparameters
 emb_dim = 300
-batch_size = 64
+batch_size = 128
 nb_epoch = 16
 lr = 0.001
 beta_1 = 0.9
@@ -31,8 +31,8 @@ beta_2 = 0.999
 epsilon = 1e-08
 
 def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
-          drop_unk=False, word_vecs=None, return_net=False, cv=10,
-          label_unk=False):
+          activation='relu', drop_unk=False, word_vecs=None,
+          return_net=False, cv=10, label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
@@ -79,6 +79,7 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                             emb_dim,
                             maxlen,
                             layer_sizes,
+                            activation,
                             embedding_weights,
                             pool_mode=pool_mode)
 

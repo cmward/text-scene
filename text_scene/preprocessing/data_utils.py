@@ -514,4 +514,4 @@ def add_unknown_words(word_vecs, vocab, k=300):
             word_vecs[word] = np.random.uniform(-0.25,0.25,k)
     word_vecs['<unk>'] = np.random.uniform(-0.25,0.25,k)
     print "Added %i unknown words to word vectors." % len(unknown_words)
-    print unknown_words
+    #print unknown_words
