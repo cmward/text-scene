@@ -22,7 +22,7 @@ layer_sizes = [[128, 128],
                [512, 512, 256]]
 pool_modes = ['sum', 'max', 'mean', 'concat']
 label_sets = ['full', 'function', '3way']
-activations = ['relu', 'leakyrelu', 'prelu', 'elu']
+activations = ['tanh', 'relu', 'leakyrelu', 'prelu', 'elu']
 word_vecs = sys.argv[1]
 
 

@@ -60,7 +60,7 @@ class ParallelCNN(object):
     A CNN for text classification.
     embedding --> conv --> 1-max pool --> softmax
     """
-    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
+    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, fc,
                  embedding_weights, filter_hs, nb_filters, dropout_p,
                  trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
@@ -87,6 +87,9 @@ class ParallelCNN(object):
             conv_pools.append(pooled)
         merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
+        if fc:
+            fc_layer = Dense(fc)
+            fc_out = PReLU()(fc_layer)
         if nb_labels == 2:
             out = Dense(1, activation='sigmoid')
             out = out(dropout)

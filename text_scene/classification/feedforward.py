@@ -37,6 +37,8 @@ class FeedforwardNN(object):
             hidden_bn = BatchNormalization()(hidden_in)
             if activation == 'relu':
                 hidden_activation = Activation('relu')(hidden_bn)
+            elif activation == 'tanh':
+                hidden_activation = Activation('tanh')(hidden_bn)
             elif activation == 'prelu':
                 hidden_activation = PReLU()(hidden_bn)
             elif activation == 'leakyrelu':
@@ -49,6 +51,8 @@ class FeedforwardNN(object):
         final_hidden_in = Dense(layer_sizes[-1])(hidden_layers[-1])
         if activation == 'relu':
             final_hidden_activation = Activation('relu')(final_hidden_in)
+        elif activation == 'tanh':
+            final_hidden_activation = Activation('tanh')(final_hidden_in)
         elif activation == 'prelu':
             final_hidden_activation = PReLU()(final_hidden_in)
         elif activation == 'leakyrelu':
