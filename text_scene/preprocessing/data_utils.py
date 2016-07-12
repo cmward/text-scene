@@ -32,10 +32,9 @@ q3map = {'0': 'transportation_urban',
          '5': 'other_unclear',
          'NA': 'NA'}
 q4map = {'0': 'body_of_water',
-         '1': 'field',
+         '1': 'field/forest',
          '2': 'mountain',
-         '3': 'forest_jungle',
-         '4': 'other_unclear',
+         '3': 'other_unclear',
          'NA': 'NA'}
 
 def make_datadict(results_csv, keep_url=False):
