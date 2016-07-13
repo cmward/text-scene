@@ -32,7 +32,7 @@ epsilon = 1e-08
 
 def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
           activation='relu', drop_unk=False, word_vecs=None,
-          return_net=False, cv=10, label_unk=False):
+          return_net=False, cv=10, val_split=0.10, label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
     X, y, word2idx, l_enc = load_dataset(df, pad=True)
@@ -84,8 +84,8 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                             pool_mode=pool_mode)
 
         _, acc = train_and_test_model(nn1, X_train, y_train, X_test, y_test,
-                                       batch_size, nb_epoch,
-                                       lr, beta_1, beta_2, epsilon)
+                                      batch_size, nb_epoch,
+                                      lr, beta_1, beta_2, epsilon)
 
         print "Acc: %.4f" % acc
 
@@ -124,7 +124,8 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                 print_summary(nn.model.layers)
             nn, acc = train_and_test_model(nn, X[train], y[train], X[test], y[test],
                                            batch_size, nb_epoch,
-                                           lr, beta_1, beta_2, epsilon)
+                                           lr, beta_1, beta_2, epsilon,
+                                           val_split=val_split)
             if return_net:
                 d = {'X': X,
                      'y': y,
