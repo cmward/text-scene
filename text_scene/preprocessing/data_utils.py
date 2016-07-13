@@ -32,7 +32,7 @@ q3map = {'0': 'transportation_urban',
          '5': 'other_unclear',
          'NA': 'NA'}
 q4map = {'0': 'body_of_water',
-         '1': 'field/forest',
+         '1': 'field_forest',
          '2': 'mountain',
          '3': 'other_unclear',
          'NA': 'NA'}
@@ -357,6 +357,7 @@ def majority_vote_dict(datadict, keep_all=True):
     # return (value, count) tuple for most common value
     most_common = lambda x: Counter(x).most_common(1)[0]
     is_majority = lambda x,n: x[1] >= max(2., ceil(n / 2.))
+
     nb_no_majority_imgs = 0
     nb_no_majority_questions = 0
     for img_file, answer_lists in datadict.items():
@@ -374,6 +375,18 @@ def majority_vote_dict(datadict, keep_all=True):
                     majority_answers.append(answers[i])
                     no_majority_img = True
                     nb_no_majority_questions += 1
+
+            # check to make sure majorities for q3 and q4 both aren't NA
+            is_na = lambda x: x == 'NA'
+            if sum([is_na(m) for m in majority_answers]) > 1:
+                no_majority_img = True
+                majority_answers[0] = ('no', 'majority')
+            # check to rule out invalid combos
+            if majority_answers[1] == 'man-made' and \
+                    majority_answers[3] in ['field_forest', 'body_of_water']:
+                no_majority_img = True
+                majority_answers[0] = ('invalid', 'data')
+
             if no_majority_img:
                 #print "no majority: %s" % img_file
                 nb_no_majority_imgs += 1
