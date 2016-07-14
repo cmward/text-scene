@@ -259,6 +259,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
             sentence = [w
                         for w in sentence.split()
                         if w not in "?.,-!"]
+            sentence = [w.split('-') for w in sentence]
         if ngram_order == 1:
             for word in sentence:
                 if stem:
