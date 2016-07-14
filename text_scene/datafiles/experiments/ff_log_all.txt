@@ -1,0 +1,255 @@
+[128, 128]	sum	tanh	full	0.6851
+[128, 128]	sum	relu	full	0.6859
+[128, 128]	sum	leakyrelu	full	0.6850
+[128, 128]	sum	prelu	full	0.6840
+[128, 128]	sum	elu	full	0.6853
+[128, 128]	max	tanh	full	0.6767
+[128, 128]	max	relu	full	0.6762
+[128, 128]	max	leakyrelu	full	0.6756
+[128, 128]	max	prelu	full	0.6774
+[128, 128]	max	elu	full	0.6759
+[128, 128]	mean	tanh	full	0.6832
+[128, 128]	mean	relu	full	0.6846
+[128, 128]	mean	leakyrelu	full	0.6848
+[128, 128]	mean	prelu	full	0.6825
+[128, 128]	mean	elu	full	0.6838
+[256, 256]	sum	tanh	full	0.6856
+[256, 256]	sum	relu	full	0.6876
+[256, 256]	sum	leakyrelu	full	0.6889
+[256, 256]	sum	prelu	full	0.6860
+[256, 256]	sum	elu	full	0.6859
+[256, 256]	max	tanh	full	0.6799
+[256, 256]	max	relu	full	0.6801
+[256, 256]	max	leakyrelu	full	0.6797
+[256, 256]	max	prelu	full	0.6771
+[256, 256]	max	elu	full	0.6803
+[256, 256]	mean	tanh	full	0.6871
+[256, 256]	mean	relu	full	0.6858
+[256, 256]	mean	leakyrelu	full	0.6859
+[256, 256]	mean	prelu	full	0.6888
+[256, 256]	mean	elu	full	0.6879
+[512, 512]	sum	tanh	full	0.6872
+[512, 512]	sum	relu	full	0.6884
+[512, 512]	sum	leakyrelu	full	0.6868
+[512, 512]	sum	prelu	full	0.6891
+[512, 512]	sum	elu	full	0.6864
+[512, 512]	max	tanh	full	0.6821
+[512, 512]	max	relu	full	0.6797
+[512, 512]	max	leakyrelu	full	0.6833
+[512, 512]	max	prelu	full	0.6837
+[512, 512]	max	elu	full	0.6842
+[512, 512]	mean	tanh	full	0.6879
+[512, 512]	mean	relu	full	0.6884
+[512, 512]	mean	leakyrelu	full	0.6886
+[512, 512]	mean	prelu	full	0.6880
+[512, 512]	mean	elu	full	0.6836
+[1024, 1024]	sum	tanh	full	0.6855
+[1024, 1024]	sum	relu	full	0.6851
+[1024, 1024]	sum	leakyrelu	full	0.6842
+[1024, 1024]	sum	prelu	full	0.6903
+[1024, 1024]	sum	elu	full	0.6828
+[1024, 1024]	max	tanh	full	0.6807
+[1024, 1024]	max	relu	full	0.6843
+[1024, 1024]	max	leakyrelu	full	0.6816
+[1024, 1024]	max	prelu	full	0.6806
+[1024, 1024]	max	elu	full	0.6821
+[1024, 1024]	mean	tanh	full	0.6866
+[1024, 1024]	mean	relu	full	0.6870
+[1024, 1024]	mean	leakyrelu	full	0.6872
+[1024, 1024]	mean	prelu	full	0.6863
+[1024, 1024]	mean	elu	full	0.6886
+[256, 128]	sum	tanh	full	0.6874
+[256, 128]	sum	relu	full	0.6860
+[256, 128]	sum	leakyrelu	full	0.6877
+[256, 128]	sum	prelu	full	0.6858
+[256, 128]	sum	elu	full	0.6861
+[256, 128]	max	tanh	full	0.6774
+[256, 128]	max	relu	full	0.6793
+[256, 128]	max	leakyrelu	full	0.6790
+[256, 128]	max	prelu	full	0.6792
+[256, 128]	max	elu	full	0.6804
+[256, 128]	mean	tanh	full	0.6877
+[256, 128]	mean	relu	full	0.6858
+[256, 128]	mean	leakyrelu	full	0.6868
+[256, 128]	mean	prelu	full	0.6851
+[256, 128]	mean	elu	full	0.6862
+[512, 256]	sum	tanh	full	0.6851
+[512, 256]	sum	relu	full	0.6873
+[512, 256]	sum	leakyrelu	full	0.6863
+[512, 256]	sum	prelu	full	0.6869
+[512, 256]	sum	elu	full	0.6884
+[512, 256]	max	tanh	full	0.6813
+[512, 256]	max	relu	full	0.6799
+[512, 256]	max	leakyrelu	full	0.6805
+[512, 256]	max	prelu	full	0.6829
+[512, 256]	max	elu	full	0.6807
+[512, 256]	mean	tanh	full	0.6846
+[512, 256]	mean	relu	full	0.6865
+[512, 256]	mean	leakyrelu	full	0.6882
+[512, 256]	mean	prelu	full	0.6870
+[512, 256]	mean	elu	full	0.6886
+[512, 128]	sum	tanh	full	0.6865
+[512, 128]	sum	relu	full	0.6856
+[512, 128]	sum	leakyrelu	full	0.6848
+[512, 128]	sum	prelu	full	0.6872
+[512, 128]	sum	elu	full	0.6860
+[512, 128]	max	tanh	full	0.6798
+[512, 128]	max	relu	full	0.6801
+[512, 128]	max	leakyrelu	full	0.6826
+[512, 128]	max	prelu	full	0.6807
+[512, 128]	max	elu	full	0.6807
+[512, 128]	mean	tanh	full	0.6892
+[512, 128]	mean	relu	full	0.6861
+[512, 128]	mean	leakyrelu	full	0.6890
+[512, 128]	mean	prelu	full	0.6849
+[512, 128]	mean	elu	full	0.6853
+[1024, 512]	sum	tanh	full	0.6855
+[1024, 512]	sum	relu	full	0.6861
+[1024, 512]	sum	leakyrelu	full	0.6877
+[1024, 512]	sum	prelu	full	0.6854
+[1024, 512]	sum	elu	full	0.6884
+[1024, 512]	max	tanh	full	0.6818
+[1024, 512]	max	relu	full	0.6826
+[1024, 512]	max	leakyrelu	full	0.6821
+[1024, 512]	max	prelu	full	0.6816
+[1024, 512]	max	elu	full	0.6810
+[1024, 512]	mean	tanh	full	0.6829
+[1024, 512]	mean	relu	full	0.6840
+[1024, 512]	mean	leakyrelu	full	0.6848
+[1024, 512]	mean	prelu	full	0.6871
+[1024, 512]	mean	elu	full	0.6872
+[1024, 256]	sum	tanh	full	0.6874
+[1024, 256]	sum	relu	full	0.6851
+[1024, 256]	sum	leakyrelu	full	0.6875
+[1024, 256]	sum	prelu	full	0.6869
+[1024, 256]	sum	elu	full	0.6866
+[1024, 256]	max	tanh	full	0.6805
+[1024, 256]	max	relu	full	0.6809
+[1024, 256]	max	leakyrelu	full	0.6804
+[1024, 256]	max	prelu	full	0.6791
+[1024, 256]	max	elu	full	0.6798
+[1024, 256]	mean	tanh	full	0.6845
+[1024, 256]	mean	relu	full	0.6864
+[1024, 256]	mean	leakyrelu	full	0.6819
+[1024, 256]	mean	prelu	full	0.6855
+[1024, 256]	mean	elu	full	0.6854
+[1024, 128]	sum	tanh	full	0.6892
+[1024, 128]	sum	relu	full	0.6872
+[1024, 128]	sum	leakyrelu	full	0.6866
+[1024, 128]	sum	prelu	full	0.6879
+[1024, 128]	sum	elu	full	0.6874
+[1024, 128]	max	tanh	full	0.6819
+[1024, 128]	max	relu	full	0.6781
+[1024, 128]	max	leakyrelu	full	0.6796
+[1024, 128]	max	prelu	full	0.6797
+[1024, 128]	max	elu	full	0.6797
+[1024, 128]	mean	tanh	full	0.6861
+[1024, 128]	mean	relu	full	0.6876
+[1024, 128]	mean	leakyrelu	full	0.6875
+[1024, 128]	mean	prelu	full	0.6869
+[1024, 128]	mean	elu	full	0.6862
+[128, 128, 128]	sum	tanh	full	0.6748
+[128, 128, 128]	sum	relu	full	0.6745
+[128, 128, 128]	sum	leakyrelu	full	0.6739
+[128, 128, 128]	sum	prelu	full	0.6744
+[128, 128, 128]	sum	elu	full	0.6734
+[128, 128, 128]	max	tanh	full	0.6542
+[128, 128, 128]	max	relu	full	0.6543
+[128, 128, 128]	max	leakyrelu	full	0.6514
+[128, 128, 128]	max	prelu	full	0.6533
+[128, 128, 128]	max	elu	full	0.6494
+[128, 128, 128]	mean	tanh	full	0.6754
+[128, 128, 128]	mean	relu	full	0.6739
+[128, 128, 128]	mean	leakyrelu	full	0.6743
+[128, 128, 128]	mean	prelu	full	0.6745
+[128, 128, 128]	mean	elu	full	0.6754
+[256, 256, 256]	sum	tanh	full	0.6826
+[256, 256, 256]	sum	relu	full	0.6817
+[256, 256, 256]	sum	leakyrelu	full	0.6796
+[256, 256, 256]	sum	prelu	full	0.6835
+[256, 256, 256]	sum	elu	full	0.6799
+[256, 256, 256]	max	tanh	full	0.6712
+[256, 256, 256]	max	relu	full	0.6715
+[256, 256, 256]	max	leakyrelu	full	0.6716
+[256, 256, 256]	max	prelu	full	0.6706
+[256, 256, 256]	max	elu	full	0.6711
+[256, 256, 256]	mean	tanh	full	0.6826
+[256, 256, 256]	mean	relu	full	0.6831
+[256, 256, 256]	mean	leakyrelu	full	0.6816
+[256, 256, 256]	mean	prelu	full	0.6824
+[256, 256, 256]	mean	elu	full	0.6830
+[512, 512, 512]	sum	tanh	full	0.6853
+[512, 512, 512]	sum	relu	full	0.6845
+[512, 512, 512]	sum	leakyrelu	full	0.6845
+[512, 512, 512]	sum	prelu	full	0.6883
+[512, 512, 512]	sum	elu	full	0.6852
+[512, 512, 512]	max	tanh	full	0.6786
+[512, 512, 512]	max	relu	full	0.6771
+[512, 512, 512]	max	leakyrelu	full	0.6790
+[512, 512, 512]	max	prelu	full	0.6743
+[512, 512, 512]	max	elu	full	0.6765
+[512, 512, 512]	mean	tanh	full	0.6846
+[512, 512, 512]	mean	relu	full	0.6849
+[512, 512, 512]	mean	leakyrelu	full	0.6840
+[512, 512, 512]	mean	prelu	full	0.6832
+[512, 512, 512]	mean	elu	full	0.6837
+[1024, 1024, 1024]	sum	tanh	full	0.6837
+[1024, 1024, 1024]	sum	relu	full	0.6857
+[1024, 1024, 1024]	sum	leakyrelu	full	0.6847
+[1024, 1024, 1024]	sum	prelu	full	0.6853
+[1024, 1024, 1024]	sum	elu	full	0.6840
+[1024, 1024, 1024]	max	tanh	full	0.6816
+[1024, 1024, 1024]	max	relu	full	0.6815
+[1024, 1024, 1024]	max	leakyrelu	full	0.6791
+[1024, 1024, 1024]	max	prelu	full	0.6795
+[1024, 1024, 1024]	max	elu	full	0.6799
+[1024, 1024, 1024]	mean	tanh	full	0.6858
+[1024, 1024, 1024]	mean	relu	full	0.6857
+[1024, 1024, 1024]	mean	leakyrelu	full	0.6868
+[1024, 1024, 1024]	mean	prelu	full	0.6848
+[1024, 1024, 1024]	mean	elu	full	0.6865
+[1024, 512, 256]	sum	tanh	full	0.6851
+[1024, 512, 256]	sum	relu	full	0.6860
+[1024, 512, 256]	sum	leakyrelu	full	0.6845
+[1024, 512, 256]	sum	prelu	full	0.6865
+[1024, 512, 256]	sum	elu	full	0.6868
+[1024, 512, 256]	max	tanh	full	0.6771
+[1024, 512, 256]	max	relu	full	0.6775
+[1024, 512, 256]	max	leakyrelu	full	0.6799
+[1024, 512, 256]	max	prelu	full	0.6775
+[1024, 512, 256]	max	elu	full	0.6789
+[1024, 512, 256]	mean	tanh	full	0.6864
+[1024, 512, 256]	mean	relu	full	0.6884
+[1024, 512, 256]	mean	leakyrelu	full	0.6844
+[1024, 512, 256]	mean	prelu	full	0.6834
+[1024, 512, 256]	mean	elu	full	0.6868
+[512, 256, 128]	sum	tanh	full	0.6826
+[512, 256, 128]	sum	relu	full	0.6845
+[512, 256, 128]	sum	leakyrelu	full	0.6828
+[512, 256, 128]	sum	prelu	full	0.6839
+[512, 256, 128]	sum	elu	full	0.6852
+[512, 256, 128]	max	tanh	full	0.6768
+[512, 256, 128]	max	relu	full	0.6750
+[512, 256, 128]	max	leakyrelu	full	0.6744
+[512, 256, 128]	max	prelu	full	0.6757
+[512, 256, 128]	max	elu	full	0.6768
+[512, 256, 128]	mean	tanh	full	0.6847
+[512, 256, 128]	mean	relu	full	0.6834
+[512, 256, 128]	mean	leakyrelu	full	0.6848
+[512, 256, 128]	mean	prelu	full	0.6830
+[512, 256, 128]	mean	elu	full	0.6841
+[512, 512, 256]	sum	tanh	full	0.6863
+[512, 512, 256]	sum	relu	full	0.6830
+[512, 512, 256]	sum	leakyrelu	full	0.6856
+[512, 512, 256]	sum	prelu	full	0.6816
+[512, 512, 256]	sum	elu	full	0.6864
+[512, 512, 256]	max	tanh	full	0.6773
+[512, 512, 256]	max	relu	full	0.6795
+[512, 512, 256]	max	leakyrelu	full	0.6780
+[512, 512, 256]	max	prelu	full	0.6771
+[512, 512, 256]	max	elu	full	0.6788
+[512, 512, 256]	mean	tanh	full	0.6862
+[512, 512, 256]	mean	relu	full	0.6824
+[512, 512, 256]	mean	leakyrelu	full	0.6828
+[512, 512, 256]	mean	prelu	full	0.6861
+[512, 512, 256]	mean	elu	full	0.6862

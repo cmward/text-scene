@@ -68,7 +68,8 @@ class FeedforwardNN(object):
 
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
                          batch_size, nb_epoch,
-                         lr, beta_1, beta_2, epsilon):
+                         lr, beta_1, beta_2, epsilon,
+                         val_split=0.10):
     adam = Adam(lr=lr, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon)
     if nn.nb_labels == 2:
         nn.model.compile(loss='binary_crossentropy',
@@ -80,6 +81,6 @@ def train_and_test_model(nn, X_train, y_train, X_test, y_test,
                       metrics=['accuracy'])
     nn.model.fit(X_train, y_train,
                  batch_size=batch_size, nb_epoch=nb_epoch,
-                 validation_split=0.1)
+                 validation_split=val_split)
     score, acc = nn.model.evaluate(X_test, y_test, batch_size=64)
     return nn, acc
