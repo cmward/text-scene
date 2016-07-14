@@ -253,11 +253,11 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     for sentence in sentences:
         if omit_stop:
             sentence = [w
-                        for w in sentence.split()
+                        for w in re.split("| ", sentence)
                         if w not in stop and w not in "?.,-!"]
         else:
             sentence = [w
-                        for w in sentence.split()
+                        for w in re.split("| ", sentence)
                         if w not in "?.,-!"]
             sentence = [w.split('-') for w in sentence]
         if ngram_order == 1:
@@ -275,11 +275,11 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     for i,sentence in enumerate(sentences):
         if omit_stop:
             sentence = [w
-                        for w in sentence.split()
+                        for w in re.split("| ", sentence)
                         if w not in stop and w not in "?.,-!"]
         else:
             sentence = [w
-                        for w in sentence.split()
+                        for w in re.split("| ", sentence)
                         if w not in "?.,-!"]
         if ngram_order == 1:
             if stem:
