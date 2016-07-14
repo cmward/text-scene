@@ -16,7 +16,7 @@ def train_test_bow(ngram_order, batch_size=128, n_epoch=3):
         X, y, word2idx, l_enc = load_dataset(df, ngram_order=ngram_order)
         print "X shape: %s" % (X.shape,)
         print "y shape: %s" % (y.shape,)
-        skf = StratifiedKFold(y, n_folds=5, shuffle=True, random_state=0)
+        skf = StratifiedKFold(y, n_folds=10, shuffle=True, random_state=0)
         scores = []
         for (train, test) in skf:
             clf = None

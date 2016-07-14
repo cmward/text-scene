@@ -18,7 +18,7 @@ def train_and_test_nb(ngram_order=1):
         print "X shape: %s" % (X.shape,)
         print "y shape: %s" % (y.shape,)
         clf = BernoulliNB()
-        scores = cross_val_score(clf, X, y, cv=5)
+        scores = cross_val_score(clf, X, y, cv=10)
         print_label_frequencies(df)
-        print '%s label mean cv accuracy: %.2f\n' % (label_set, np.mean(scores))
+        print '%s label mean cv accuracy: %.4f\n' % (label_set, np.mean(scores))
 
