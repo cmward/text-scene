@@ -294,8 +294,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
             for n in range(1, ngram_order+1):
                 for ngram in zip(*[sentence[i:] for i in range(n)]):
                     indices.append(word2id[ngram])
-            indices = [word2id[n] for n in
-                       zip(*[sentence[j:] for j in range(ngram_order)])]
+            X_ind.append(indices)
     X = np.zeros((len(sentences), len(word2id)+1))
     for i,sample in enumerate(X_ind):
         for idx in sample:
