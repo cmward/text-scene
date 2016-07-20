@@ -1,3 +1,4 @@
+import re
 import csv
 import numpy as np
 import pandas as pd
@@ -253,13 +254,12 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     for sentence in sentences:
         if omit_stop:
             sentence = [w
-                        for w in re.split("| ", sentence)
+                        for w in re.split("-| ", sentence)
                         if w not in stop and w not in "?.,-!"]
         else:
             sentence = [w
-                        for w in re.split("| ", sentence)
+                        for w in re.split("-| ", sentence)
                         if w not in "?.,-!"]
-            sentence = [w.split('-') for w in sentence]
         if ngram_order == 1:
             for word in sentence:
                 if stem:
@@ -267,19 +267,21 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
                 else:
                     vocab.append(word)
         else:
-            for ngram in zip(*[sentence[i:] for i in range(ngram_order)]):
-                vocab.append(ngram)
+            # all n from 1 to n
+            for n in range(1, ngram_order+1):
+                for ngram in zip(*[sentence[i:] for i in range(n)]):
+                    vocab.append(ngram)
     # start at 1 to allow masking in Keras
     word2id = {w:i for i,w in enumerate(set(vocab), start=1)}
     X_ind = []
     for i,sentence in enumerate(sentences):
         if omit_stop:
             sentence = [w
-                        for w in re.split("| ", sentence)
+                        for w in re.split("-| ", sentence)
                         if w not in stop and w not in "?.,-!"]
         else:
             sentence = [w
-                        for w in re.split("| ", sentence)
+                        for w in re.split("-| ", sentence)
                         if w not in "?.,-!"]
         if ngram_order == 1:
             if stem:
@@ -288,6 +290,10 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
                 indices = [word2id[w] for w in sentence]
             X_ind.append(indices)
         else:
+            indices = []
+            for n in range(1, ngram_order+1):
+                for ngram in zip(*[sentence[i:] for i in range(n)]):
+                    indices.append(word2id[ngram])
             indices = [word2id[n] for n in
                        zip(*[sentence[j:] for j in range(ngram_order)])]
     X = np.zeros((len(sentences), len(word2id)+1))
