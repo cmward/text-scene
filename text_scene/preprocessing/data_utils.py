@@ -302,7 +302,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     l_enc = LabelEncoder()
     y = l_enc.fit_transform(df['label'].values)
     if pad:
-        X = pad_sequences(X_ind, maxlen=79)
+        X = pad_sequences(X_ind)
     return X, y, word2id, l_enc
 
 #######################
