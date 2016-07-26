@@ -188,14 +188,15 @@ def append_batch_results(batch_results_csv=COMBINED_BATCH_RESULTS_CSV,
 ####################
 
 def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
-                 label_unk=None, distant=None):
+                 label_unk=None, distant=None, keep_filename=False):
     """
     Create a dataframe out of the data in `sentence_csv`.
     Each row contains a sentence and its label. The label set
     is determined by the value of the `labels` parameter.
     """
     df = label_unk if isinstance(label_unk, pd.DataFrame) else pd.read_csv(sentence_csv)
-    df = df.drop(['img_file'], 1)
+    if not keep_filename:
+        df = df.drop(['img_file'], 1)
     if labels == 'full':
         if drop_unk:
             df = df[df.q3 != 'other_unclear']
@@ -302,7 +303,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     l_enc = LabelEncoder()
     y = l_enc.fit_transform(df['label'].values)
     if pad:
-        X = pad_sequences(X_ind)
+        X = pad_sequences(X_ind, padding='post')
     return X, y, word2id, l_enc
 
 #######################
