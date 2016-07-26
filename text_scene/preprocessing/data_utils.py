@@ -188,13 +188,18 @@ def append_batch_results(batch_results_csv=COMBINED_BATCH_RESULTS_CSV,
 ####################
 
 def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
-                 label_unk=None, distant=None, keep_filename=False):
+                 label_unk=None, distant=None, keep_filename=False,
+                 special_tokens=False):
     """
     Create a dataframe out of the data in `sentence_csv`.
     Each row contains a sentence and its label. The label set
     is determined by the value of the `labels` parameter.
     """
     df = label_unk if isinstance(label_unk, pd.DataFrame) else pd.read_csv(sentence_csv)
+    # start and end tokens
+    if special_tokens:
+        ins_toks = lambda row: ' '.join(['<s>'] + row['sentence'].split() + ['<e>'])
+        df['sentence'] = df.apply(lambda row: ins_toks(row), axis=1)
     if not keep_filename:
         df = df.drop(['img_file'], 1)
     if labels == 'full':
@@ -238,7 +243,8 @@ def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
         df = df.drop(['q1', 'q2', 'q3', 'q4'], 1)
         return df
 
-def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
+def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False,
+                 word2idx=None):
     """
     Creates numpy arrays out of a dataframe. If `pad` is set to
     `True`, X array will be of size (n_samples, maxlen), where each
@@ -272,8 +278,9 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
             for n in range(1, ngram_order+1):
                 for ngram in zip(*[sentence[i:] for i in range(n)]):
                     vocab.append(ngram)
-    # start at 1 to allow masking in Keras
-    word2id = {w:i for i,w in enumerate(set(vocab), start=1)}
+    if not word2idx:
+        # start at 1 to allow masking in Keras
+        word2idx = {w:i for i,w in enumerate(set(vocab), start=1)}
     X_ind = []
     for i,sentence in enumerate(sentences):
         if omit_stop:
@@ -286,17 +293,17 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
                         if w not in "?.,-!"]
         if ngram_order == 1:
             if stem:
-                indices = [word2id[stemmer.stem(w)] for w in sentence]
+                indices = [word2idx[stemmer.stem(w)] for w in sentence]
             else:
-                indices = [word2id[w] for w in sentence]
+                indices = [word2idx[w] for w in sentence]
             X_ind.append(indices)
         else:
             indices = []
             for n in range(1, ngram_order+1):
                 for ngram in zip(*[sentence[i:] for i in range(n)]):
-                    indices.append(word2id[ngram])
+                    indices.append(word2idx[ngram])
             X_ind.append(indices)
-    X = np.zeros((len(sentences), len(word2id)+1))
+    X = np.zeros((len(sentences), len(word2idx)+1))
     for i,sample in enumerate(X_ind):
         for idx in sample:
             X[i,idx] = 1
@@ -304,7 +311,7 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False):
     y = l_enc.fit_transform(df['label'].values)
     if pad:
         X = pad_sequences(X_ind, padding='post')
-    return X, y, word2id, l_enc
+    return X, y, word2idx, l_enc
 
 #######################
 ### Majority voting ###
