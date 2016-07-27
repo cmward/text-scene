@@ -8,6 +8,7 @@ from keras.layers import Embedding, Input, BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU, PReLU, ELU
 from keras.regularizers import l2
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 from keras import backend as K
 
 class FeedforwardNN(object):
@@ -66,6 +67,25 @@ class FeedforwardNN(object):
         out = out(final_hidden_activation)
         self.model = Model(input=sentence_input, output=out)
 
+class FastText(object):
+    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, layer_sizes,
+                 embedding_weights, pool_mode='max', activation='relu'):
+        self.nb_labels = nb_labels
+        sentence_input = Input(shape=(maxlen,), dtype='int32')
+        x = Embedding(input_dim=vocab_size+1,
+                      output_dim=emb_dim,
+                      input_length=maxlen,
+                      weights=None)
+        x = x(sentence_input)
+        pool = Lambda(lambda x: K.mean(x, axis=1), output_shape=(emb_dim,))
+        pool_out = pool(x)
+        if self.nb_labels == 2:
+            out = Dense(1, activation='sigmoid')
+        else:
+            out = Dense(nb_labels, activation='softmax')
+        out = out(pool_out)
+        self.model = Model(input=sentence_input, output=out)
+
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
                          batch_size, nb_epoch,
                          lr, beta_1, beta_2, epsilon,
@@ -79,8 +99,11 @@ def train_and_test_model(nn, X_train, y_train, X_test, y_test,
         nn.model.compile(loss='categorical_crossentropy',
                       optimizer=adam,
                       metrics=['accuracy'])
-    nn.model.fit(X_train, y_train,
-                 batch_size=batch_size, nb_epoch=nb_epoch,
-                 validation_split=val_split)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5,
+                                   verbose=0, mode='auto')
+    nn.model.fit(X_train, y_train, nb_epoch=nb_epoch,
+                 batch_size=batch_size,
+                 validation_split=val_split,
+                 callbacks=[early_stopping])
     score, acc = nn.model.evaluate(X_test, y_test, batch_size=64)
     return nn, acc

@@ -1,0 +1,13 @@
+[1024, 1024]	sum	prelu	full	0.6903
+
+Model type: Parallel
+filter_hs: [5, 10, 15]
+nb_filters: 150
+dropout_p: [0.2, 0.5]
+trainable_embeddings: True
+pretrained_embeddings: True
+.6866
+
+GRU [512, 512] .6755
+GRU [256, 256] 
+GRU [128, 128] .6869
