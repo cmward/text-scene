@@ -13,6 +13,7 @@ from keras.layers.advanced_activations import LeakyReLU, PReLU, ELU
 from keras.regularizers import l2
 from keras.constraints import maxnorm
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 from keras import backend as K
 
 class KmaxCNN(object):
@@ -24,7 +25,7 @@ class KmaxCNN(object):
                  embedding_weights, filter_hs, nb_filters, dropout_p,
                  trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
-        self.k = 4
+        self.k = 8
         if pretrained_embeddings is False:
             embedding_weights = None
         else:
@@ -60,7 +61,7 @@ class ParallelCNN(object):
     A CNN for text classification.
     embedding --> conv --> 1-max pool --> softmax
     """
-    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, fc,
+    def __init__(self, vocab_size, nb_labels, emb_dim, maxlen,
                  embedding_weights, filter_hs, nb_filters, dropout_p,
                  trainable_embeddings, pretrained_embeddings):
         self.nb_labels = nb_labels
@@ -85,11 +86,11 @@ class ParallelCNN(object):
             pool = Lambda(max_1d, output_shape=(nb_filters,))
             pooled = pool(conved_relu)
             conv_pools.append(pooled)
-        merged = merge(conv_pools, mode='concat')
+        if len(conv_pools) == 1:
+            merged = conv_pools[0]
+        else:
+            merged = merge(conv_pools, mode='concat')
         dropout = Dropout(dropout_p[1])(merged)
-        if fc:
-            fc_layer = Dense(fc)
-            fc_out = PReLU()(fc_layer)
         if nb_labels == 2:
             out = Dense(1, activation='sigmoid')
             out = out(dropout)
@@ -198,9 +199,10 @@ def train_and_test_model(cnn, X_train, y_train, X_test, y_test,
         cnn.model.compile(loss='categorical_crossentropy',
                       optimizer=adam,
                       metrics=['accuracy'])
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=0,
+                                   mode='auto')
     cnn.model.fit(X_train, y_train,
-                  batch_size=batch_size, nb_epoch=nb_epoch,
-                  validation_split=0.1)
+                  batch_size=batch_size, nb_epoch=nb_epoch)
     score, acc = cnn.model.evaluate(X_test, y_test, batch_size=64)
     return acc
 

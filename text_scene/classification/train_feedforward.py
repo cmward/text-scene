@@ -17,25 +17,26 @@ from preprocessing.data_utils import (
 )
 from preprocessing.distant import create_unk_labeled_instances
 from corpus_stats.frequency import print_label_frequencies
-from feedforward import FeedforwardNN, train_and_test_model
+from feedforward import FeedforwardNN, train_and_test_model, FastText
 from paths import SENTENCES_CSV
 
 
 # hyperparameters
 emb_dim = 300
-batch_size = 128
-nb_epoch = 16
+ngram_order = 2
+batch_size = 256
+nb_epoch = 50
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
 
 def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
-          activation='relu', drop_unk=False, word_vecs=None,
+          activation='prelu', drop_unk=False, word_vecs=None,
           return_net=False, cv=10, val_split=0.10, label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
-    X, y, word2idx, l_enc = load_dataset(df, pad=True)
+    X, y, word2idx, l_enc = load_dataset(df, ngram_order=ngram_order, pad=True)
     print "X shape:", X.shape
     y_orig = y
     y_binary = to_categorical(y)
@@ -52,9 +53,11 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
     vocab_size = len(word2idx) + 1 # 0 masking
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
+
     embedding_weights = np.zeros((vocab_size+1, emb_dim))
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
+    #embedding_weights = None
     print "Data loaded."
 
     params = [('batch_size',batch_size), ('nb_epoch',nb_epoch),
@@ -141,6 +144,7 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                 return d, nn
             cv_scores.append(acc)
             train_time = time.time() - start_time
+            """
             print('\nLabel frequencies in y[test]')
             print_label_frequencies((y_orig[test], l_enc))
             y_pred = nn.model.predict(X[test])
@@ -150,7 +154,9 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
             print('\nLabel frequencies in predict(y[test])')
             for label, count in c.most_common():
                 print l_enc.inverse_transform(label), count, count / total
+            """
             print "\nfold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
                 (i+1, train_time, acc, len(test))
+            print "ngram order: %i" % ngram_order
         print "Avg cv accuracy: %.4f" % np.mean(cv_scores)
         return cv_scores

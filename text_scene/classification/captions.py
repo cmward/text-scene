@@ -19,6 +19,7 @@ from keras.utils.layer_utils import print_summary
 from keras.engine.topology import InputSpec
 from keras import backend as K
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.data_utils import load_dataset, sentences_df
 
 
