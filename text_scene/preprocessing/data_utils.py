@@ -244,7 +244,7 @@ def sentences_df(sentence_csv=SENTENCES_CSV, labels='full', drop_unk=True,
         return df
 
 def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False,
-                 word2idx=None):
+                 word2idx=None, truncate=False):
     """
     Creates numpy arrays out of a dataframe. If `pad` is set to
     `True`, X array will be of size (n_samples, maxlen), where each
@@ -310,7 +310,10 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False,
     l_enc = LabelEncoder()
     y = l_enc.fit_transform(df['label'].values)
     if pad:
-        X = pad_sequences(X_ind, padding='post')
+        if truncate:
+            X = pad_sequences(X_ind, padding='post', maxlen=20, truncating='post')
+        else:
+            X = pad_sequences(X_ind, padding='post')
     return X, y, word2idx, l_enc
 
 #######################
