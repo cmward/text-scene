@@ -233,6 +233,7 @@ def preprocess_im(im):
         im[:,:,1] -= 116.779
         im[:,:,2] -= 123.68
         im = im.transpose((2,0,1))
+        im = np.expand_dims(im, axis=0)
         return im
 
 def imstream(ic):
@@ -249,14 +250,9 @@ def one_hot_captionstream(captions, word2idx):
     for caption in captions:
         yield to_categorical(caption, nb_classes=len(word2idx)+1)
 
-def minibatches(imstream, captionstream, oh_captionstream, batch_size=32,
-                nb_samples=23285):
-    nb_batches = nb_samples // batch_size
-    for batch in range(nb_batches):
-        ims = np.asarray(list(islice(imstream, batch_size)))
-        captions = np.asarray(list(islice(captionstream, batch_size)))
-        X = [ims, captions]
-        y = np.asarray(list(islice(oh_captionstream, batch_size)))
+def minibatches(imstream, captionstream, oh_captionstream):
+    for im, caption, y in zip(imstream, captionstream, oh_captionstream):
+        X = [im, caption]
         yield X, y
 
 if __name__ == '__main__':
@@ -300,17 +296,39 @@ if __name__ == '__main__':
     vocab_size = len(word2idx) + 1
     max_caption_len = X_sents.shape[1]
 
+    split_idx = int(0.90 * X_sents.shape[0])
+    im_split_idx = None
+    ims_train, ims_test = ic[:im_split_idx], ic[im_split_idx:]
+    X_sents_train, y_sents_train = X_sents[:split_idx], y_sents[:split_idx]
+    X_sents_test, y_sents_test = X_sents[split_idx:], y_sents[split_idx:]
+
     model = load_vgg_weights(build_model(vocab_size, max_caption_len, emb_dim),
                              weights_path)
     print "VGG 16 weights loaded."
 
     print_summary(model.layers)
 
-    ims = imstream(ic)
-    caps = captionstream(X_sents)
-    oh_caps = one_hot_captionstream(y_sents, word2idx)
+    ims = imstream(ims_train)
+    caps = captionstream(X_sents_train)
+    oh_caps = one_hot_captionstream(y_sents_train, word2idx)
 
-    for epoch in range(10):
-        for X, y in minibatches(ims, caps, oh_caps):
-            model.train_on_batch(X, y)
+    idx2word = {i:w for w,i in word2idx.items()}
+    idx2word[0] = 'mask'
+    im_fn = df.img_file[0]
+    print "im check", next(ims) == preprocess_im(ic[ic.files.index('../../text-scene-images/text-scene-images/'+Xdf.img_file[0])])
+    print [idx2word[i] for i in next(caps)]
+    oh_idxs = [np.where(i != 0)[0][0] for i in next(oh_caps)]
+    print [idx2word[i] for i in oh_idxs]
+
+    samples_per_epoch = X_sents_train.shape[0]
+    model.fit_generator(minibatches(ims, caps, oh_caps),
+                        samples_per_epoch=samples_per_epoch,
+                        nb_epoch=1,
+                        verbose=1)
+
+    test_ims = imstream(ims_test)
+    test_caps = captionstream(X_sents_test)
+    test_oh_caps = one_hot_captionstream(y_sents_test, word2idx)
+
+    model.evaluate_on_generator(minibatches(test_ims, test_caps, test_oh_caps))
 
