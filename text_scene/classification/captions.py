@@ -16,12 +16,136 @@ from keras.layers import Dense, GRU, Dropout, Activation, TimeDistributed
 from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
+from keras.engine.topology import InputSpec
 from keras import backend as K
 
 from preprocessing.data_utils import load_dataset, sentences_df
 
+
 class InitialStateGRU(GRU):
-    pass
+
+    # https://github.com/fchollet/keras/issues/2995
+    def call(self, x, mask=None):
+        # input shape: (nb_samples, time (padded with zeros), input_dim)
+        # note that the .build() method of subclasses MUST define
+        # self.input_spec with a complete input shape.
+        if isinstance(x, (tuple, list)):
+            x, custom_initial = x
+        else:
+            custom_initial = None
+        input_shape = self.input_spec[0].shape
+
+        if K._BACKEND == 'tensorflow':
+            if not input_shape[1]:
+                raise Exception('When using TensorFlow, you should define '
+                                'explicitly the number of timesteps of '
+                                'your sequences.\n'
+                                'If your first layer is an Embedding, '
+                                'make sure to pass it an "input_length" '
+                                'argument. Otherwise, make sure '
+                                'the first layer has '
+                                'an "input_shape" or "batch_input_shape" '
+                                'argument, including the time axis. '
+                                'Found input shape at layer ' + self.name +
+                                ': ' + str(input_shape))
+        if self.stateful:
+            initial_states = self.states
+        elif custom_initial:
+            initial_states = custom_initial
+        else:
+            initial_states = self.get_initial_states(x)
+        constants = self.get_constants(x)
+        preprocessed_input = self.preprocess_input(x)
+        print "call input shape", input_shape
+        last_output, outputs, states = K.rnn(self.step, preprocessed_input,
+                                             initial_states,
+                                             go_backwards=self.go_backwards,
+                                             mask=mask[0],
+                                             constants=constants,
+                                             unroll=self.unroll,
+                                             input_length=input_shape[1])
+        if self.stateful:
+            self.updates = []
+            for i in range(len(states)):
+                self.updates.append((self.states[i], states[i]))
+
+        if self.return_sequences:
+            return outputs
+        else:
+            return last_output
+
+        def get_output_shape_for(self, input_shape):
+            print "get output shape", input_shape
+            return (input_shape[0], self.output_dim)
+
+
+    def build(self, input_shape):
+        print "Input shape:", input_shape
+        self.input_spec = [InputSpec(shape=input_shape[0]),
+                           InputSpec(shape=input_shape[1])]
+        self.input_dim = input_shape[0][2] + input_shape[1][2]
+
+        if self.stateful:
+            self.reset_states()
+        else:
+            # initial states: all-zero tensor of shape (output_dim)
+            self.states = [None]
+
+        if self.consume_less == 'gpu':
+
+            self.W = self.init((self.input_dim, 3 * self.output_dim),
+                               name='{}_W'.format(self.name))
+            self.U = self.inner_init((self.output_dim, 3 * self.output_dim),
+                                     name='{}_U'.format(self.name))
+
+            self.b = K.variable(np.hstack((np.zeros(self.output_dim),
+                                           np.zeros(self.output_dim),
+                                           np.zeros(self.output_dim))),
+                                name='{}_b'.format(self.name))
+
+            self.trainable_weights = [self.W, self.U, self.b]
+        else:
+
+            self.W_z = self.init((self.input_dim, self.output_dim),
+                                 name='{}_W_z'.format(self.name))
+            self.U_z = self.inner_init((self.output_dim, self.output_dim),
+                                       name='{}_U_z'.format(self.name))
+            self.b_z = K.zeros((self.output_dim,), name='{}_b_z'.format(self.name))
+
+            self.W_r = self.init((self.input_dim, self.output_dim),
+                                 name='{}_W_r'.format(self.name))
+            self.U_r = self.inner_init((self.output_dim, self.output_dim),
+                                       name='{}_U_r'.format(self.name))
+            self.b_r = K.zeros((self.output_dim,), name='{}_b_r'.format(self.name))
+
+            self.W_h = self.init((self.input_dim, self.output_dim),
+                                 name='{}_W_h'.format(self.name))
+            self.U_h = self.inner_init((self.output_dim, self.output_dim),
+                                       name='{}_U_h'.format(self.name))
+            self.b_h = K.zeros((self.output_dim,), name='{}_b_h'.format(self.name))
+
+            self.trainable_weights = [self.W_z, self.U_z, self.b_z,
+                                      self.W_r, self.U_r, self.b_r,
+                                      self.W_h, self.U_h, self.b_h]
+
+            self.W = K.concatenate([self.W_z, self.W_r, self.W_h])
+            self.U = K.concatenate([self.U_z, self.U_r, self.U_h])
+            self.b = K.concatenate([self.b_z, self.b_r, self.b_h])
+
+        self.regularizers = []
+        if self.W_regularizer:
+            self.W_regularizer.set_param(self.W)
+            self.regularizers.append(self.W_regularizer)
+        if self.U_regularizer:
+            self.U_regularizer.set_param(self.U)
+            self.regularizers.append(self.U_regularizer)
+        if self.b_regularizer:
+            self.b_regularizer.set_param(self.b)
+            self.regularizers.append(self.b_regularizer)
+
+        if self.initial_weights is not None:
+            self.set_weights(self.initial_weights)
+            del self.initial_weights
 
 def build_model(vocab_size, max_caption_len, emb_dim):
     # build the VGG16 network
@@ -65,19 +189,25 @@ def build_model(vocab_size, max_caption_len, emb_dim):
     # encode image into `emb_dim`-dimensional vector
     flatten = Flatten()(pool_5)
     encode = Dense(emb_dim, activation='relu')(flatten)
-    encode = Lambda(lambda x: K.expand_dims(x, dim=1),
-                    output_shape=(1, emb_dim))(encode)
+    encode = RepeatVector(max_caption_len)(encode)
+    #encode = Lambda(lambda x: K.expand_dims(x, dim=1),
+    #                output_shape=(max_caption_len, emb_dim))(encode)
 
     # RNN to produce output sequence
-    partial_caption = Input(shape=(max_caption_len,), dtype='int32')
+    caption = Input(shape=(max_caption_len,), dtype='int32')
     embeddings = Embedding(input_dim=vocab_size,
-                           output_dim=emb_dim)
-    embeddings = embeddings(partial_caption, mask_zero=True)
+                           output_dim=emb_dim,
+                           mask_zero=True)
+    embeddings = embeddings(caption)
+    conditioned_embeddings = merge([encode, embeddings],
+                                   mode='concat',
+                                   concat_axis=2)
     # set initial hidden state to image encoding
-    gru = GRU(emb_dim, return_sequences=True, activation='relu')(embeddings)
+    gru = GRU(emb_dim, return_sequences=True, activation='relu')
+    gru = gru(conditioned_embeddings)
     probas = TimeDistributed(Dense(vocab_size, activation='softmax'))(gru)
 
-    model = Model(input=[image, partial_caption], output=probas)
+    model = Model(input=[image, caption], output=probas)
 
     model.compile(loss='categorical_crossentropy', optimizer='adam')
 
@@ -102,7 +232,6 @@ def preprocess_im(im):
         im[:,:,1] -= 116.779
         im[:,:,2] -= 123.68
         im = im.transpose((2,0,1))
-        im = np.expand_dims(im, axis=0)
         return im
 
 def imstream(ic):
@@ -115,18 +244,18 @@ def captionstream(X):
     for caption in X:
         yield caption
 
-def one_hot_captionstream(X):
-    for caption in X:
-        yield caption
+def one_hot_captionstream(captions, word2idx):
+    for caption in captions:
+        yield to_categorical(caption, nb_classes=len(word2idx)+1)
 
-def minibatches(imstream, captionstream, oh_captionstream, size=32,
+def minibatches(imstream, captionstream, oh_captionstream, batch_size=32,
                 nb_samples=23285):
     nb_batches = nb_samples // batch_size
     for batch in range(nb_batches):
-        ims = np.asarray(list(islice(imstream, size)))
-        captions = np.asarray(list(islice(captionstream, size)))
+        ims = np.asarray(list(islice(imstream, batch_size)))
+        captions = np.asarray(list(islice(captionstream, batch_size)))
         X = [ims, captions]
-        y = np.asarray(list(islice(oh_captionstream, size)))
+        y = np.asarray(list(islice(oh_captionstream, batch_size)))
         yield X, y
 
 if __name__ == '__main__':
@@ -140,13 +269,12 @@ if __name__ == '__main__':
     img_directory = args.images
     emb_dim = args.dim
 
-    print "Loading images...",
+    print "Loading images..."
     # load images and captions
     ic = skimage.io.imread_collection(os.path.join(img_directory, '*.jpg'),
                                       conserve_memory=True)
     df = sentences_df(keep_filename=True, special_tokens=True, drop_unk=True)
 
-    print "Sorting df...",
     # sort df by ImageCollection ordering
     img_order = [f.split('/')[-1] for f in ic.files]
     df['img_file_ord'] = pd.Categorical(
@@ -159,20 +287,17 @@ if __name__ == '__main__':
     # since they'll be the input to the RNN.
     # Y sentences should have the end token, but not the start token,
     # since they'll be the predictions given by the RNN.
-    print "Loading captions...",
+    print "Loading captions..."
     _, _, word2idx, _ = load_dataset(df, pad=True)
     Xdf = df.copy()
-    Xdf['sentence'] = Xdf['sentence'].apply(lambda x: ' '.join(x.split()[:-1]))
     ydf = df.copy()
+    Xdf['sentence'] = Xdf['sentence'].apply(lambda x: ' '.join(x.split()[:-1]))
     ydf['sentence'] = ydf['sentence'].apply(lambda x: ' '.join(x.split()[1:]))
     X_sents, _, _, _ = load_dataset(Xdf, pad=True, word2idx=word2idx)
     y_sents, _, _, _ = load_dataset(ydf, pad=True, word2idx=word2idx)
 
     vocab_size = len(word2idx) + 1
     max_caption_len = X_sents.shape[1]
-    one_hot_captions = np.asarray([to_categorical(x_i, nb_classes=len(word2idx)+1)
-                                   for x_i in y_sents],
-                                  dtype=np.float32)
 
     model = load_vgg_weights(build_model(vocab_size, max_caption_len, emb_dim),
                              weights_path)
@@ -181,11 +306,10 @@ if __name__ == '__main__':
     print_summary(model.layers)
 
     ims = imstream(ic)
-    caps = captionstream(sents)
-    oh_caps = one_hot_captionstream(one_hot_captions)
+    caps = captionstream(X_sents)
+    oh_caps = one_hot_captionstream(y_sents, word2idx)
 
-    for epoch in range(nb_epochs):
-        for minibatch in minibatches(ims, caps, oh_caps):
-            X, y = minibatch(ims, caps, oh_caps)
+    for epoch in range(10):
+        for X, y in minibatches(ims, caps, oh_caps):
             model.train_on_batch(X, y)
 
