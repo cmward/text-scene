@@ -97,7 +97,7 @@ if __name__ == '__main__':
     elif args.classify == 'nb':
         from classification import nb
         if args.ngram:
-            nb.train_and_test_nb(ngram_order=args.ngram-order)
+            nb.train_and_test_nb(ngram_order=args.ngram)
         else:
             nb.train_and_test_nb()
 
