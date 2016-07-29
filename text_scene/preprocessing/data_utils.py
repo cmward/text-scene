@@ -262,11 +262,11 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False,
         if omit_stop:
             sentence = [w
                         for w in re.split("-| ", sentence)
-                        if w not in stop and w not in "?.,-!"]
+                        if w not in stop and w not in "?.,-!()"]
         else:
             sentence = [w
                         for w in re.split("-| ", sentence)
-                        if w not in "?.,-!"]
+                        if w not in "?.,-!()"]
         if ngram_order == 1:
             for word in sentence:
                 if stem:
@@ -286,11 +286,11 @@ def load_dataset(df, ngram_order=1, pad=False, stem=False, omit_stop=False,
         if omit_stop:
             sentence = [w
                         for w in re.split("-| ", sentence)
-                        if w not in stop and w not in "?.,-!"]
+                        if w not in stop and w not in "?.,-!()"]
         else:
             sentence = [w
                         for w in re.split("-| ", sentence)
-                        if w not in "?.,-!"]
+                        if w not in "?.,-!()"]
         if ngram_order == 1:
             if stem:
                 indices = [word2idx[stemmer.stem(w)] for w in sentence]
