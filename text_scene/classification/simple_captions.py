@@ -2,18 +2,23 @@ import numpy as np
 import pandas as pd
 import scipy.misc
 import skimage.io
+import json
+import pickle
 import h5py
 import glob
 import argparse
 import os
 import sys
 
+from itertools import islice, izip
+
 from keras.models import Sequential, Model
 from keras.layers import Embedding, Input, Flatten, merge, RepeatVector, Lambda
 from keras.layers import Dense, GRU, LSTM, Dropout, Activation, TimeDistributed
-from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D
+from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D, Merge
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
+from keras.preprocessing.sequence import pad_sequences
 from keras.callbacks import ModelCheckpoint
 from keras import backend as K
 
@@ -23,86 +28,105 @@ from preprocessing.data_utils import (
 )
 
 
-def build_model(vocab_size, max_caption_len, emb_dim, embedding_weights):
-    # build the VGG16 network
-    image = Input(shape=(3, 224, 224))
-    pad_1_1 = ZeroPadding2D((1,1),input_shape=(3,224,224))(image)
-    conv_1_1 = Convolution2D(64, 3, 3, activation='relu')(pad_1_1)
-    pad_1_2 = ZeroPadding2D((1,1))(conv_1_1)
-    conv_1_2 = Convolution2D(64, 3, 3, activation='relu')(pad_1_2)
-    pool_1 = MaxPooling2D((2,2), strides=(2,2))(conv_1_2)
+def build_model(vocab_size, max_caption_len, weights_path, embedding_weights,
+                scene_model=True):
+    image_model = Sequential()
+    image_model.add(ZeroPadding2D((1,1),input_shape=(3,224,224)))
+    image_model.add(Convolution2D(64, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(64, 3, 3, activation='relu'))
+    image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
-    pad_2_1 = ZeroPadding2D((1,1))(pool_1)
-    conv_2_1 = Convolution2D(128, 3, 3, activation='relu')(pad_2_1)
-    pad_2_2 = ZeroPadding2D((1,1))(conv_2_1)
-    conv_2_2 = Convolution2D(128, 3, 3, activation='relu')(pad_2_2)
-    pool_2 = MaxPooling2D((2,2), strides=(2,2))(conv_2_2)
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(128, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(128, 3, 3, activation='relu'))
+    image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
-    pad_3_1 = ZeroPadding2D((1,1))(pool_2)
-    conv_3_1 = Convolution2D(256, 3, 3, activation='relu')(pad_3_1)
-    pad_3_2 = ZeroPadding2D((1,1))(conv_3_1)
-    conv_3_2 = Convolution2D(256, 3, 3, activation='relu')(pad_3_2)
-    pad_3_3 = ZeroPadding2D((1,1))(conv_3_2)
-    conv_3_3 = Convolution2D(256, 3, 3, activation='relu')(pad_3_3)
-    pool_3 = MaxPooling2D((2,2), strides=(2,2))(conv_3_3)
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(256, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(256, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(256, 3, 3, activation='relu'))
+    image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
-    pad_4_1 = ZeroPadding2D((1,1))(pool_3)
-    conv_4_1 = Convolution2D(512, 3, 3, activation='relu')(pad_4_1)
-    pad_4_2 = ZeroPadding2D((1,1))(conv_4_1)
-    conv_4_2 = Convolution2D(512, 3, 3, activation='relu')(pad_4_2)
-    pad_4_3 = ZeroPadding2D((1,1))(conv_4_2)
-    conv_4_3 = Convolution2D(512, 3, 3, activation='relu')(pad_4_3)
-    pool_4 = MaxPooling2D((2,2), strides=(2,2))(conv_4_3)
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
-    pad_5_1 = ZeroPadding2D((1,1))(pool_4)
-    conv_5_1 = Convolution2D(512, 3, 3, activation='relu')(pad_5_1)
-    pad_5_2 = ZeroPadding2D((1,1))(conv_5_1)
-    conv_5_2 = Convolution2D(512, 3, 3, activation='relu')(pad_5_2)
-    pad_5_3 = ZeroPadding2D((1,1))(conv_5_2)
-    conv_5_3 = Convolution2D(512, 3, 3, activation='relu')(pad_5_3)
-    pool_5 = MaxPooling2D((2,2), strides=(2,2))(conv_5_3)
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(ZeroPadding2D((1,1)))
+    image_model.add(Convolution2D(512, 3, 3, activation='relu'))
+    image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
-    # encode image into `emb_dim`-dimensional vector
-    flatten = Flatten()(pool_5)
-    image_encoder = Dense(128, activation='relu')(flatten)
+    f = h5py.File(weights_path)
+    for k in range(f.attrs['nb_layers']):
+        if k >= len(image_model.layers):
+            # we don't look at the last (fully-connected) layers in
+            # the savefile
+            break
+        g = f['layer_{}'.format(k)]
+        weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
+        image_model.layers[k].set_weights(weights)
+    f.close()
 
-    # RNN to produce output sequence
-    caption = Input(shape=(max_caption_len,), dtype='int32')
-    embeddings = Embedding(input_dim=vocab_size,
-                           output_dim=emb_dim,
-                           mask_zero=True,
-                           weights=[embedding_weights])
-    embeddings = embeddings(caption)
-    caption_encoder = GRU(128, return_sequences=True, activation='relu')(embeddings)
-    caption_encoder_out = TimeDistributed(Dense(128, activation='relu'))
+    image_model.add(Flatten())
+    image_model.add(Dense(128, activation='relu'))
 
-    image_encoder = RepeatVector(max_caption_len)(image_encoder)
-    encoding = merge([image_encoder, caption_encoder_out],
-                     mode='concat',
-                     concat_axis=-1)
+    language_model = Sequential()
+    language_model.add(Embedding(vocab_size, 300,
+                                 input_length=max_caption_len,
+                                 mask_zero=True,
+                                 weights=[embedding_weights]))
+    language_model.add(GRU(output_dim=128, return_sequences=True,
+                           dropout_W=0.5, dropout_U=0.5,
+                           activation='relu'))
+    language_model.add(TimeDistributed(Dense(128, activation='relu')))
 
-    rnn = GRU(256, return_sequences=False, activation='relu')(encoding)
-    probas = Dense(vocab_size, activation='softmax')
+    image_model.add(RepeatVector(max_caption_len))
 
-    model = Model(input=[image, caption], output=probas)
+    if scene_model:
+        label_model = Sequential()
+        label_model.add(Embedding(13, 100,
+                                  input_length=1,
+                                  mask_zero=False))
+        label_model.add(Flatten())
+        label_model.add(RepeatVector(max_caption_len))
+
+    model = Sequential()
+    if scene_model:
+        model.add(Merge([image_model, language_model, label_model],
+                        mode='concat', concat_axis=-1))
+    else:
+        model.add(Merge([image_model, language_model],
+                        mode='concat', concat_axis=-1))
+    model.add(GRU(256, return_sequences=False,
+                  dropout_W=0.5, dropout_U=0.5,
+                  activation='relu'))
+    model.add(Dense(vocab_size))
+    model.add(Activation('softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam',
                   metrics=['accuracy'])
 
     return model
 
-def load_vgg_weights(model, weights_path):
-    # load pretrained model weights
-    f = h5py.File(weights_path)
-    for k in range(f.attrs['nb_layers']):
-        if k >= len(model.layers[1:len(model.layers)-8]):
-            # we don't look at the last (fully-connected) layers in the savefile
-            break
-        g = f['layer_{}'.format(k)]
-        weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
-        model.layers[k+1].set_weights(weights)
-    f.close()
-    return model
+def sample(preds, temperature=1.):
+    # helper function to sample idx from probas array
+    preds = np.asarray(preds).astype('float64')
+    preds = np.log(preds) / temperature
+    exp_preds = np.exp(preds)
+    preds = exp_preds / np.sum(exp_preds)
+    probas = np.random.multinomial(1, preds, 1)
+    return np.argmax(probas)
 
 def preprocess_im(im):
     im = scipy.misc.imresize(im, (224, 224)).astype(np.float32)
@@ -112,51 +136,156 @@ def preprocess_im(im):
     im = im.transpose((2,0,1))
     return im
 
+def stream(X):
+    while True:
+        for x_i in X:
+            yield x_i
+
+def imstream(imlookup, imfiles):
+    while True:
+        for imfile in imfiles:
+            yield imlookup[imfile]
+
+def nextwordstream(next_words):
+    while True:
+        for next_word in next_words:
+            yield next_word
+
+def minibatches(imstream, capstream, nextstream, scenestream,
+                word2idx, nb_samples, scenes=False, batch_size=64):
+    nb_batches = nb_samples // batch_size
+    while True:
+        for batch in range(nb_batches):
+            ims = np.asarray(list(islice(imstream, batch_size)),
+                             dtype=np.float32)
+            captions = np.asarray(list(islice(capstream, batch_size)),
+                                  dtype=np.float32)
+            scenes = np.asarray(list(islice(scenestream, batch_size)),
+                                dtype=np.int32)
+            if scenes:
+                X = [ims, captions, scenes]
+            else:
+                X = [ims, captions]
+            y = np.asarray(list(islice(nextstream, batch_size)))
+            y = to_categorical(y, nb_classes=len(word2idx)+1).astype('int32')
+            yield X, y
+
+def setup_generation(word_vecs, model_weights, scene_model=False):
+    with open('../../models/l_enc.pkl') as p:
+        l_enc = pickle.load(p)
+    with open('../../models/word2idx.json') as j:
+        word2idx = json.load(j)
+    vocab_size = len(word2idx) + 1
+    max_caption_len = 79
+    word_vectors = load_bin_vec(word_vecs, word2idx)
+    add_unknown_words(word_vectors, word2idx)
+    embedding_weights = np.zeros((vocab_size,300))
+    for word, index in word2idx.items():
+        embedding_weights[index:,] = word_vectors[word]
+    model = build_model(vocab_size, max_caption_len, '../../models/vgg16_weights.h5',
+                        embedding_weights, scene_model=scene_model)
+    model.load_weights(model_weights)
+    return model, word2idx, l_enc
+
+def generate(model, imfile, word2idx, l_enc, scene=None, temperature=1.):
+    idx2word = {i:w for w,i in word2idx.items()}
+    im = preprocess_im(scipy.misc.imread(imfile))
+    im = np.expand_dims(im, axis=0)
+    start_token, end_token = word2idx['<s>'], word2idx['<e>']
+    input_caption = [start_token]
+    input_caption_x = np.expand_dims(np.asarray(input_caption), axis=0)
+    input_caption_x = pad_sequences(input_caption_x, padding='post', maxlen=79)
+    if scene:
+        label = l_enc.transform([scene])
+        x = [im, input_caption_x, label]
+    else:
+        x = [im, input_caption_x]
+
+    generated = ""
+
+    preds = model.predict(x)[0]
+    next_idx = sample(preds, temperature)
+    next_word = idx2word[next_idx]
+    generated += " " + next_word
+    sys.stdout.write(next_word)
+
+    while next_idx != end_token:
+        if scene:
+            x = [im, input_caption_x, label]
+        else:
+            x = [im, input_caption_x]
+
+        preds = model.predict(x, batch_size=1, verbose=0)[0]
+        next_idx = sample(preds, temperature)
+        input_caption.append(next_idx)
+        input_caption_x = np.expand_dims(np.asarray(input_caption), axis=0)
+        input_caption_x = pad_sequences(input_caption_x, padding='post',
+                                        maxlen=79)
+
+        next_word = idx2word[next_idx]
+        generated += " " + next_word
+        sys.stdout.write(' ' + next_word)
+        sys.stdout.flush()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dim', type=int)
-    parser.add_argument('--weights', type=str)
+    parser.add_argument('--vggweights', type=str)
+    parser.add_argument('--modelweights', type=str)
     parser.add_argument('--wordvecs', type=str)
     parser.add_argument('--images', type=str)
+    parser.add_argument('--scenes', action='store_true')
     args = parser.parse_args()
 
-    weights_path = args.weights
+    vggweights_path = args.vggweights
+    modelweights_path = args.modelweights
     word_vecs = args.wordvecs
     img_directory = args.images
     emb_dim = args.dim
+    scene_model = args.scenes
 
-    print "Loading images..."
     df = sentences_df(keep_filename=True, special_tokens=True, drop_unk=True)
-    ims = np.zeros((df.shape[0], 3, 224, 224))
-    for i, row in df.iterrows():
-        impath = os.path.join(img_directory, row['img_file'])
+    imlookup = {}
+    for imfile in set(df.img_file):
+        impath = os.path.join(img_directory, imfile)
         im = scipy.misc.imread(impath)
         im = preprocess_im(im)
-        ims[i, ...] = im
+        imlookup[imfile] = im
 
     # X sentences should have the start token but not the end token,
     # since they'll be the input to the RNN.
     # Y sentences should have the end token, but not the start token,
     # since they'll be the predictions given by the RNN.
     print "Loading captions..."
-    _, _, word2idx, _ = load_dataset(df, pad=True, truncate=True)
-    Xdf = df.copy()
-    ydf = df.copy()
-    Xdf['sentence'] = Xdf['sentence'].apply(lambda x: ' '.join(x.split()[:-1]))
-    ydf['sentence'] = ydf['sentence'].apply(lambda x: ' '.join(x.split()[1:]))
-    X_sents, _, _, _ = load_dataset(Xdf, pad=True, word2idx=word2idx)
-    y_sents, _, _, _ = load_dataset(ydf, pad=True, word2idx=word2idx)
-    scene_labels = Xdf.label
+    X, scene_labels, word2idx, l_enc = load_dataset(df, pad=True)
+    with open('../../models/word2idx.json') as j:
+        word2idx = json.load(j)
+    with open('../../models/l_enc.pkl') as p:
+        l_enc = pickle.load(p)
+
+    # partial captions are word 0..n
+    # next word is word n+1
+    # create samples for n=1...N-1
+    partial_captions = []
+    next_words = []
+    imfiles = []
+    scenes = []
+    for i, x_i in enumerate(X):
+        indices = x_i[np.nonzero(x_i)[0]]
+        for j in range(len(indices)-1):
+            imfiles.append(df.img_file.iloc[i])
+            scenes.append(np.asarray(l_enc.transform(df.label.iloc[i])))
+            partial_captions.append(indices[:j+1])
+            next_words.append(indices[j+1])
+    partial_captions = pad_sequences(partial_captions, padding='post')
+
+    print "pc shape", partial_captions.shape
+    print "imfiles shape", len(imfiles)
+    print "scenes shape", len(scenes)
+    print "next_words shape", len(next_words)
 
     vocab_size = len(word2idx) + 1
-    max_caption_len = X_sents.shape[1]
-
-    ims_train, ims_test = ims[:4000], ims[4000:]
-    X_sents_train, y_sents_train = X_sents[:20000], y_sents[:20000]
-    X_sents_test, y_sents_test = X_sents[20000:], y_sents[20000:]
-
-    X_train = [ims_train, X_sents_train]
-    X_test = [ims_test, X_sents_test]
+    max_caption_len = partial_captions.shape[1]
 
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
@@ -164,14 +293,38 @@ if __name__ == '__main__':
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
 
-    model = load_vgg_weights(build_model(vocab_size,
-                                         max_caption_len,
-                                         emb_dim,
-                                         embedding_weights),
-                             weights_path)
-    print "VGG 16 weights loaded."
-
+    model = build_model(vocab_size, max_caption_len, vggweights_path,
+                        embedding_weights, scene_model=scene_model)
+    model.load_weights(modelweights_path)
     print_summary(model.layers)
 
-        
+    partial_captions_train, partial_captions_test = (
+        partial_captions[:280000],
+        partial_captions[280000:])
+    imfiles_train, imfiles_test = (
+        imfiles[:280000],
+        imfiles[280000])
+    next_words_train, next_words_test = (
+        next_words[:280000],
+        next_words[280000:])
+    scenes_train, scenes_test = (
+        scenes[:280000],
+        scenes[280000:])
 
+    samples_per_epoch = partial_captions_train.shape[0]
+
+    imstream = imstream(imlookup, imfiles_train)
+    capstream = stream(partial_captions_train)
+    nextstream = nextwordstream(next_words_train)
+    scenestream = stream(scenes_train)
+    generator = minibatches(imstream, capstream, nextstream, scenestream,
+                            word2idx, samples_per_epoch, scenes=scene_model)
+
+    if scene_model:
+        checkpoint = ModelCheckpoint('../../models/weights.scenes.{epoch:02d}.h5')
+    else:
+        checkpoint = ModelCheckpoint('../../models/weights.{epoch:02d}.h5')
+    model.fit_generator(generator,
+                        nb_epoch=100,
+                        samples_per_epoch=samples_per_epoch,
+                        callbacks=[checkpoint])

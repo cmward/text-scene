@@ -250,6 +250,7 @@ def captionstream(X):
     for caption in X:
         yield caption
 
+# this is wrong
 def one_hot_captionstream(captions, word2idx):
     for caption in captions:
         yield to_categorical(caption, nb_classes=len(word2idx)+1)
