@@ -1,4 +1,4 @@
-[1024, 1024]	sum	prelu	full	0.6903
+ff [1024, 1024] sum	prelu	full	0.6903
 
 Model type: Parallel
 filter_hs: [5, 10, 15]
@@ -10,4 +10,24 @@ pretrained_embeddings: True
 
 GRU [512, 512] .6755
 GRU [256, 256] 
-GRU [128, 128] .6869
+GRU [128, 128] 
+
+NAIVE BAYES
+-----------
+unigram
+full label mean cv accuracy: 0.5412
+function label mean cv accuracy: 0.6591
+3way label mean cv accuracy: 0.7567
+
+MAXENT
+------
+unigram
+full label mean cv accuracy: 0.5717
+function label mean cv accuracy: 0.6554
+3way label mean cv accuracy: 0.7409
+
+bigram
+full label mean cv accuracy: 0.5911
+function label mean cv accuracy 0.6721
+3way label mean cv accuracy: 0.7526
+
