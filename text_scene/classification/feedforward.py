@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Activation
+from keras.layers import Dense, Dropout, Activation, TimeDistributed
 from keras.layers import Flatten, Lambda, Merge, merge
 from keras.layers import Embedding, Input, BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU, PReLU, ELU
@@ -13,27 +13,59 @@ from keras import backend as K
 
 class FeedforwardNN(object):
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, layer_sizes,
-                 embedding_weights, pool_mode='max', activation='relu'):
+                 embedding_weights, pool_mode='max', activation='prelu',
+                 dropout_p=[0.7,0.5,0.5]):
+
+        print "Activation:", activation
+        print "Pool mode:", pool_mode
+        print "Dropout", dropout_p
+
         self.nb_labels = nb_labels
+
         sentence_input = Input(shape=(maxlen,), dtype='int32')
         x = Embedding(input_dim=vocab_size+1,
                       output_dim=emb_dim,
                       input_length=maxlen,
-                      weights=[embedding_weights],
-                      dropout=0.2)
+                      weights=[embedding_weights])
         x = x(sentence_input)
+        x = Dropout(dropout_p[0])(x)
+
         if pool_mode == 'sum':
-            pool = Lambda(lambda x: K.sum(x, axis=1), output_shape=(emb_dim,))
+            pool = Lambda(lambda x: K.sum(x, axis=1),
+                          output_shape=(emb_dim,))(x)
+
         elif pool_mode == 'max':
-            pool = Lambda(lambda x: K.max(x, axis=1), output_shape=(emb_dim,))
+            pool = Lambda(lambda x: K.max(x, axis=1),
+                          output_shape=(emb_dim,))(x)
+
         elif pool_mode == 'mean':
-            pool = Lambda(lambda x: K.mean(x, axis=1), output_shape=(emb_dim,))
-        else: # concat
-            pool = Flatten()
-        pool_out = Dropout(0.5)(pool(x))
+            pool = Lambda(lambda x: K.mean(x, axis=1),
+                          output_shape=(emb_dim,))(x)
+
+        elif pool_mode == 'concat':
+            pool = Flatten()(x)
+
+        else:
+            dense = TimeDistributed(Dense(300))(x)
+            dense_bn = BatchNormalization()(dense)
+            if activation == 'relu':
+                dense_activation = Activation('relu')(dense_bn)
+            elif activation == 'tanh':
+                dense_activation = Activation('tanh')(dense_bn)
+            elif activation == 'prelu':
+                dense_activation = PReLU()(dense_bn)
+            elif activation == 'leakyrelu':
+                dense_activation = LeakyReLU()(dense_bn)
+            else: #ELU
+                dense_activation = ELU()(dense_bn)
+            pool = Lambda(lambda x: K.sum(x, axis=1),
+                          output_shape=(300,))(dense_activation)
+
+        pool_out = Dropout(dropout_p[1])(pool)
         hidden_layers = []
         prev_layer = pool_out
-        for layer_size in layer_sizes[:-1]:
+
+        for layer_size in layer_sizes:
             hidden_in = Dense(layer_size)(prev_layer)
             hidden_bn = BatchNormalization()(hidden_in)
             if activation == 'relu':
@@ -46,25 +78,18 @@ class FeedforwardNN(object):
                 hidden_activation = LeakyReLU()(hidden_bn)
             else: #ELU
                 hidden_activation = ELU()(hidden_bn)
-            hidden_out = Dropout(0.5)(hidden_activation)
+            hidden_out = Dropout(dropout_p[2])(hidden_activation)
             hidden_layers.append(hidden_out)
             prev_layer = hidden_out
-        final_hidden_in = Dense(layer_sizes[-1])(hidden_layers[-1])
-        if activation == 'relu':
-            final_hidden_activation = Activation('relu')(final_hidden_in)
-        elif activation == 'tanh':
-            final_hidden_activation = Activation('tanh')(final_hidden_in)
-        elif activation == 'prelu':
-            final_hidden_activation = PReLU()(final_hidden_in)
-        elif activation == 'leakyrelu':
-            final_hidden_activation = LeakyReLU()(final_hidden_in)
-        else: #ELU
-            final_hidden_activation = ELU()(final_hidden_in)
+
         if self.nb_labels == 2:
             out = Dense(1, activation='sigmoid')
         else:
             out = Dense(nb_labels, activation='softmax')
-        out = out(final_hidden_activation)
+        if not hidden_layers:
+            out = out(pool_out)
+        else:
+            out = out(hidden_layers[-1])
         self.model = Model(input=sentence_input, output=out)
 
 class FastText(object):
@@ -89,7 +114,7 @@ class FastText(object):
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
                          batch_size, nb_epoch,
                          lr, beta_1, beta_2, epsilon,
-                         val_split=0.10):
+                         val_split):
     adam = Adam(lr=lr, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon)
     if nn.nb_labels == 2:
         nn.model.compile(loss='binary_crossentropy',
@@ -99,11 +124,8 @@ def train_and_test_model(nn, X_train, y_train, X_test, y_test,
         nn.model.compile(loss='categorical_crossentropy',
                       optimizer=adam,
                       metrics=['accuracy'])
-    early_stopping = EarlyStopping(monitor='val_loss', patience=5,
-                                   verbose=0, mode='auto')
     nn.model.fit(X_train, y_train, nb_epoch=nb_epoch,
                  batch_size=batch_size,
-                 validation_split=val_split,
-                 callbacks=[early_stopping])
+                 validation_split=val_split)
     score, acc = nn.model.evaluate(X_test, y_test, batch_size=64)
     return nn, acc
