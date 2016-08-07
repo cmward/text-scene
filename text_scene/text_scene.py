@@ -76,7 +76,10 @@ if __name__ == '__main__':
         drop_unk = args.dropunk
         word_vecs = args.wordvecs
         pool_mode = args.poolmode
-        layer_sizes = args.layersizes
+        if args.layersizes:
+            layer_sizes = args.layersizes
+        else:
+            layer_sizes = []
         train_feedforward.train(label_set,
                                 pool_mode=pool_mode,
                                 layer_sizes=layer_sizes,
