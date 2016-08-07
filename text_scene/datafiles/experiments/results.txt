@@ -1,16 +1,16 @@
-ff [1024, 1024] sum	prelu	full	0.6903
+[512],sum,prelu,full,0.6913 [0.2,0.5]
+function 0.7329
+3way 0.7910
 
-Model type: Parallel
-filter_hs: [5, 10, 15]
-nb_filters: 150
-dropout_p: [0.2, 0.5]
-trainable_embeddings: True
-pretrained_embeddings: True
-.6866
+Parallel [5, 10, 15] 150 [0.2, 0.5] True True 0.6866
+function 0.7317
+3way 0.8017
 
-GRU [512, 512] .6755
-GRU [256, 256] 
-GRU [128, 128] 
+GRU [512, 512] 0.6755
+function
+3way
+
+most common label: 0.2582
 
 NAIVE BAYES
 -----------

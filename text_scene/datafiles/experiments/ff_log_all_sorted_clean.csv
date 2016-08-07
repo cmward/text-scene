@@ -1,0 +1,193 @@
+[512],sum,prelu,full,0.6913
+[512],mean,tanh,full,0.6905
+[512],sum,tanh,full,0.6903
+[512],mean,leakyrelu,full,0.6892
+[1024],mean,elu,full,0.6891
+[1024],mean,prelu,full,0.6890
+[1024],mean,relu,full,0.6889
+[512],sum,leakyrelu,full,0.6888
+"[1024, 1024]",sum,leakyrelu,full,0.6887
+"[1024, 1024]",mean,prelu,full,0.6883
+[256],sum,elu,full,0.6883
+[512],mean,relu,full,0.6883
+[512],mean,elu,full,0.6883
+[256],mean,tanh,full,0.6882
+[256],mean,leakyrelu,full,0.6882
+[512],sum,elu,full,0.6880
+"[512, 512]",mean,relu,full,0.6879
+[1024],sum,elu,full,0.6879
+"[1024, 1024]",mean,elu,full,0.6878
+[1024],mean,tanh,full,0.6878
+"[1024, 1024]",mean,relu,full,0.6877
+[256],sum,leakyrelu,full,0.6872
+[512],mean,prelu,full,0.6871
+"[1024, 1024]",mean,tanh,full,0.6870
+"[1024, 1024]",sum,prelu,full,0.6869
+"[1024, 1024]",sum,tanh,full,0.6868
+[1024],sum,tanh,full,0.6868
+[256],mean,elu,full,0.6867
+[1024],mean,leakyrelu,full,0.6867
+"[512, 512]",mean,prelu,full,0.6866
+[1024],sum,prelu,full,0.6865
+"[1024, 1024]",sum,relu,full,0.6862
+[256],sum,tanh,full,0.6862
+[256],mean,prelu,full,0.6861
+"[1024, 1024]",sum,elu,full,0.6859
+[256],sum,relu,full,0.6859
+[1024],sum,leakyrelu,full,0.6859
+"[512, 512]",sum,elu,full,0.6858
+[256],sum,prelu,full,0.6858
+"[1024, 1024]",mean,leakyrelu,full,0.6857
+[128],sum,prelu,full,0.6856
+"[512, 512]",mean,leakyrelu,full,0.6853
+[128],mean,leakyrelu,full,0.6853
+[1024],sum,relu,full,0.6853
+"[1024, 1024, 1024]",mean,relu,full,0.6851
+[512],sum,relu,full,0.6850
+"[512, 512]",sum,tanh,full,0.6849
+"[1024, 1024, 1024]",sum,prelu,full,0.6849
+"[1024, 1024, 1024]",mean,tanh,full,0.6849
+"[1024, 1024, 1024]",mean,leakyrelu,full,0.6848
+"[512, 512]",mean,elu,full,0.6847
+[128],sum,leakyrelu,full,0.6847
+[128],mean,relu,full,0.6847
+"[1024, 1024, 1024]",sum,tanh,full,0.6845
+"[512, 512]",sum,leakyrelu,full,0.6844
+"[512, 512]",mean,tanh,full,0.6840
+[256],mean,relu,full,0.6839
+"[1024, 1024, 1024]",sum,elu,full,0.6837
+[128],mean,prelu,full,0.6836
+"[512, 512]",sum,relu,full,0.6834
+"[1024, 1024, 1024]",mean,prelu,full,0.6833
+[128],mean,elu,full,0.6832
+"[1024, 1024, 1024]",sum,relu,full,0.6831
+"[512, 512]",sum,prelu,full,0.6830
+[128],sum,elu,full,0.6830
+"[1024, 1024, 1024]",sum,leakyrelu,full,0.6829
+[128],mean,tanh,full,0.6827
+[128],sum,tanh,full,0.6822
+"[256, 256]",mean,prelu,full,0.6817
+"[1024, 1024, 1024]",mean,elu,full,0.6815
+[128],sum,relu,full,0.6812
+"[256, 256]",sum,tanh,full,0.6809
+"[512, 512, 512]",mean,tanh,full,0.6807
+"[512, 512, 512]",sum,relu,full,0.6804
+"[256, 256]",sum,elu,full,0.6801
+"[512, 512, 512]",sum,leakyrelu,full,0.6801
+"[512, 512, 512]",sum,prelu,full,0.6799
+"[256, 256]",mean,leakyrelu,full,0.6794
+"[512, 512, 512]",mean,leakyrelu,full,0.6794
+"[256, 256]",mean,tanh,full,0.6792
+"[512, 512, 512]",mean,prelu,full,0.6792
+"[512, 512, 512]",mean,relu,full,0.6791
+"[512, 512, 512]",sum,tanh,full,0.6788
+"[256, 256]",sum,relu,full,0.6787
+"[256, 256]",sum,leakyrelu,full,0.6786
+"[256, 256]",mean,relu,full,0.6786
+"[256, 256]",mean,elu,full,0.6785
+"[512, 512, 512]",mean,elu,full,0.6785
+"[256, 128]",mean,prelu,full,0.6783
+"[256, 256]",sum,prelu,full,0.6780
+"[256, 128]",sum,tanh,full,0.6776
+"[256, 128]",sum,prelu,full,0.6776
+"[512, 512, 512]",sum,elu,full,0.6773
+"[256, 128]",mean,relu,full,0.6771
+"[256, 128]",sum,relu,full,0.6767
+"[256, 128]",mean,tanh,full,0.6761
+"[256, 128]",mean,leakyrelu,full,0.6761
+"[256, 128]",sum,elu,full,0.6759
+"[256, 128]",mean,elu,full,0.6757
+[512],max,tanh,full,0.6731
+[256],max,prelu,full,0.6720
+"[128, 128]",mean,elu,full,0.6709
+[256],max,leakyrelu,full,0.6706
+"[128, 128]",sum,tanh,full,0.6705
+"[128, 128]",sum,elu,full,0.6703
+"[128, 128]",mean,relu,full,0.6703
+"[256, 256, 256]",sum,leakyrelu,full,0.6703
+"[256, 256, 256]",mean,elu,full,0.6703
+"[128, 128]",sum,prelu,full,0.6701
+[512],max,elu,full,0.6701
+"[256, 256, 256]",mean,prelu,full,0.6699
+[256],max,relu,full,0.6698
+"[128, 128]",mean,leakyrelu,full,0.6696
+[512],max,leakyrelu,full,0.6696
+[256],max,tanh,full,0.6695
+[1024],max,elu,full,0.6695
+"[256, 256, 256]",mean,leakyrelu,full,0.6694
+"[128, 128]",sum,leakyrelu,full,0.6693
+[512],max,relu,full,0.6693
+"[256, 256, 256]",sum,tanh,full,0.6692
+"[256, 256, 256]",mean,tanh,full,0.6692
+[1024],max,prelu,full,0.6691
+"[256, 256, 256]",sum,prelu,full,0.6690
+"[128, 128]",mean,prelu,full,0.6689
+[512],max,prelu,full,0.6689
+[256],max,elu,full,0.6687
+"[256, 256, 256]",sum,elu,full,0.6684
+[1024],max,relu,full,0.6680
+"[128, 128]",sum,relu,full,0.6679
+"[128, 128]",mean,tanh,full,0.6679
+"[256, 256, 256]",mean,relu,full,0.6679
+[128],max,leakyrelu,full,0.6669
+[1024],max,tanh,full,0.6667
+[1024],max,leakyrelu,full,0.6666
+[128],max,prelu,full,0.6665
+"[256, 256, 256]",sum,relu,full,0.6662
+[128],max,tanh,full,0.6658
+[128],max,relu,full,0.6651
+[128],max,elu,full,0.6642
+"[1024, 1024]",max,relu,full,0.6634
+"[512, 512]",max,leakyrelu,full,0.6624
+"[1024, 1024]",max,elu,full,0.6622
+"[1024, 1024]",max,prelu,full,0.6621
+"[512, 512]",max,tanh,full,0.6611
+"[512, 512]",max,relu,full,0.6607
+"[512, 512]",max,prelu,full,0.6606
+"[1024, 1024]",max,tanh,full,0.6603
+"[512, 512]",max,elu,full,0.6588
+"[1024, 1024]",max,leakyrelu,full,0.6585
+"[1024, 1024, 1024]",max,tanh,full,0.6554
+"[1024, 1024, 1024]",max,prelu,full,0.6552
+"[256, 256]",max,leakyrelu,full,0.6539
+"[1024, 1024, 1024]",max,leakyrelu,full,0.6532
+"[256, 256]",max,prelu,full,0.6531
+"[1024, 1024, 1024]",max,elu,full,0.6531
+"[1024, 1024, 1024]",max,relu,full,0.6524
+"[256, 256]",max,tanh,full,0.6522
+"[256, 256]",max,relu,full,0.6505
+"[256, 256]",max,elu,full,0.6500
+"[512, 512, 512]",max,prelu,full,0.6499
+"[512, 512, 512]",max,leakyrelu,full,0.6491
+"[512, 512, 512]",max,relu,full,0.6490
+"[256, 128]",max,prelu,full,0.6476
+"[512, 512, 512]",max,elu,full,0.6475
+"[512, 512, 512]",max,tanh,full,0.6466
+"[256, 128]",max,tanh,full,0.6465
+"[256, 128]",max,elu,full,0.6463
+"[256, 128]",max,relu,full,0.6458
+"[128, 128, 128]",mean,leakyrelu,full,0.6427
+"[128, 128, 128]",sum,elu,full,0.6423
+"[128, 128, 128]",sum,tanh,full,0.6414
+"[128, 128, 128]",sum,relu,full,0.6414
+"[128, 128, 128]",mean,relu,full,0.6409
+"[128, 128, 128]",mean,elu,full,0.6400
+"[128, 128, 128]",sum,leakyrelu,full,0.6394
+"[128, 128, 128]",sum,prelu,full,0.6386
+"[128, 128, 128]",mean,prelu,full,0.6386
+"[128, 128, 128]",mean,tanh,full,0.6367
+"[128, 128]",max,prelu,full,0.6321
+"[128, 128]",max,elu,full,0.6304
+"[128, 128]",max,relu,full,0.6292
+"[128, 128]",max,tanh,full,0.6278
+"[128, 128]",max,leakyrelu,full,0.6250
+"[256, 256, 256]",max,tanh,full,0.6238
+"[256, 256, 256]",max,prelu,full,0.6237
+"[256, 256, 256]",max,leakyrelu,full,0.6235
+"[256, 256, 256]",max,relu,full,0.6230
+"[256, 256, 256]",max,elu,full,0.6225
+"[128, 128, 128]",max,elu,full,0.6059
+"[128, 128, 128]",max,relu,full,0.6021
+"[128, 128, 128]",max,leakyrelu,full,0.6003
+"[128, 128, 128]",max,prelu,full,0.6001
+"[128, 128, 128]",max,tanh,full,0.5962
