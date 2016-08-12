@@ -13,9 +13,10 @@ import sys
 from itertools import islice, izip
 
 from keras.models import Sequential, Model
-from keras.layers import Embedding, Input, Flatten, merge, RepeatVector, Lambda
-from keras.layers import Dense, GRU, LSTM, Dropout, Activation, TimeDistributed
-from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D, Merge
+from keras.layers import Embedding, Input, Activation, Dropout
+from keras.layers import BatchNormalization, Flatten, RepeatVector, Merge
+from keras.layers import Dense, GRU, LSTM, TimeDistributed
+from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D
 from keras.utils.np_utils import to_categorical
 from keras.utils.layer_utils import print_summary
 from keras.preprocessing.sequence import pad_sequences
@@ -67,6 +68,12 @@ def build_model(vocab_size, max_caption_len, weights_path, embedding_weights,
     image_model.add(Convolution2D(512, 3, 3, activation='relu'))
     image_model.add(MaxPooling2D((2,2), strides=(2,2)))
 
+    image_model.add(Flatten())
+    image_model.add(Dense(4096, activation='relu'))
+    image_model.add(Dropout(0.5))
+    image_model.add(Dense(4096, activation='relu'))
+    image_model.add(Dropout(0.5))
+
     f = h5py.File(weights_path)
     for k in range(f.attrs['nb_layers']):
         if k >= len(image_model.layers):
@@ -78,24 +85,33 @@ def build_model(vocab_size, max_caption_len, weights_path, embedding_weights,
         image_model.layers[k].set_weights(weights)
     f.close()
 
-    image_model.add(Flatten())
-    image_model.add(Dense(128, activation='relu'))
+    image_model.add(Dense(256))
+    image_model.add(BatchNormalization())
+    image_model.add(Activation('relu'))
+    image_model.add(Dropout(0.5))
+
+    image_model.add(RepeatVector(max_caption_len))
 
     language_model = Sequential()
     language_model.add(Embedding(vocab_size, 300,
                                  input_length=max_caption_len,
                                  mask_zero=True,
                                  weights=[embedding_weights]))
-    language_model.add(GRU(output_dim=128, return_sequences=True,
-                           dropout_W=0.5, dropout_U=0.5,
-                           activation='relu'))
-    language_model.add(TimeDistributed(Dense(128, activation='relu')))
+    language_model.add(Dropout(0.2))
 
-    image_model.add(RepeatVector(max_caption_len))
+    language_model.add(LSTM(256, return_sequences=True))
+    language_model.add(BatchNormalization())
+    language_model.add(Dropout(0.5))
+
+    language_model.add(TimeDistributed(Dense(256)))
+    language_model.add(BatchNormalization())
+    language_model.add(Activation('relu'))
+    language_model.add(Dropout(0.5))
+
 
     if scene_model:
         label_model = Sequential()
-        label_model.add(Embedding(13, 100,
+        label_model.add(Embedding(13, 64,
                                   input_length=1,
                                   mask_zero=False))
         label_model.add(Flatten())
@@ -108,9 +124,15 @@ def build_model(vocab_size, max_caption_len, weights_path, embedding_weights,
     else:
         model.add(Merge([image_model, language_model],
                         mode='concat', concat_axis=-1))
-    model.add(GRU(256, return_sequences=False,
-                  dropout_W=0.5, dropout_U=0.5,
-                  activation='relu'))
+
+    model.add(LSTM(512, return_sequences=True))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(LSTM(512, return_sequences=False))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
     model.add(Dense(vocab_size))
     model.add(Activation('softmax'))
 
@@ -152,7 +174,7 @@ def nextwordstream(next_words):
             yield next_word
 
 def minibatches(imstream, capstream, nextstream, scenestream,
-                word2idx, nb_samples, scenes=False, batch_size=64):
+                word2idx, nb_samples, labels=False, batch_size=75):
     nb_batches = nb_samples // batch_size
     while True:
         for batch in range(nb_batches):
@@ -162,7 +184,7 @@ def minibatches(imstream, capstream, nextstream, scenestream,
                                   dtype=np.float32)
             scenes = np.asarray(list(islice(scenestream, batch_size)),
                                 dtype=np.int32)
-            if scenes:
+            if labels:
                 X = [ims, captions, scenes]
             else:
                 X = [ims, captions]
@@ -170,21 +192,22 @@ def minibatches(imstream, capstream, nextstream, scenestream,
             y = to_categorical(y, nb_classes=len(word2idx)+1).astype('int32')
             yield X, y
 
-def setup_generation(word_vecs, model_weights, scene_model=False):
+def setup_generation(word_vecs, model_weights=None, scene_model=False):
     with open('../../models/l_enc.pkl') as p:
         l_enc = pickle.load(p)
     with open('../../models/word2idx.json') as j:
         word2idx = json.load(j)
     vocab_size = len(word2idx) + 1
-    max_caption_len = 79
+    max_caption_len = 40
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
     embedding_weights = np.zeros((vocab_size,300))
     for word, index in word2idx.items():
         embedding_weights[index:,] = word_vectors[word]
-    model = build_model(vocab_size, max_caption_len, '../../models/vgg16_weights.h5',
+    model = build_model(vocab_size, max_caption_len, '../../vgg16_weights.h5',
                         embedding_weights, scene_model=scene_model)
-    model.load_weights(model_weights)
+    if model_weights:
+        model.load_weights(model_weights)
     return model, word2idx, l_enc
 
 def generate(model, imfile, word2idx, l_enc, scene=None, temperature=1.):
@@ -194,7 +217,7 @@ def generate(model, imfile, word2idx, l_enc, scene=None, temperature=1.):
     start_token, end_token = word2idx['<s>'], word2idx['<e>']
     input_caption = [start_token]
     input_caption_x = np.expand_dims(np.asarray(input_caption), axis=0)
-    input_caption_x = pad_sequences(input_caption_x, padding='post', maxlen=79)
+    input_caption_x = pad_sequences(input_caption_x, padding='post', maxlen=40)
     if scene:
         label = l_enc.transform([scene])
         x = [im, input_caption_x, label]
@@ -220,7 +243,7 @@ def generate(model, imfile, word2idx, l_enc, scene=None, temperature=1.):
         input_caption.append(next_idx)
         input_caption_x = np.expand_dims(np.asarray(input_caption), axis=0)
         input_caption_x = pad_sequences(input_caption_x, padding='post',
-                                        maxlen=79)
+                                        maxlen=40)
 
         next_word = idx2word[next_idx]
         generated += " " + next_word
@@ -231,7 +254,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dim', type=int)
     parser.add_argument('--vggweights', type=str)
-    parser.add_argument('--modelweights', type=str)
+    parser.add_argument('--modelweights', type=str, required=False)
     parser.add_argument('--wordvecs', type=str)
     parser.add_argument('--images', type=str)
     parser.add_argument('--scenes', action='store_true')
@@ -277,6 +300,10 @@ if __name__ == '__main__':
             scenes.append(np.asarray(l_enc.transform(df.label.iloc[i])))
             partial_captions.append(indices[:j+1])
             next_words.append(indices[j+1])
+    partial_captions = [pc
+                        if len(pc) <= 40
+                        else pc[:40]
+                        for pc in partial_captions]
     partial_captions = pad_sequences(partial_captions, padding='post')
 
     print "pc shape", partial_captions.shape
@@ -285,7 +312,7 @@ if __name__ == '__main__':
     print "next_words shape", len(next_words)
 
     vocab_size = len(word2idx) + 1
-    max_caption_len = partial_captions.shape[1]
+    max_caption_len = 40
 
     word_vectors = load_bin_vec(word_vecs, word2idx)
     add_unknown_words(word_vectors, word2idx)
@@ -295,7 +322,11 @@ if __name__ == '__main__':
 
     model = build_model(vocab_size, max_caption_len, vggweights_path,
                         embedding_weights, scene_model=scene_model)
-    model.load_weights(modelweights_path)
+    if modelweights_path:
+        model.load_weights(modelweights_path)
+
+    for m in model.layers[0].layers:
+        print_summary(m.layers)
     print_summary(model.layers)
 
     partial_captions_train, partial_captions_test = (
@@ -318,12 +349,12 @@ if __name__ == '__main__':
     nextstream = nextwordstream(next_words_train)
     scenestream = stream(scenes_train)
     generator = minibatches(imstream, capstream, nextstream, scenestream,
-                            word2idx, samples_per_epoch, scenes=scene_model)
+                            word2idx, samples_per_epoch, labels=scene_model)
 
     if scene_model:
-        checkpoint = ModelCheckpoint('../../models/weights.scenes.{epoch:02d}.h5')
+        checkpoint = ModelCheckpoint('../../models/weights.lstm.scenes.{epoch:02d}.h5')
     else:
-        checkpoint = ModelCheckpoint('../../models/weights.{epoch:02d}.h5')
+        checkpoint = ModelCheckpoint('../../models/weights.lstm.1.{epoch:02d}.h5')
     model.fit_generator(generator,
                         nb_epoch=100,
                         samples_per_epoch=samples_per_epoch,

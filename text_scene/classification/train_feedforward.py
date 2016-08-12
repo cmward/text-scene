@@ -23,8 +23,12 @@ from paths import SENTENCES_CSV
 
 # hyperparameters
 emb_dim = 300
+<<<<<<< HEAD
 ngram_order = 1
 batch_size = 256
+=======
+batch_size = 128
+>>>>>>> 30acde2a62894bcba1348418b740e3c458303c27
 nb_epoch = 15
 lr = 0.001
 beta_1 = 0.9
@@ -33,10 +37,10 @@ epsilon = 1e-08
 
 def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
           activation='prelu', drop_unk=False, word_vecs=None,
-          return_net=False, cv=10, val_split=0.10, label_unk=False):
+          return_net=False, cv=10, val_split=0.00, label_unk=False):
     print "Loading data..."
     df = sentences_df(SENTENCES_CSV, labels=label_set, drop_unk=drop_unk)
-    X, y, word2idx, l_enc = load_dataset(df, ngram_order=ngram_order, pad=True)
+    X, y, word2idx, l_enc = load_dataset(df, ngram_order=1, pad=True)
     print "X shape:", X.shape
     y_orig = y
     y_binary = to_categorical(y)
@@ -57,6 +61,14 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
     embedding_weights = np.zeros((vocab_size+1, emb_dim))
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
+<<<<<<< HEAD
+=======
+
+    idx2word = {i:w for w,i in word2idx.items()}
+    randidx = np.random.randint(low=1, high=len(idx2word)-1)
+    assert np.all(embedding_weights[randidx] ==
+                  word_vectors[idx2word[randidx]])
+>>>>>>> 30acde2a62894bcba1348418b740e3c458303c27
     print "Data loaded."
 
     params = [('batch_size',batch_size), ('nb_epoch',nb_epoch),
@@ -87,7 +99,8 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
 
         _, acc = train_and_test_model(nn1, X_train, y_train, X_test, y_test,
                                       batch_size, nb_epoch,
-                                      lr, beta_1, beta_2, epsilon)
+                                      lr, beta_1, beta_2, epsilon,
+                                      val_split=val_split)
 
         print "Acc: %.4f" % acc
 
@@ -122,12 +135,15 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                                layer_sizes,
                                embedding_weights,
                                pool_mode=pool_mode)
+
             if i == 0:
                 print_summary(nn.model.layers)
+
             nn, acc = train_and_test_model(nn, X[train], y[train], X[test], y[test],
                                            batch_size, nb_epoch,
                                            lr, beta_1, beta_2, epsilon,
                                            val_split=val_split)
+<<<<<<< HEAD
             if return_net:
                 d = {'X': X,
                      'y': y,
@@ -142,6 +158,8 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                      'vocab_size': vocab_size,
                      'embedding_weights': embedding_weights}
                 return d, nn
+=======
+>>>>>>> 30acde2a62894bcba1348418b740e3c458303c27
             cv_scores.append(acc)
             train_time = time.time() - start_time
             """
@@ -157,6 +175,5 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
             """
             print "\nfold %i/10 - time: %.2f s - acc: %.4f on %i samples" % \
                 (i+1, train_time, acc, len(test))
-            print "ngram order: %i" % ngram_order
         print "Avg cv accuracy: %.4f" % np.mean(cv_scores)
         return cv_scores

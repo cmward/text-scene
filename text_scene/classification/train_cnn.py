@@ -21,16 +21,16 @@ from paths import SENTENCES_CSV
 
 # Model hyperparameters
 emb_dim = 300
-filter_hs = [5, 10, 15, 20, 25, 30]
-nb_filters = 300
-dropout_p = [0.2,0.5] # [input, softmax]
+filter_hs = [5,10,15]
+nb_filters = 150
+dropout_p = [0.2,0.2] # [input, softmax]
 trainable_embeddings = True
 pretrained_embeddings = True
 
 # Training parameters (Adam optimizer)
 batch_size = 128
-nb_epoch = 12
-lr = 0.0008
+nb_epoch = 15
+lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
 epsilon = 1e-08
@@ -120,6 +120,7 @@ def train(model_type='parallel', label_set='full', drop_unk=False,
                            model_type=model_type)
         if i == 0:
             print_summary(cnn.model.layers)
+
         acc = train_and_test_model(cnn, X[train], y[train], X[test], y[test],
                                    batch_size, nb_epoch,
                                    lr, beta_1, beta_2, epsilon)
