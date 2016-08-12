@@ -14,7 +14,7 @@ from keras import backend as K
 class FeedforwardNN(object):
     def __init__(self, vocab_size, nb_labels, emb_dim, maxlen, layer_sizes,
                  embedding_weights, pool_mode='max', activation='prelu',
-                 dropout_p=[0.7,0.5,0.5]):
+                 dropout_p=[0.2,0.5,0.5], weights=None):
 
         print "Activation:", activation
         print "Pool mode:", pool_mode
@@ -110,6 +110,8 @@ class FastText(object):
             out = Dense(nb_labels, activation='softmax')
         out = out(pool_out)
         self.model = Model(input=sentence_input, output=out)
+        if weights:
+            self.model.load_weights(weights)
 
 def train_and_test_model(nn, X_train, y_train, X_test, y_test,
                          batch_size, nb_epoch,

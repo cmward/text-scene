@@ -23,9 +23,9 @@ from paths import SENTENCES_CSV
 
 # hyperparameters
 emb_dim = 300
-ngram_order = 2
+ngram_order = 1
 batch_size = 256
-nb_epoch = 50
+nb_epoch = 15
 lr = 0.001
 beta_1 = 0.9
 beta_2 = 0.999
@@ -57,7 +57,6 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
     embedding_weights = np.zeros((vocab_size+1, emb_dim))
     for word, index in word2idx.items():
         embedding_weights[index,:] = word_vectors[word]
-    #embedding_weights = None
     print "Data loaded."
 
     params = [('batch_size',batch_size), ('nb_epoch',nb_epoch),
@@ -135,6 +134,7 @@ def train(label_set='full', pool_mode='sum', layer_sizes=[512, 256],
                      'word2idx': word2idx,
                      'l_enc': l_enc,
                      'y_binary': y_binary,
+                     'y_orig': y_orig,
                      'labels': labels,
                      'nb_labels': nb_labels,
                      'maxlen': maxlen,
